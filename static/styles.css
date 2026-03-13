@@ -1,6 +1,7 @@
 :root {
   --bg: #07161f;
   --bg-soft: #102733;
+  --sticky-bg: #102733;
   --panel: rgba(8, 28, 40, 0.78);
   --panel-border: rgba(121, 170, 194, 0.35);
   --text: #e7f4fb;
@@ -231,7 +232,7 @@ input:focus {
 
 .split-view {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 50%) minmax(0, 50%);
   gap: 8px;
   width: 100%;
   min-width: 0;
@@ -298,11 +299,12 @@ td {
   position: sticky;
   left: 0;
   background-clip: padding-box;
-  background-color: var(--bg-soft);
+  background-color: var(--sticky-bg) !important;
   z-index: 6;
 }
 
 .sticky-col-head {
+  background-color: var(--sticky-bg) !important;
   z-index: 12;
 }
 

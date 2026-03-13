@@ -20,8 +20,14 @@ from openpyxl.utils import get_column_letter
 ROOT_DIR = Path(__file__).resolve().parent
 UPLOAD_DIR = ROOT_DIR / "uploads"
 WORKBOOK_REGISTRY_PATH = UPLOAD_DIR / "workbook_registry.json"
+ACCESS_CONTROL_PATH = UPLOAD_DIR / "access_control.json"
 SUPPORTED_EXTENSIONS = {".xlsx", ".xlsm", ".xltx", ".xltm"}
-ALLOWED_VIEWER_ROLES = {"owner", "regional_manager"}
+ROLE_OWNER = "owner"
+ROLE_RSM = "rsm"
+ROLE_ASM = "asm"
+ROLE_USER = "user"
+ALLOWED_USER_ROLES = {ROLE_OWNER, ROLE_RSM, ROLE_ASM, ROLE_USER}
+ALLOWED_VIEWER_ROLES = {"owner", "regional_manager", "rsm", "asm", "user"}
 ALL_REGION_TOKEN = "ALL"
 DEFAULT_REGION_TOKEN = "GLOBAL"
 
@@ -388,16 +394,69 @@ def workbook_sheetnames_cached(path_str: str, mtime_ns: int) -> tuple[str, ...]:
         keep_links=False,
     )
     try:
+        visible_names = tuple(
+            worksheet.title
+            for worksheet in workbook.worksheets
+            if getattr(worksheet, "sheet_state", "visible") == "visible"
+        )
+        if visible_names:
+            return visible_names
         return tuple(workbook.sheetnames)
     finally:
         workbook.close()
 
 
+def normalize_sheet_name_list(sheet_names: tuple[str, ...] | list[str]) -> list[str]:
+    seen: set[str] = set()
+    ordered: list[str] = []
+    for raw_name in sheet_names:
+        if not isinstance(raw_name, str):
+            continue
+        sheet_name = raw_name
+        if not sheet_name or sheet_name in seen:
+            continue
+        seen.add(sheet_name)
+        ordered.append(sheet_name)
+    return ordered
+
+
 def normalize_viewer_role(raw_role: str | None) -> str:
-    role = (raw_role or "owner").strip().lower()
-    if role in ALLOWED_VIEWER_ROLES:
+    role = normalize_token(raw_role)
+    if role in {"owner"}:
+        return ROLE_OWNER
+    if role in {"regionalmanager", "regional_manager", "rsm"}:
+        return ROLE_RSM
+    if role in {"asm"}:
+        return ROLE_ASM
+    if role in {"user", "staff"}:
+        return ROLE_USER
+    return ROLE_OWNER
+
+
+def normalize_user_role(raw_role: str | None, default: str = ROLE_USER) -> str:
+    role = normalize_viewer_role(raw_role)
+    if role in ALLOWED_USER_ROLES:
         return role
-    return "owner"
+    return default
+
+
+def normalize_username(raw_username: Any) -> str:
+    if raw_username is None:
+        return ""
+    value = str(raw_username).strip().lower()
+    if not value:
+        return ""
+    cleaned = re.sub(r"[^a-z0-9_.-]+", "_", value).strip("._-")
+    return cleaned
+
+
+def normalize_display_name(raw_display_name: Any, fallback_username: str) -> str:
+    if raw_display_name is None:
+        return fallback_username
+    display_name = str(raw_display_name).strip()
+    if not display_name:
+        return fallback_username
+    return re.sub(r"\s+", " ", display_name)
 
 
 def normalize_region_scope(raw_region: str | None) -> str:
@@ -472,6 +531,408 @@ def save_workbook_registry(registry: dict[str, dict[str, str]]) -> None:
     )
 
 
+def parse_token_list(raw_value: Any) -> list[str]:
+    if raw_value is None:
+        return []
+    if isinstance(raw_value, (list, tuple, set)):
+        items = raw_value
+    else:
+        items = re.split(r"[,\n;]+", str(raw_value))
+    tokens: list[str] = []
+    for item in items:
+        text = str(item).strip()
+        if text:
+            tokens.append(text)
+    return tokens
+
+
+def normalize_region_list(raw_value: Any) -> list[str]:
+    regions: list[str] = []
+    seen: set[str] = set()
+    for token in parse_token_list(raw_value):
+        region = normalize_region_token(token)
+        if not region or region in seen:
+            continue
+        seen.add(region)
+        regions.append(region)
+    return regions
+
+
+def normalize_township_list(raw_value: Any) -> list[str]:
+    townships: list[str] = []
+    seen: set[str] = set()
+    for token in parse_token_list(raw_value):
+        canonical = canonical_sheet_name(token)
+        if not canonical or canonical in seen:
+            continue
+        seen.add(canonical)
+        townships.append(canonical)
+    return townships
+
+
+def default_access_control() -> dict[str, Any]:
+    return {
+        "users": {
+            "owner": {
+                "role": ROLE_OWNER,
+                "display_name": "Owner",
+            }
+        },
+        "rsm_regions": {},
+        "user_to_rsm": {},
+        "asm_townships": {},
+    }
+
+
+def load_access_control() -> dict[str, Any]:
+    defaults = default_access_control()
+    if not ACCESS_CONTROL_PATH.exists():
+        return defaults
+
+    try:
+        raw = ACCESS_CONTROL_PATH.read_text(encoding="utf-8")
+        payload = json.loads(raw)
+    except (OSError, ValueError):
+        return defaults
+    if not isinstance(payload, dict):
+        return defaults
+
+    users_raw = payload.get("users")
+    users: dict[str, dict[str, str]] = {}
+    if isinstance(users_raw, dict):
+        for username_raw, meta in users_raw.items():
+            username = normalize_username(username_raw)
+            if not username:
+                continue
+            role = ROLE_USER
+            display_name = username
+            if isinstance(meta, dict):
+                role = normalize_user_role(meta.get("role"), default=ROLE_USER)
+                display_name = normalize_display_name(meta.get("display_name"), username)
+            users[username] = {
+                "role": role,
+                "display_name": display_name,
+            }
+
+    if "owner" not in users:
+        users["owner"] = {"role": ROLE_OWNER, "display_name": "Owner"}
+    else:
+        users["owner"]["role"] = ROLE_OWNER
+
+    rsm_regions: dict[str, list[str]] = {}
+    rsm_regions_raw = payload.get("rsm_regions")
+    if isinstance(rsm_regions_raw, dict):
+        for username_raw, regions_raw in rsm_regions_raw.items():
+            username = normalize_username(username_raw)
+            if not username:
+                continue
+            regions = normalize_region_list(regions_raw)
+            rsm_regions[username] = regions
+            if username not in users:
+                users[username] = {"role": ROLE_RSM, "display_name": username}
+
+    user_to_rsm: dict[str, str] = {}
+    user_to_rsm_raw = payload.get("user_to_rsm")
+    if isinstance(user_to_rsm_raw, dict):
+        for username_raw, rsm_raw in user_to_rsm_raw.items():
+            username = normalize_username(username_raw)
+            manager_rsm = normalize_username(rsm_raw)
+            if not username or not manager_rsm:
+                continue
+            user_to_rsm[username] = manager_rsm
+            if username not in users:
+                users[username] = {"role": ROLE_USER, "display_name": username}
+            if manager_rsm not in users:
+                users[manager_rsm] = {"role": ROLE_RSM, "display_name": manager_rsm}
+
+    asm_townships: dict[str, dict[str, list[str]]] = {}
+    asm_townships_raw = payload.get("asm_townships")
+    if isinstance(asm_townships_raw, dict):
+        for asm_raw, region_map_raw in asm_townships_raw.items():
+            asm_username = normalize_username(asm_raw)
+            if not asm_username or not isinstance(region_map_raw, dict):
+                continue
+            region_map: dict[str, list[str]] = {}
+            for region_raw, towns_raw in region_map_raw.items():
+                region = normalize_region_token(region_raw)
+                townships = normalize_township_list(towns_raw)
+                if townships:
+                    region_map[region] = townships
+            if region_map:
+                asm_townships[asm_username] = region_map
+                if asm_username not in users:
+                    users[asm_username] = {"role": ROLE_ASM, "display_name": asm_username}
+
+    for username, regions in rsm_regions.items():
+        if regions and users[username]["role"] != ROLE_OWNER:
+            users[username]["role"] = ROLE_RSM
+    for username, regions in asm_townships.items():
+        if regions and users[username]["role"] not in {ROLE_OWNER, ROLE_RSM}:
+            users[username]["role"] = ROLE_ASM
+
+    return {
+        "users": users,
+        "rsm_regions": rsm_regions,
+        "user_to_rsm": user_to_rsm,
+        "asm_townships": asm_townships,
+    }
+
+
+def save_access_control(access: dict[str, Any]) -> None:
+    UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "updated_at": datetime.now().isoformat(timespec="seconds"),
+        "users": access.get("users", {}),
+        "rsm_regions": access.get("rsm_regions", {}),
+        "user_to_rsm": access.get("user_to_rsm", {}),
+        "asm_townships": access.get("asm_townships", {}),
+    }
+    ACCESS_CONTROL_PATH.write_text(
+        json.dumps(payload, indent=2, sort_keys=True),
+        encoding="utf-8",
+    )
+
+
+def ensure_access_user(
+    access: dict[str, Any],
+    username: str,
+    role: str = ROLE_USER,
+    display_name: str | None = None,
+) -> dict[str, str]:
+    users = access.setdefault("users", {})
+    record = users.get(username)
+    if not isinstance(record, dict):
+        record = {}
+        users[username] = record
+    if "role" not in record:
+        record["role"] = normalize_user_role(role, default=ROLE_USER)
+    if display_name:
+        record["display_name"] = normalize_display_name(display_name, username)
+    if "display_name" not in record:
+        record["display_name"] = username
+    if username == "owner":
+        record["role"] = ROLE_OWNER
+    return record
+
+
+def all_known_regions(access: dict[str, Any], entries: list[dict[str, Any]]) -> list[str]:
+    regions = {str(entry["region"]) for entry in entries}
+    for values in access.get("rsm_regions", {}).values():
+        for region in values:
+            regions.add(normalize_region_token(region))
+    for region_map in access.get("asm_townships", {}).values():
+        if not isinstance(region_map, dict):
+            continue
+        for region in region_map:
+            regions.add(normalize_region_token(region))
+    return sorted(regions)
+
+
+def derive_allowed_regions(
+    access: dict[str, Any],
+    username: str,
+    role: str,
+    regions_universe: list[str],
+) -> list[str]:
+    region_set = set(regions_universe)
+    if role == ROLE_OWNER:
+        return sorted(region_set)
+    if role == ROLE_RSM:
+        assigned = [
+            normalize_region_token(region)
+            for region in access.get("rsm_regions", {}).get(username, [])
+        ]
+        return [region for region in assigned if region in region_set]
+    if role == ROLE_ASM:
+        asm_regions = []
+        region_map = access.get("asm_townships", {}).get(username, {})
+        if isinstance(region_map, dict):
+            asm_regions = [normalize_region_token(region) for region in region_map.keys()]
+        return [region for region in asm_regions if region in region_set]
+
+    manager_rsm = access.get("user_to_rsm", {}).get(username)
+    if manager_rsm:
+        assigned = [
+            normalize_region_token(region)
+            for region in access.get("rsm_regions", {}).get(manager_rsm, [])
+        ]
+        return [region for region in assigned if region in region_set]
+    return []
+
+
+def resolve_selected_region(
+    requested_region: str | None,
+    allowed_regions: list[str],
+    allow_all_regions: bool,
+) -> str:
+    requested = normalize_region_scope(requested_region)
+    if allow_all_regions and requested == ALL_REGION_TOKEN:
+        return ALL_REGION_TOKEN
+    if requested in allowed_regions:
+        return requested
+    if allowed_regions:
+        return allowed_regions[0]
+    return ALL_REGION_TOKEN
+
+
+def current_request_user_and_region() -> tuple[str, str | None]:
+    user_raw = request.args.get("user")
+    if not user_raw:
+        user_raw = request.form.get("user")
+    if not user_raw and request.is_json:
+        payload = request.get_json(silent=True) or {}
+        if isinstance(payload, dict):
+            user_raw = payload.get("user")
+    username = normalize_username(user_raw) or "owner"
+
+    region_raw = request.args.get("region")
+    if region_raw is None:
+        region_raw = request.form.get("region")
+    if region_raw is None and request.is_json:
+        payload = request.get_json(silent=True) or {}
+        if isinstance(payload, dict):
+            region_raw = payload.get("region")
+    return username, region_raw
+
+
+def resolve_principal(
+    requested_user: str | None = None,
+    requested_region: str | None = None,
+) -> dict[str, Any]:
+    access = load_access_control()
+    requested_username = normalize_username(requested_user) or "owner"
+    users = access.get("users", {})
+    if requested_username not in users:
+        requested_username = "owner"
+    user_record = users.get(requested_username, {})
+    role = normalize_user_role(user_record.get("role"), default=ROLE_USER)
+
+    entries = discover_workbook_entries()
+    regions_universe = all_known_regions(access, entries)
+    allowed_regions = derive_allowed_regions(access, requested_username, role, regions_universe)
+    allow_all_regions = role == ROLE_OWNER
+    selected_region = resolve_selected_region(
+        requested_region,
+        allowed_regions,
+        allow_all_regions=allow_all_regions,
+    )
+
+    asm_townships = access.get("asm_townships", {}).get(requested_username, {})
+    allowed_townships = None
+    if role == ROLE_ASM and isinstance(asm_townships, dict):
+        region_for_townships = selected_region
+        if region_for_townships == ALL_REGION_TOKEN and allowed_regions:
+            region_for_townships = allowed_regions[0]
+        allowed_townships = set(
+            normalize_township_list(asm_townships.get(region_for_townships, []))
+        )
+
+    return {
+        "username": requested_username,
+        "role": role,
+        "display_name": normalize_display_name(
+            user_record.get("display_name"),
+            requested_username,
+        ),
+        "access": access,
+        "entries": entries,
+        "regions_universe": regions_universe,
+        "allowed_regions": allowed_regions,
+        "selected_region": selected_region,
+        "allow_all_regions": allow_all_regions,
+        "allowed_townships": allowed_townships,
+        "rsm_regions": normalize_region_list(
+            access.get("rsm_regions", {}).get(requested_username, [])
+        ),
+    }
+
+
+def principal_from_request() -> dict[str, Any]:
+    requested_user, requested_region = current_request_user_and_region()
+    return resolve_principal(
+        requested_user=requested_user,
+        requested_region=requested_region,
+    )
+
+
+def principal_can_upload_to_region(principal: dict[str, Any], region: str) -> bool:
+    role = principal["role"]
+    if role == ROLE_OWNER:
+        return True
+    if role == ROLE_RSM:
+        return region in set(principal.get("rsm_regions", []))
+    return False
+
+
+def principal_can_manage_rsm(principal: dict[str, Any]) -> bool:
+    return principal["role"] == ROLE_OWNER
+
+
+def principal_can_manage_asm(principal: dict[str, Any]) -> bool:
+    return principal["role"] in {ROLE_OWNER, ROLE_RSM}
+
+
+def principal_can_manage_region(principal: dict[str, Any], region: str) -> bool:
+    if principal["role"] == ROLE_OWNER:
+        return True
+    if principal["role"] == ROLE_RSM:
+        return region in set(principal.get("rsm_regions", []))
+    return False
+
+
+def filter_data_by_allowed_townships(
+    data: dict[str, Any],
+    allowed_townships: set[str] | None,
+) -> dict[str, Any]:
+    if allowed_townships is None:
+        return data
+
+    filtered_main = {
+        canonical: sheet
+        for canonical, sheet in data["main"].items()
+        if canonical in allowed_townships
+    }
+    filtered_reference = {
+        canonical: sheet
+        for canonical, sheet in data["reference"].items()
+        if canonical in allowed_townships
+    }
+
+    allowed_main_names = {sheet["sheet_name"] for sheet in filtered_main.values()}
+    allowed_reference_names = {sheet["sheet_name"] for sheet in filtered_reference.values()}
+
+    filtered_main_tabs = [
+        tab
+        for tab in data["main_sheet_tabs"]
+        if tab.get("canonical") in allowed_townships and tab.get("sheet_name") in allowed_main_names
+    ]
+    filtered_reference_tabs = [
+        tab
+        for tab in data["reference_sheet_tabs"]
+        if tab.get("canonical") in allowed_townships
+        and tab.get("sheet_name") in allowed_reference_names
+    ]
+    filtered_sheet_index = [
+        row
+        for row in data["sheet_index"]
+        if row.get("canonical") in allowed_townships
+    ]
+
+    return {
+        **data,
+        "main": filtered_main,
+        "reference": filtered_reference,
+        "sheet_index": filtered_sheet_index,
+        "main_sheet_tabs": filtered_main_tabs,
+        "reference_sheet_tabs": filtered_reference_tabs,
+        "main_sheet_names": normalize_sheet_name_list(
+            [tab["sheet_name"] for tab in filtered_main_tabs]
+        ),
+        "reference_sheet_names": normalize_sheet_name_list(
+            [tab["sheet_name"] for tab in filtered_reference_tabs]
+        ),
+    }
+
 def discover_workbook_entries() -> list[dict[str, Any]]:
     registry = load_workbook_registry()
     entries: list[dict[str, Any]] = []
@@ -538,29 +999,43 @@ def resolve_workbook_pair(
     reference_name: str | None,
     viewer_role: str | None = None,
     region_scope: str | None = None,
+    allowed_regions: list[str] | None = None,
+    allow_all_regions: bool | None = None,
 ) -> dict[str, Any]:
     entries = discover_workbook_entries()
     if not entries:
         raise FileNotFoundError("No supported Excel files found in this folder.")
 
     resolved_role = normalize_viewer_role(viewer_role)
+    if allow_all_regions is None:
+        allow_all_regions = resolved_role == ROLE_OWNER
+
     requested_region = normalize_region_scope(region_scope)
-    available_regions = sorted({str(entry["region"]) for entry in entries})
 
-    if resolved_role == "owner":
-        selected_region = (
-            requested_region if requested_region in available_regions else ALL_REGION_TOKEN
-        )
-    else:
-        if requested_region in available_regions:
-            selected_region = requested_region
-        else:
-            selected_region = available_regions[0]
+    scoped_entries = entries
+    if allowed_regions is not None:
+        allowed_region_set = {
+            normalize_region_token(region)
+            for region in allowed_regions
+            if region is not None
+        }
+        scoped_entries = [
+            entry for entry in entries if entry["region"] in allowed_region_set
+        ]
 
-    if selected_region == ALL_REGION_TOKEN:
-        visible_entries = entries
+    available_regions = sorted({str(entry["region"]) for entry in scoped_entries})
+    selected_region = resolve_selected_region(
+        requested_region,
+        available_regions,
+        allow_all_regions=allow_all_regions,
+    )
+
+    if selected_region == ALL_REGION_TOKEN and allow_all_regions:
+        visible_entries = scoped_entries
     else:
-        visible_entries = [entry for entry in entries if entry["region"] == selected_region]
+        visible_entries = [
+            entry for entry in scoped_entries if entry["region"] == selected_region
+        ]
 
     if not visible_entries:
         if selected_region == ALL_REGION_TOKEN:
@@ -605,13 +1080,21 @@ def load_viewer_data(main_path: Path, reference_path: Path) -> dict[str, Any]:
     reference_data = parse_workbook_cached(str(reference_path), ref_stat.st_mtime_ns)
     version = f"{main_stat.st_mtime_ns}:{ref_stat.st_mtime_ns}"
     try:
-        main_sheet_names = workbook_sheetnames_cached(str(main_path), main_stat.st_mtime_ns)
+        main_sheet_names = normalize_sheet_name_list(
+            workbook_sheetnames_cached(str(main_path), main_stat.st_mtime_ns)
+        )
     except Exception:
-        main_sheet_names = tuple(sheet["sheet_name"] for sheet in main_data.values())
+        main_sheet_names = normalize_sheet_name_list(
+            [sheet["sheet_name"] for sheet in main_data.values()]
+        )
     try:
-        reference_sheet_names = workbook_sheetnames_cached(str(reference_path), ref_stat.st_mtime_ns)
+        reference_sheet_names = normalize_sheet_name_list(
+            workbook_sheetnames_cached(str(reference_path), ref_stat.st_mtime_ns)
+        )
     except Exception:
-        reference_sheet_names = tuple(sheet["sheet_name"] for sheet in reference_data.values())
+        reference_sheet_names = normalize_sheet_name_list(
+            [sheet["sheet_name"] for sheet in reference_data.values()]
+        )
 
     sheet_index = []
     fixed_by_sheet_name: dict[str, dict[str, Any]] = {}
@@ -648,10 +1131,6 @@ def load_viewer_data(main_path: Path, reference_path: Path) -> dict[str, Any]:
             }
         )
 
-    fixed_main_by_sheet_name: dict[str, dict[str, Any]] = {}
-    for canonical, main_sheet in main_data.items():
-        fixed_main_by_sheet_name[main_sheet["sheet_name"]] = {"canonical": canonical}
-
     fixed_reference_by_sheet_name: dict[str, dict[str, Any]] = {}
     for canonical, reference_sheet in reference_data.items():
         fixed_reference_by_sheet_name[reference_sheet["sheet_name"]] = {
@@ -662,14 +1141,13 @@ def load_viewer_data(main_path: Path, reference_path: Path) -> dict[str, Any]:
     reference_sheet_tabs = []
     for sheet_name in reference_sheet_names:
         fixed_info = fixed_reference_by_sheet_name.get(sheet_name)
-        main_info = fixed_main_by_sheet_name.get(sheet_name)
-        canonical = fixed_info["canonical"] if fixed_info else (main_info["canonical"] if main_info else None)
+        canonical = fixed_info["canonical"] if fixed_info else None
         reference_sheet_tabs.append(
             {
                 "sheet_name": sheet_name,
                 "canonical": canonical,
                 "filterable": bool(fixed_info),
-                "has_main": fixed_info["has_main"] if fixed_info else bool(main_info),
+                "has_main": fixed_info["has_main"] if fixed_info else False,
             }
         )
 
@@ -677,6 +1155,8 @@ def load_viewer_data(main_path: Path, reference_path: Path) -> dict[str, Any]:
         "main_workbook": main_path.name,
         "reference_workbook": reference_path.name,
         "version": version,
+        "main_sheet_names": main_sheet_names,
+        "reference_sheet_names": reference_sheet_names,
         "main": main_data,
         "reference": reference_data,
         "sheet_index": sheet_index,
@@ -688,19 +1168,86 @@ def load_viewer_data(main_path: Path, reference_path: Path) -> dict[str, Any]:
 def color_to_css_hex(color) -> str | None:
     if not color:
         return None
-    rgb = getattr(color, "rgb", None)
+    try:
+        rgb = getattr(color, "rgb", None)
+    except Exception:
+        return None
     if not rgb:
         return None
-    rgb = str(rgb)
+    try:
+        rgb = str(rgb)
+    except Exception:
+        return None
     if len(rgb) == 8:
         rgb = rgb[2:]
     if len(rgb) != 6:
         return None
+    if not re.fullmatch(r"[0-9a-fA-F]{6}", rgb):
+        return None
     return f"#{rgb.lower()}"
 
 
+DEFAULT_TABLE_TEXT_COLOR = "#e7f4fb"
+FALLBACK_READABLE_DARK_TEXT = "#102733"
+FALLBACK_READABLE_LIGHT_TEXT = "#f5fbff"
+MIN_TEXT_CONTRAST_RATIO = 4.5
+
+
+def hex_to_rgb_triplet(css_hex: str) -> tuple[int, int, int] | None:
+    if not css_hex or not re.fullmatch(r"#[0-9a-fA-F]{6}", css_hex):
+        return None
+    return (
+        int(css_hex[1:3], 16),
+        int(css_hex[3:5], 16),
+        int(css_hex[5:7], 16),
+    )
+
+
+def relative_luminance(rgb: tuple[int, int, int]) -> float:
+    def to_linear(channel: int) -> float:
+        normalized = channel / 255
+        if normalized <= 0.03928:
+            return normalized / 12.92
+        return ((normalized + 0.055) / 1.055) ** 2.4
+
+    red = to_linear(rgb[0])
+    green = to_linear(rgb[1])
+    blue = to_linear(rgb[2])
+    return 0.2126 * red + 0.7152 * green + 0.0722 * blue
+
+
+def contrast_ratio(foreground_hex: str, background_hex: str) -> float:
+    foreground_rgb = hex_to_rgb_triplet(foreground_hex)
+    background_rgb = hex_to_rgb_triplet(background_hex)
+    if foreground_rgb is None or background_rgb is None:
+        return 1.0
+    foreground_l = relative_luminance(foreground_rgb)
+    background_l = relative_luminance(background_rgb)
+    lighter = max(foreground_l, background_l)
+    darker = min(foreground_l, background_l)
+    return (lighter + 0.05) / (darker + 0.05)
+
+
+def pick_accessible_text_color(background_hex: str, preferred_text_hex: str | None) -> str | None:
+    current_text = preferred_text_hex or DEFAULT_TABLE_TEXT_COLOR
+    if contrast_ratio(current_text, background_hex) >= MIN_TEXT_CONTRAST_RATIO:
+        return preferred_text_hex
+
+    dark_contrast = contrast_ratio(FALLBACK_READABLE_DARK_TEXT, background_hex)
+    light_contrast = contrast_ratio(FALLBACK_READABLE_LIGHT_TEXT, background_hex)
+    if dark_contrast >= light_contrast:
+        return FALLBACK_READABLE_DARK_TEXT
+    return FALLBACK_READABLE_LIGHT_TEXT
+
+
 def border_side_css(side) -> str | None:
-    if side is None or side.style is None:
+    if side is None:
+        return None
+    try:
+        side_style = side.style
+    except Exception:
+        return None
+    if side_style is None:
         return None
     width_map = {
         "hair": "1px",
@@ -720,15 +1267,25 @@ def border_side_css(side) -> str | None:
         "dashed": "dashed",
         "double": "double",
     }
-    width = width_map.get(side.style, "1px")
-    line_style = line_map.get(side.style, "solid")
-    color = color_to_css_hex(side.color) or "#6f8797"
+    width = width_map.get(side_style, "1px")
+    line_style = line_map.get(side_style, "solid")
+    try:
+        side_color = side.color
+    except Exception:
+        side_color = None
+    color = color_to_css_hex(side_color) or "#6f8797"
     return f"{width} {line_style} {color}"
 
 
 def cell_css(cell) -> str:
     rules: list[str] = []
-    alignment = cell.alignment
+    font_color: str | None = None
+    fill_color: str | None = None
+
+    try:
+        alignment = cell.alignment
+    except Exception:
+        alignment = None
     if alignment:
         if alignment.horizontal:
             rules.append(f"text-align:{alignment.horizontal}")
@@ -737,7 +1294,10 @@ def cell_css(cell) -> str:
         if alignment.wrap_text:
             rules.append("white-space:pre-wrap")
 
-    font = cell.font
+    try:
+        font = cell.font
+    except Exception:
+        font = None
     if font:
         if font.bold:
             rules.append("font-weight:700")
@@ -749,17 +1309,27 @@ def cell_css(cell) -> str:
             rules.append(f"font-size:{font.size:.1f}pt")
         if font.name:
             rules.append(f"font-family:'{font.name}', sans-serif")
-        font_color = color_to_css_hex(font.color)
-        if font_color:
-            rules.append(f"color:{font_color}")
+        try:
+            font_color = color_to_css_hex(font.color)
+        except Exception:
+            font_color = None
 
-    fill = cell.fill
+    try:
+        fill = cell.fill
+    except Exception:
+        fill = None
     if fill and fill.fill_type == "solid":
-        fill_color = color_to_css_hex(fill.fgColor) or color_to_css_hex(fill.start_color)
+        try:
+            fill_color = color_to_css_hex(fill.fgColor) or color_to_css_hex(fill.start_color)
+        except Exception:
+            fill_color = None
         if fill_color:
             rules.append(f"background-color:{fill_color}")
 
-    border = cell.border
+    try:
+        border = cell.border
+    except Exception:
+        border = None
     if border:
         left = border_side_css(border.left)
         right = border_side_css(border.right)
@@ -773,6 +1343,12 @@ def cell_css(cell) -> str:
             rules.append(f"border-top:{top}")
         if bottom:
             rules.append(f"border-bottom:{bottom}")
+
+    resolved_font_color = font_color
+    if fill_color:
+        resolved_font_color = pick_accessible_text_color(fill_color, font_color)
+    if resolved_font_color:
+        rules.append(f"color:{resolved_font_color}")
 
     return ";".join(rules)
 
@@ -1056,7 +1632,10 @@ def build_main_sheet_html_cached(
     style_rules: list[str] = []
 
     def style_class_for(cell) -> str:
-        style_id = cell.style_id
+        try:
+            style_id = int(cell.style_id)
+        except Exception:
+            style_id = -1
         if style_id in style_to_class:
             return style_to_class[style_id]
         class_name = f"sx{len(style_to_class)}"
@@ -1141,6 +1720,13 @@ def safe_uploaded_filename(original_name: str) -> str:
     return f"{stem}__{timestamp}{suffix}"
 
 
+def upload_region_for_file(upload_region: str | None, original_name: str) -> str:
+    scoped_region = normalize_region_scope(upload_region)
+    if scoped_region != ALL_REGION_TOKEN:
+        return scoped_region
+    return infer_region_from_filename(Path(original_name))
+
+
 @app.route("/")
 def index() -> str:
     return render_template("index.html", static_version=int(time.time()))
@@ -1149,13 +1735,21 @@ def index() -> str:
 @app.route("/api/workbooks")
 def api_workbooks():
     try:
-        selection = resolve_workbook_pair(None, None)
+        selection = resolve_workbook_pair(
+            None,
+            None,
+            viewer_role=request.args.get("role"),
+            region_scope=request.args.get("region"),
+        )
     except FileNotFoundError as exc:
         return jsonify({"error": str(exc), "workbooks": []}), 404
 
     return jsonify(
         {
             "workbooks": selection["available"],
+            "regions": selection["regions"],
+            "viewer_role": selection["viewer_role"],
+            "selected_region": selection["selected_region"],
             "default_main": selection["default_main"],
             "default_reference": selection["default_reference"],
         }
@@ -1168,9 +1762,15 @@ def api_upload_workbooks():
     if not files:
         return jsonify({"error": "No Excel files were uploaded."}), 400
 
+    viewer_role = request.form.get("role")
+    viewer_region = request.form.get("region")
+    upload_region = request.form.get("upload_region")
+
     UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
     saved_files: list[str] = []
+    uploaded_regions: list[dict[str, str]] = []
     skipped_files: list[str] = []
+    registry = load_workbook_registry()
 
     for file_storage in files:
         original_name = (file_storage.filename or "").strip()
@@ -1185,6 +1785,9 @@ def api_upload_workbooks():
         output_name = safe_uploaded_filename(original_name)
         file_storage.save(UPLOAD_DIR / output_name)
         saved_files.append(output_name)
+        region = upload_region_for_file(upload_region, original_name)
+        uploaded_regions.append({"file": output_name, "region": region})
+        registry[output_name] = {"region": region}
 
     if not saved_files:
         return (
@@ -1197,13 +1800,23 @@ def api_upload_workbooks():
             400,
         )
 
+    save_workbook_registry(registry)
     clear_workbook_caches()
-    selection = resolve_workbook_pair(None, None)
+    selection = resolve_workbook_pair(
+        None,
+        None,
+        viewer_role=viewer_role,
+        region_scope=viewer_region,
+    )
     return jsonify(
         {
             "uploaded_files": saved_files,
+            "uploaded_regions": uploaded_regions,
             "skipped_files": skipped_files,
             "workbooks": selection["available"],
+            "regions": selection["regions"],
+            "viewer_role": selection["viewer_role"],
+            "selected_region": selection["selected_region"],
             "default_main": selection["default_main"],
             "default_reference": selection["default_reference"],
         }
@@ -1216,6 +1829,8 @@ def api_sheets():
         selection = resolve_workbook_pair(
             request.args.get("main"),
             request.args.get("reference"),
+            viewer_role=request.args.get("role"),
+            region_scope=request.args.get("region"),
         )
     except FileNotFoundError as exc:
         return jsonify({"error": str(exc)}), 404
@@ -1229,6 +1844,11 @@ def api_sheets():
             "reference_workbook": data["reference_workbook"],
             "version": data["version"],
             "available_workbooks": selection["available"],
+            "main_sheet_names": data["main_sheet_names"],
+            "reference_sheet_names": data["reference_sheet_names"],
+            "regions": selection["regions"],
+            "viewer_role": selection["viewer_role"],
+            "selected_region": selection["selected_region"],
             "sheets": data["sheet_index"],
             "main_sheet_tabs": data["main_sheet_tabs"],
             "reference_sheet_tabs": data["reference_sheet_tabs"],
@@ -1242,6 +1862,8 @@ def api_sheet(canonical: str):
         selection = resolve_workbook_pair(
             request.args.get("main"),
             request.args.get("reference"),
+            viewer_role=request.args.get("role"),
+            region_scope=request.args.get("region"),
         )
     except FileNotFoundError as exc:
         return jsonify({"error": str(exc)}), 404
@@ -1268,6 +1890,8 @@ def api_main_styled(canonical: str):
         selection = resolve_workbook_pair(
             request.args.get("main"),
             request.args.get("reference"),
+            viewer_role=request.args.get("role"),
+            region_scope=request.args.get("region"),
         )
     except FileNotFoundError as exc:
         return jsonify({"error": str(exc)}), 404
@@ -1317,6 +1941,8 @@ def api_main_styled_sheet():
         selection = resolve_workbook_pair(
             request.args.get("main"),
             request.args.get("reference"),
+            viewer_role=request.args.get("role"),
+            region_scope=request.args.get("region"),
         )
     except FileNotFoundError as exc:
         return jsonify({"error": str(exc)}), 404

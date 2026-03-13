@@ -1,5 +1,8 @@
 const state = {
   workbooks: [],
+  regions: [],
+  viewerRole: "owner",
+  selectedRegion: "ALL",
   selectedMainWorkbook: null,
   selectedReferenceWorkbook: null,
   mainSheetTabs: [],
@@ -18,12 +21,17 @@ const state = {
 const POLL_INTERVAL_MS = 30000;
 
 const el = {
+  viewerRoleSelect: document.getElementById("viewerRoleSelect"),
+  regionSelect: document.getElementById("regionSelect"),
   uploadInput: document.getElementById("uploadInput"),
+  uploadRegionInput: document.getElementById("uploadRegionInput"),
   uploadBtn: document.getElementById("uploadBtn"),
   mainWorkbookSelect: document.getElementById("mainWorkbookSelect"),
   referenceWorkbookSelect: document.getElementById("referenceWorkbookSelect"),
   mainWorkbookName: document.getElementById("mainWorkbookName"),
   referenceWorkbookName: document.getElementById("referenceWorkbookName"),
+  viewerRoleName: document.getElementById("viewerRoleName"),
+  regionName: document.getElementById("regionName"),
   mainPanelTitle: document.getElementById("mainPanelTitle"),
   referencePanelTitle: document.getElementById("referencePanelTitle"),
   mainTabSelect: document.getElementById("mainTabSelect"),
@@ -62,6 +70,59 @@ const monthLabels = [
   "December",
 ];
 
+function setText(node, value) {
+  if (!node) {
+    return;
+  }
+  node.textContent = value;
+}
+
+function appendText(node, value) {
+  if (!node) {
+    return;
+  }
+  node.textContent = `${node.textContent || ""}${value}`;
+}
+
+function normalizeSheetName(value) {
+  if (typeof value !== "string") {
+    return "";
+  }
+  return value;
+}
+
+function sanitizeSheetTabs(tabs, allowedNames) {
+  const nameSet = new Set(
+    Array.isArray(allowedNames)
+      ? allowedNames.map((item) => normalizeSheetName(item)).filter(Boolean)
+      : [],
+  );
+  const useAllowedNames = nameSet.size > 0;
+  const normalized = [];
+  const seen = new Set();
+  for (const rawTab of Array.isArray(tabs) ? tabs : []) {
+    if (!rawTab || typeof rawTab !== "object") {
+      continue;
+    }
+    const sheetName = normalizeSheetName(rawTab.sheet_name);
+    if (!sheetName || seen.has(sheetName)) {
+      continue;
+    }
+    if (useAllowedNames && !nameSet.has(sheetName)) {
+      continue;
+    }
+    seen.add(sheetName);
+    normalized.push({
+      sheet_name: sheetName,
+      canonical: typeof rawTab.canonical === "string" && rawTab.canonical ? rawTab.canonical : null,
+      filterable: Boolean(rawTab.filterable),
+      has_reference: Boolean(rawTab.has_reference),
+      has_main: Boolean(rawTab.has_main),
+    });
+  }
+  return normalized;
+}
+
 async function fetchJson(url) {
   const res = await fetch(url);
   if (!res.ok) {
@@ -79,8 +140,23 @@ async function fetchJson(url) {
   return res.json();
 }
 
-function workbookQuery() {
+function roleLabel(role) {
+  return role === "regional_manager" ? "Regional manager" : "Owner";
+}
+
+function regionLabel(region) {
+  return region === "ALL" ? "All regions" : region || "-";
+}
+
+function scopeQuery() {
   const params = new URLSearchParams();
+  params.set("role", state.viewerRole || "owner");
+  params.set("region", state.selectedRegion || "ALL");
+  return params.toString();
+}
+
+function workbookQuery() {
+  const params = new URLSearchParams(scopeQuery());
   if (state.selectedMainWorkbook) {
     params.set("main", state.selectedMainWorkbook);
   }
@@ -92,7 +168,7 @@ function workbookQuery() {
 
 function cacheKey(canonical) {
   const version = state.pairVersion || "noversion";
-  return `${state.selectedMainWorkbook}::${state.selectedReferenceWorkbook}::${version}::${canonical}`;
+  return `${state.viewerRole}::${state.selectedRegion}::${state.selectedMainWorkbook}::${state.selectedReferenceWorkbook}::${version}::${canonical}`;
 }
 
 function populateWorkbookSelect(selectElement, selectedName) {
@@ -103,27 +179,82 @@ function populateWorkbookSelect(selectElement, selectedName) {
     option.textContent = workbook;
     selectElement.appendChild(option);
   }
-  if (selectedName) {
+  if (selectedName && state.workbooks.includes(selectedName)) {
     selectElement.value = selectedName;
+    return;
+  }
+  if (state.workbooks.length) {
+    selectElement.value = state.workbooks[0];
   }
 }
 
+function populateRegionSelect() {
+  const regions = Array.isArray(state.regions) ? state.regions : [];
+  const isOwner = state.viewerRole === "owner";
+  el.regionSelect.innerHTML = "";
+
+  if (isOwner) {
+    const allOption = document.createElement("option");
+    allOption.value = "ALL";
+    allOption.textContent = "All regions";
+    el.regionSelect.appendChild(allOption);
+  }
+
+  for (const region of regions) {
+    const option = document.createElement("option");
+    option.value = region;
+    option.textContent = region;
+    el.regionSelect.appendChild(option);
+  }
+
+  if (!isOwner && state.selectedRegion === "ALL" && regions.length) {
+    state.selectedRegion = regions[0];
+  }
+  if (state.selectedRegion !== "ALL" && !regions.includes(state.selectedRegion)) {
+    state.selectedRegion = isOwner ? "ALL" : regions[0] || "ALL";
+  }
+
+  el.regionSelect.value = state.selectedRegion || (isOwner ? "ALL" : regions[0] || "ALL");
+  el.regionSelect.disabled = !isOwner && regions.length <= 1;
+}
+
+function applyScopePayload(payload) {
+  if (!payload || typeof payload !== "object") {
+    return;
+  }
+  if (payload.viewer_role) {
+    state.viewerRole = payload.viewer_role;
+  }
+  if (Array.isArray(payload.regions)) {
+    state.regions = payload.regions;
+  }
+  if (payload.selected_region) {
+    state.selectedRegion = payload.selected_region;
+  }
+  if (el.viewerRoleSelect) {
+    el.viewerRoleSelect.value = state.viewerRole;
+  }
+  populateRegionSelect();
+}
+
 function updateWorkbookLabels() {
-  el.mainWorkbookName.textContent = state.selectedMainWorkbook || "-";
-  el.referenceWorkbookName.textContent = state.selectedReferenceWorkbook || "-";
-  el.mainPanelTitle.textContent = `Main View (${state.selectedMainWorkbook || "-"})`;
-  el.referencePanelTitle.textContent = `Reference Detail (${state.selectedReferenceWorkbook || "-"})`;
+  setText(el.mainWorkbookName, state.selectedMainWorkbook || "-");
+  setText(el.referenceWorkbookName, state.selectedReferenceWorkbook || "-");
+  setText(el.viewerRoleName, roleLabel(state.viewerRole));
+  setText(el.regionName, regionLabel(state.selectedRegion));
+  setText(el.mainPanelTitle, `Main View (${state.selectedMainWorkbook || "-"})`);
+  setText(el.referencePanelTitle, `Reference Detail (${state.selectedReferenceWorkbook || "-"})`);
 }
 
 function setEmptyMain(message) {
   el.mainTable.innerHTML = `<div class="empty">${message}</div>`;
-  el.mainMeta.textContent = "";
+  setText(el.mainMeta, "");
 }
 
 function setEmptyRef(message) {
   unwrapSplitViewport(el.refTable);
   el.refTable.innerHTML = `<tbody><tr><td class="empty">${message}</td></tr></tbody>`;
-  el.refMeta.textContent = "";
+  setText(el.refMeta, "");
 }
 
 function getMainTabMeta(sheetName = state.selectedMainSheetName) {
@@ -234,7 +365,7 @@ function rebuildMainTabs(preferredSheetName) {
     }
     button.addEventListener("click", () => {
       onMainTabChange(tab.sheet_name).catch((err) => {
-        el.statusText.textContent = err.message;
+        setText(el.statusText, err.message);
       });
     });
     el.mainSheetTabs.appendChild(button);
@@ -296,7 +427,7 @@ function rebuildReferenceTabs(preferredSheetName) {
     }
     button.addEventListener("click", () => {
       onReferenceTabChange(tab.sheet_name).catch((err) => {
-        el.statusText.textContent = err.message;
+        setText(el.statusText, err.message);
       });
     });
     el.referenceSheetTabs.appendChild(button);
@@ -309,11 +440,13 @@ function rebuildReferenceTabs(preferredSheetName) {
 }
 
 async function loadWorkbookOptions() {
-  const payload = await fetchJson("/api/workbooks");
+  const scope = scopeQuery();
+  const payload = await fetchJson(`/api/workbooks?${scope}`);
+  applyScopePayload(payload);
   state.workbooks = payload.workbooks || [];
 
   if (!state.workbooks.length) {
-    throw new Error("No supported Excel files found in this folder.");
+    throw new Error(`No supported Excel files found for ${regionLabel(state.selectedRegion)}.`);
   }
 
   state.selectedMainWorkbook = payload.default_main || state.workbooks[0];
@@ -327,7 +460,7 @@ async function loadWorkbookOptions() {
 async function uploadSelectedWorkbooks() {
   const files = Array.from(el.uploadInput.files || []);
   if (!files.length) {
-    el.statusText.textContent = "Choose one or more Excel files first.";
+    setText(el.statusText, "Choose one or more Excel files first.");
     return;
   }
 
@@ -335,8 +468,16 @@ async function uploadSelectedWorkbooks() {
   for (const file of files) {
     formData.append("files", file);
   }
+  formData.append("role", state.viewerRole || "owner");
+  formData.append("region", state.selectedRegion || "ALL");
+  const uploadRegionValue = (el.uploadRegionInput.value || "").trim();
+  if (uploadRegionValue) {
+    formData.append("upload_region", uploadRegionValue);
+  } else if (state.selectedRegion && state.selectedRegion !== "ALL") {
+    formData.append("upload_region", state.selectedRegion);
+  }
 
-  el.statusText.textContent = `Uploading ${files.length} file(s)...`;
+  setText(el.statusText, `Uploading ${files.length} file(s)...`);
   const res = await fetch("/api/upload-workbooks", { method: "POST", body: formData });
   if (!res.ok) {
     let message = `Upload failed (${res.status})`;
@@ -352,11 +493,13 @@ async function uploadSelectedWorkbooks() {
   }
 
   const payload = await res.json();
+  applyScopePayload(payload);
   state.workbooks = payload.workbooks || state.workbooks;
   state.selectedMainWorkbook = payload.default_main || state.selectedMainWorkbook;
   state.selectedReferenceWorkbook = payload.default_reference || state.selectedReferenceWorkbook;
   state.cache.clear();
   state.mainStyledRequestKey = null;
+  state.mainAvailableMonths.clear();
 
   populateWorkbookSelect(el.mainWorkbookSelect, state.selectedMainWorkbook);
   populateWorkbookSelect(el.referenceWorkbookSelect, state.selectedReferenceWorkbook);
@@ -364,16 +507,28 @@ async function uploadSelectedWorkbooks() {
   await loadSheets();
 
   el.uploadInput.value = "";
+  el.uploadRegionInput.value = "";
   const skippedCount = Array.isArray(payload.skipped_files) ? payload.skipped_files.length : 0;
   const skippedText = skippedCount ? ` · skipped ${skippedCount} unsupported file(s)` : "";
-  el.statusText.textContent = `Uploaded ${files.length} file(s)${skippedText}`;
+  const uploadedRegions = Array.isArray(payload.uploaded_regions)
+    ? [...new Set(payload.uploaded_regions.map((item) => (item && item.region ? String(item.region) : "")))]
+        .filter(Boolean)
+        .join(", ")
+    : "";
+  const uploadRegionText = uploadedRegions || regionLabel(state.selectedRegion);
+  setText(el.statusText, `Uploaded ${files.length} file(s) to ${uploadRegionText}${skippedText}`);
 }
 
 function applySheetsPayload(payload) {
   const previousVersion = state.pairVersion;
-  state.mainSheetTabs = payload.main_sheet_tabs || [];
-  state.referenceSheetTabs = payload.reference_sheet_tabs || [];
+  applyScopePayload(payload);
+  state.mainSheetTabs = sanitizeSheetTabs(payload.main_sheet_tabs, payload.main_sheet_names);
+  state.referenceSheetTabs = sanitizeSheetTabs(
+    payload.reference_sheet_tabs,
+    payload.reference_sheet_names,
+  );
   state.pairVersion = payload.version || null;
+  state.workbooks = payload.available_workbooks || state.workbooks;
 
   if (payload.main_workbook) {
     state.selectedMainWorkbook = payload.main_workbook;
@@ -382,6 +537,8 @@ function applySheetsPayload(payload) {
     state.selectedReferenceWorkbook = payload.reference_workbook;
   }
 
+  populateWorkbookSelect(el.mainWorkbookSelect, state.selectedMainWorkbook);
+  populateWorkbookSelect(el.referenceWorkbookSelect, state.selectedReferenceWorkbook);
   updateWorkbookLabels();
   const changed = previousVersion !== state.pairVersion;
   if (changed) {
@@ -420,11 +577,11 @@ async function ensureSheetLoaded(canonical) {
     return state.cache.get(key);
   }
 
-  el.statusText.textContent = `Loading ${canonical}...`;
+  setText(el.statusText, `Loading ${canonical}...`);
   const query = workbookQuery();
   const payload = await fetchJson(`/api/sheet/${encodeURIComponent(canonical)}?${query}`);
   state.cache.set(key, payload);
-  el.statusText.textContent = "";
+  setText(el.statusText, "");
   return payload;
 }
 
@@ -634,6 +791,10 @@ function shouldSplitFrozenViewport(table, frozenCount, widths, totalCols) {
   const wrap = tableWrapFor(table);
   const viewportWidth = wrap ? wrap.clientWidth : table.parentElement ? table.parentElement.clientWidth : 0;
 
+  if (viewportWidth > 0 && viewportWidth <= 1024) {
+    return true;
+  }
+
   if (viewportWidth > 0 && frozenWidth > viewportWidth * 0.48) {
     return true;
   }
@@ -704,11 +865,18 @@ function applySplitViewport(table, frozenCount, totalCols, widths) {
 
   const rightPane = document.createElement("div");
   rightPane.className = "split-pane split-pane-right";
-  rightPane.appendChild(table);
 
   splitView.appendChild(leftPane);
   splitView.appendChild(rightPane);
-  host.replaceChild(splitView, table);
+  if (table.parentElement !== host) {
+    return false;
+  }
+  try {
+    host.replaceChild(splitView, table);
+  } catch {
+    return false;
+  }
+  rightPane.appendChild(table);
 
   const wrap = tableWrapFor(table);
   if (wrap) {
@@ -720,11 +888,8 @@ function applySplitViewport(table, frozenCount, totalCols, widths) {
       rightPane.style.maxHeight = maxHeight;
     }
   }
-
-  const leftWidth = widths.slice(0, frozenCount).reduce((sum, width) => sum + width, 0);
-  const rightWidth = widths.slice(frozenCount).reduce((sum, width) => sum + width, 0);
-  leftPane.style.minWidth = leftWidth > 0 ? `${Math.min(leftWidth, 560)}px` : "";
-  rightPane.style.minWidth = rightWidth > 0 ? "0" : "";
+  leftPane.style.minWidth = "0";
+  rightPane.style.minWidth = "0";
 
   let syncLock = false;
   leftPane.addEventListener(
@@ -860,28 +1025,20 @@ function toSolidRgbString(color) {
 }
 
 function resolveOpaqueStickyBackground(cell, table) {
-  const fallbackBaseText =
-    getComputedStyle(document.documentElement).getPropertyValue("--bg-soft").trim() || "#102733";
-  const fallbackBase = parseCssColor(fallbackBaseText) || { r: 16, g: 39, b: 51, a: 1 };
-
-  const candidates = [
-    getComputedStyle(cell).backgroundColor,
-    cell.parentElement ? getComputedStyle(cell.parentElement).backgroundColor : null,
-    getComputedStyle(table).backgroundColor,
-  ];
-
-  for (const candidate of candidates) {
-    const parsed = parseCssColor(candidate || "");
-    if (!parsed || (parsed.a ?? 0) <= 0) {
-      continue;
-    }
-    if ((parsed.a ?? 1) >= 0.995) {
-      return toSolidRgbString(parsed);
-    }
-    return toSolidRgbString(blendColors(parsed, fallbackBase));
+  const root = getComputedStyle(document.documentElement);
+  const stickyBg = root.getPropertyValue("--sticky-bg").trim();
+  if (stickyBg) {
+    return stickyBg;
   }
-
-  return toSolidRgbString(fallbackBase);
+  const fallback = root.getPropertyValue("--bg-soft").trim();
+  if (fallback) {
+    return fallback;
+  }
+  const tableBg = getComputedStyle(table).backgroundColor;
+  if (tableBg && tableBg !== "transparent" && tableBg !== "rgba(0, 0, 0, 0)") {
+    return tableBg;
+  }
+  return "rgb(16, 39, 51)";
 }
 
 function applyFrozenColumns(table, frozenCount) {
@@ -1035,7 +1192,7 @@ function renderTable(target, sheetData, selectedMonths) {
 }
 
 function renderMeta(target, sheetData, selectedMonths) {
-  target.textContent = `${sheetData.sheet_name} · rows ${sheetData.rows.length} · showing ${selectedMonths.length} month group(s)`;
+  setText(target, `${sheetData.sheet_name} · rows ${sheetData.rows.length} · showing ${selectedMonths.length} month group(s)`);
 }
 
 function mainStyledKey(selectedMonths) {
@@ -1043,7 +1200,7 @@ function mainStyledKey(selectedMonths) {
   const mode = el.mainModeSelect.value;
   const nValue = currentN(el.mainNInput);
   const monthValue = modeIsSameMonthYears(mode) ? el.mainMonthSelect.value || "auto" : "none";
-  return `${state.selectedMainWorkbook}::${state.selectedReferenceWorkbook}::${state.pairVersion}::${state.selectedMainSheetName}::${mode}::${nValue}::${monthValue}::${monthsPart}`;
+  return `${state.viewerRole}::${state.selectedRegion}::${state.selectedMainWorkbook}::${state.selectedReferenceWorkbook}::${state.pairVersion}::${state.selectedMainSheetName}::${mode}::${nValue}::${monthValue}::${monthsPart}`;
 }
 
 async function renderMainStyled(selectedMonths) {
@@ -1103,11 +1260,11 @@ async function renderMainStyled(selectedMonths) {
 
   const monthCount = (payload.selected_month_labels || []).length;
   if (monthCount > 0) {
-    el.mainMeta.textContent = `${payload.sheet_name} · rows ${payload.row_count} · ${payload.col_count} columns · ${monthCount} month group(s)`;
+    setText(el.mainMeta, `${payload.sheet_name} · rows ${payload.row_count} · ${payload.col_count} columns · ${monthCount} month group(s)`);
   } else if (payload.filterable) {
-    el.mainMeta.textContent = `${payload.sheet_name} · rows ${payload.row_count} · ${payload.col_count} columns · fixed-layout mode`;
+    setText(el.mainMeta, `${payload.sheet_name} · rows ${payload.row_count} · ${payload.col_count} columns · fixed-layout mode`);
   } else {
-    el.mainMeta.textContent = `${payload.sheet_name} · rows ${payload.row_count} · ${payload.col_count} columns · full-sheet mode`;
+    setText(el.mainMeta, `${payload.sheet_name} · rows ${payload.row_count} · ${payload.col_count} columns · full-sheet mode`);
   }
 }
 
@@ -1115,12 +1272,12 @@ function renderReferencePanel(referenceSheet, selectedMonthsRef, referenceTab) {
   if (!referenceSheet) {
     if (referenceTab && !referenceTab.filterable) {
       setEmptyRef("Selected reference sheet is not in a compatible monthly-detail format.");
-      el.refMeta.textContent = `${referenceTab.sheet_name} · non-filterable`;
+      setText(el.refMeta, `${referenceTab.sheet_name} · non-filterable`);
       return;
     }
     setEmptyRef("No compatible monthly-detail data found for this reference sheet.");
     if (referenceTab) {
-      el.refMeta.textContent = `${referenceTab.sheet_name} · no parsed month groups`;
+      setText(el.refMeta, `${referenceTab.sheet_name} · no parsed month groups`);
     }
     return;
   }
@@ -1130,7 +1287,7 @@ function renderReferencePanel(referenceSheet, selectedMonthsRef, referenceTab) {
   renderMeta(el.refMeta, referenceSheet, selectedMonthsRef);
 
   if (!selectedMonthsRef.length) {
-    el.refMeta.textContent += " · no months matched this mode";
+    appendText(el.refMeta, " · no months matched this mode");
   }
 }
 
@@ -1165,7 +1322,8 @@ async function render() {
     ? `Ref: same month over past ${currentN(el.refNInput)} year(s)`
     : `Ref: past ${currentN(el.refNInput)} populated month(s)`;
 
-  el.statusText.textContent = `Live refresh every ${POLL_INTERVAL_MS / 1000}s · ${mainModeText} · ${refModeText}`;
+  const scopeText = `Scope: ${roleLabel(state.viewerRole)} / ${regionLabel(state.selectedRegion)}`;
+  setText(el.statusText, `Live refresh every ${POLL_INTERVAL_MS / 1000}s · ${scopeText} · ${mainModeText} · ${refModeText}`);
 }
 
 async function refreshRealtime() {
@@ -1200,7 +1358,7 @@ async function refreshRealtime() {
 
     await render();
   } catch (err) {
-    el.statusText.textContent = err.message;
+    setText(el.statusText, err.message);
   } finally {
     state.isRefreshing = false;
   }
@@ -1212,9 +1370,24 @@ function startRealtimePolling() {
   }
   state.pollHandle = setInterval(() => {
     refreshRealtime().catch((err) => {
-      el.statusText.textContent = err.message;
+      setText(el.statusText, err.message);
     });
   }, POLL_INTERVAL_MS);
+}
+
+async function onScopeChange() {
+  state.viewerRole = el.viewerRoleSelect.value || "owner";
+  state.selectedRegion = el.regionSelect.value || state.selectedRegion || "ALL";
+  state.selectedMainWorkbook = null;
+  state.selectedReferenceWorkbook = null;
+  state.selectedMainSheetName = null;
+  state.selectedReferenceSheetName = null;
+  state.selectedRefCanonical = null;
+  state.cache.clear();
+  state.mainStyledRequestKey = null;
+  state.mainAvailableMonths.clear();
+  await loadWorkbookOptions();
+  await loadSheets();
 }
 
 async function onWorkbookChange() {
@@ -1226,47 +1399,59 @@ async function onWorkbookChange() {
 }
 
 function bindEvents() {
+  el.viewerRoleSelect.addEventListener("change", () => {
+    onScopeChange().catch((err) => {
+      setText(el.statusText, err.message);
+    });
+  });
+
+  el.regionSelect.addEventListener("change", () => {
+    onScopeChange().catch((err) => {
+      setText(el.statusText, err.message);
+    });
+  });
+
   el.uploadBtn.addEventListener("click", () => {
     uploadSelectedWorkbooks().catch((err) => {
-      el.statusText.textContent = err.message;
+      setText(el.statusText, err.message);
     });
   });
 
   el.mainWorkbookSelect.addEventListener("change", () => {
     onWorkbookChange().catch((err) => {
-      el.statusText.textContent = err.message;
+      setText(el.statusText, err.message);
     });
   });
 
   el.referenceWorkbookSelect.addEventListener("change", () => {
     onWorkbookChange().catch((err) => {
-      el.statusText.textContent = err.message;
+      setText(el.statusText, err.message);
     });
   });
 
   el.referenceTabSelect.addEventListener("change", () => {
     onReferenceTabChange(el.referenceTabSelect.value).catch((err) => {
-      el.statusText.textContent = err.message;
+      setText(el.statusText, err.message);
     });
   });
 
   el.mainTabSelect.addEventListener("change", () => {
     onMainTabChange(el.mainTabSelect.value).catch((err) => {
-      el.statusText.textContent = err.message;
+      setText(el.statusText, err.message);
     });
   });
 
   el.mainModeSelect.addEventListener("change", () => {
     state.mainStyledRequestKey = null;
     render().catch((err) => {
-      el.statusText.textContent = err.message;
+      setText(el.statusText, err.message);
     });
   });
 
   el.mainNInput.addEventListener("input", () => {
     state.mainStyledRequestKey = null;
     render().catch((err) => {
-      el.statusText.textContent = err.message;
+      setText(el.statusText, err.message);
     });
   });
 
@@ -1274,38 +1459,38 @@ function bindEvents() {
     el.mainMonthSelect.dataset.current = el.mainMonthSelect.value;
     state.mainStyledRequestKey = null;
     render().catch((err) => {
-      el.statusText.textContent = err.message;
+      setText(el.statusText, err.message);
     });
   });
 
   el.refModeSelect.addEventListener("change", () => {
     render().catch((err) => {
-      el.statusText.textContent = err.message;
+      setText(el.statusText, err.message);
     });
   });
 
   el.refNInput.addEventListener("input", () => {
     render().catch((err) => {
-      el.statusText.textContent = err.message;
+      setText(el.statusText, err.message);
     });
   });
 
   el.refMonthSelect.addEventListener("change", () => {
     el.refMonthSelect.dataset.current = el.refMonthSelect.value;
     render().catch((err) => {
-      el.statusText.textContent = err.message;
+      setText(el.statusText, err.message);
     });
   });
 
   el.metricSelect.addEventListener("change", () => {
     render().catch((err) => {
-      el.statusText.textContent = err.message;
+      setText(el.statusText, err.message);
     });
   });
 
   el.searchInput.addEventListener("input", () => {
     render().catch((err) => {
-      el.statusText.textContent = err.message;
+      setText(el.statusText, err.message);
     });
   });
 }
@@ -1317,6 +1502,6 @@ function bindEvents() {
     await loadSheets();
     startRealtimePolling();
   } catch (err) {
-    el.statusText.textContent = err.message;
+    setText(el.statusText, err.message);
   }
 })();

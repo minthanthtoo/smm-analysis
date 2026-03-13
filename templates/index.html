@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MHL Workbook Viewer</title>
+    <title>Regional Workbook Viewer</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -18,10 +18,12 @@
       <header class="hero">
         <div>
           <p class="eyebrow">SKU Analytics Viewer</p>
-          <h1>Township Monthly Breakdown</h1>
+          <h1>Regional Township Monthly Breakdown</h1>
           <p class="subtitle">
             Overview workbook: <strong id="mainWorkbookName">-</strong> · Detail workbook:
-            <strong id="referenceWorkbookName">-</strong>
+            <strong id="referenceWorkbookName">-</strong> · Role:
+            <strong id="viewerRoleName">Owner</strong> · Region:
+            <strong id="regionName">All regions</strong>
           </p>
         </div>
       </header>
@@ -29,8 +31,23 @@
       <section class="panel controls">
         <div class="control-grid">
           <label>
+            Viewer role
+            <select id="viewerRoleSelect">
+              <option value="owner">Owner</option>
+              <option value="regional_manager">Regional manager</option>
+            </select>
+          </label>
+          <label>
+            Region scope
+            <select id="regionSelect"></select>
+          </label>
+          <label>
             Load new Excel files
             <input id="uploadInput" type="file" accept=".xlsx,.xlsm,.xltx,.xltm" multiple />
+          </label>
+          <label>
+            Upload region
+            <input id="uploadRegionInput" type="text" placeholder="Leave blank to auto-detect from filename" />
           </label>
           <div class="upload-actions">
             <button id="uploadBtn" type="button" class="action-btn">Upload + refresh files</button>

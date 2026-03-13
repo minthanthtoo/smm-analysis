@@ -10,6 +10,10 @@ You can choose:
 
 - No fixed workbook hard-coding: defaults are chosen dynamically using filename heuristics + most recent files.
 - Upload new Excel files directly in the UI (`Upload + refresh files`) without restarting the app.
+- Region-aware uploads: tag uploaded files with a region (or auto-detect from filename).
+- Role + region scope controls:
+  - `Owner` can view `All regions` or a single region.
+  - `Regional manager` is limited to one region scope at a time.
 - Workbook pickers let you switch overview/detail files at runtime.
 - Main View recreates all sheets from the selected overview workbook as tabs.
 - Reference View also has its own tabs from the selected detail workbook (independent from main tabs).
@@ -25,6 +29,7 @@ You can choose:
 - Reference panel shows matching township sheet from the selected detail workbook with the same filter mode.
 - Handles township name variants automatically (for example `Pyawbwe` vs `Pyaw Bwe`, `Wantwin` vs `Want Twin`).
 - Supported file types: `.xlsx`, `.xlsm`, `.xltx`, `.xltm` (lock files like `~$...` are ignored).
+- Uploaded workbook region metadata is stored in `uploads/workbook_registry.json`.
 
 ## Run
 
