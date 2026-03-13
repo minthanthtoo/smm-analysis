@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MHL Workbook Viewer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v=static_version) }}" />
+  </head>
+  <body>
+    <div class="page-bg"></div>
+    <main class="app-shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">SKU Analytics Viewer</p>
+          <h1>Township Monthly Breakdown</h1>
+          <p class="subtitle">
+            Overview workbook: <strong id="mainWorkbookName">-</strong> · Detail workbook:
+            <strong id="referenceWorkbookName">-</strong>
+          </p>
+        </div>
+      </header>
+
+      <section class="panel controls">
+        <div class="control-grid">
+          <label>
+            Load new Excel files
+            <input id="uploadInput" type="file" accept=".xlsx,.xlsm,.xltx,.xltm" multiple />
+          </label>
+          <div class="upload-actions">
+            <button id="uploadBtn" type="button" class="action-btn">Upload + refresh files</button>
+          </div>
+          <label>
+            Overview workbook
+            <select id="mainWorkbookSelect"></select>
+          </label>
+          <label>
+            Main filter mode
+            <select id="mainModeSelect">
+              <option value="past_months">Past N months</option>
+              <option value="same_month_years">Same month across past N years</option>
+            </select>
+          </label>
+          <label>
+            Main N value
+            <input id="mainNInput" type="number" min="1" max="60" value="6" />
+          </label>
+          <label id="mainMonthWrapper" class="hidden">
+            Main month
+            <select id="mainMonthSelect"></select>
+          </label>
+        </div>
+        <p id="statusText" class="status">Loading workbook data...</p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2 id="mainPanelTitle">Main View</h2>
+          <span id="mainMeta" class="meta"></span>
+        </div>
+        <label class="sheet-tab-select-wrap">
+          Main sheet (overview workbook only)
+          <select id="mainTabSelect"></select>
+        </label>
+        <div id="mainSheetTabs" class="sheet-tabs"></div>
+        <div class="table-wrap">
+          <div id="mainTable" class="main-table-host"></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2 id="referencePanelTitle">Reference Detail</h2>
+          <span id="refMeta" class="meta"></span>
+        </div>
+        <label class="sheet-tab-select-wrap">
+          Reference sheet (detail workbook only)
+          <select id="referenceTabSelect"></select>
+        </label>
+        <div id="referenceSheetTabs" class="sheet-tabs"></div>
+        <div class="control-grid ref-control-grid">
+          <label>
+            Detail workbook
+            <select id="referenceWorkbookSelect"></select>
+          </label>
+          <label>
+            Ref filter mode
+            <select id="refModeSelect">
+              <option value="past_months">Past N months</option>
+              <option value="same_month_years">Same month across past N years</option>
+            </select>
+          </label>
+          <label>
+            Ref N value
+            <input id="refNInput" type="number" min="1" max="60" value="6" />
+          </label>
+          <label id="refMonthWrapper" class="hidden">
+            Ref month
+            <select id="refMonthSelect"></select>
+          </label>
+          <label>
+            Metric (detail table)
+            <select id="metricSelect">
+              <option value="liter">Liter</option>
+              <option value="pk">PK</option>
+              <option value="bottle">Bottle</option>
+              <option value="all">All (PK + Bottle + Liter)</option>
+            </select>
+          </label>
+          <label>
+            Product filter (detail table)
+            <input id="searchInput" type="text" placeholder="Type product name..." />
+          </label>
+        </div>
+        <div class="table-wrap">
+          <table id="refTable"></table>
+        </div>
+      </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='app.js', v=static_version) }}"></script>
+  </body>
+</html>
