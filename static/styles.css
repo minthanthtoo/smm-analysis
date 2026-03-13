@@ -225,6 +225,31 @@ input:focus {
   min-width: 0;
 }
 
+.table-wrap.table-wrap-split {
+  overflow: hidden;
+}
+
+.split-view {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+.split-pane {
+  min-width: 0;
+  max-width: 100%;
+  overflow: auto;
+  overscroll-behavior: contain;
+  border-radius: 10px;
+}
+
+.split-pane table {
+  width: max-content;
+  min-width: 100%;
+}
+
 .main-table-host {
   min-width: 0;
   width: 100%;

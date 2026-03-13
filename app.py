@@ -348,7 +348,7 @@ def parse_fixed_sheet(worksheet, sheet_name: str) -> dict[str, Any] | None:
 
 def parse_workbook(path: Path) -> OrderedDict[str, dict[str, Any]]:
     # Use normal mode because this parser relies on random cell access.
-    workbook = load_workbook(path, read_only=False, data_only=True)
+    workbook = load_workbook(path, read_only=False, data_only=True, keep_links=False)
     parsed_sheets: OrderedDict[str, dict[str, Any]] = OrderedDict()
 
     for sheet_name in workbook.sheetnames:
@@ -375,13 +375,22 @@ def parse_workbook_cached(path_str: str, mtime_ns: int) -> OrderedDict[str, dict
 @lru_cache(maxsize=8)
 def load_workbook_cached(path_str: str, mtime_ns: int):
     _ = mtime_ns
-    return load_workbook(Path(path_str), read_only=False, data_only=True)
+    return load_workbook(Path(path_str), read_only=False, data_only=True, keep_links=False)
 
 
 @lru_cache(maxsize=8)
 def workbook_sheetnames_cached(path_str: str, mtime_ns: int) -> tuple[str, ...]:
-    workbook = load_workbook_cached(path_str, mtime_ns)
-    return tuple(workbook.sheetnames)
+    _ = mtime_ns
+    workbook = load_workbook(
+        Path(path_str),
+        read_only=True,
+        data_only=True,
+        keep_links=False,
+    )
+    try:
+        return tuple(workbook.sheetnames)
+    finally:
+        workbook.close()
 
 
 def normalize_viewer_role(raw_role: str | None) -> str:
@@ -595,8 +604,14 @@ def load_viewer_data(main_path: Path, reference_path: Path) -> dict[str, Any]:
     main_data = parse_workbook_cached(str(main_path), main_stat.st_mtime_ns)
     reference_data = parse_workbook_cached(str(reference_path), ref_stat.st_mtime_ns)
     version = f"{main_stat.st_mtime_ns}:{ref_stat.st_mtime_ns}"
-    main_sheet_names = workbook_sheetnames_cached(str(main_path), main_stat.st_mtime_ns)
-    reference_sheet_names = workbook_sheetnames_cached(str(reference_path), ref_stat.st_mtime_ns)
+    try:
+        main_sheet_names = workbook_sheetnames_cached(str(main_path), main_stat.st_mtime_ns)
+    except Exception:
+        main_sheet_names = tuple(sheet["sheet_name"] for sheet in main_data.values())
+    try:
+        reference_sheet_names = workbook_sheetnames_cached(str(reference_path), ref_stat.st_mtime_ns)
+    except Exception:
+        reference_sheet_names = tuple(sheet["sheet_name"] for sheet in reference_data.values())
 
     sheet_index = []
     fixed_by_sheet_name: dict[str, dict[str, Any]] = {}

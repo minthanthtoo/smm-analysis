@@ -15,7 +15,7 @@ const state = {
   isRefreshing: false,
 };
 
-const POLL_INTERVAL_MS = 5000;
+const POLL_INTERVAL_MS = 30000;
 
 const el = {
   uploadInput: document.getElementById("uploadInput"),
@@ -1099,7 +1099,7 @@ async function renderMainStyled(selectedMonths) {
   el.mainTable.innerHTML = payload.html;
   const mainSourceTable = el.mainTable.querySelector("table.main-source-table");
   const frozenCount = Number.parseInt(String(payload.frozen_count ?? 0), 10) || 0;
-  applyFrozenColumns(mainSourceTable, frozenCount);
+  enhanceFrozenViewport(mainSourceTable, frozenCount);
 
   const monthCount = (payload.selected_month_labels || []).length;
   if (monthCount > 0) {
@@ -1126,7 +1126,7 @@ function renderReferencePanel(referenceSheet, selectedMonthsRef, referenceTab) {
   }
 
   renderTable(el.refTable, referenceSheet, selectedMonthsRef);
-  applyFrozenColumns(el.refTable, 4);
+  enhanceFrozenViewport(el.refTable, 4);
   renderMeta(el.refMeta, referenceSheet, selectedMonthsRef);
 
   if (!selectedMonthsRef.length) {

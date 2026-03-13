@@ -72,7 +72,7 @@ This repo now includes [`render.yaml`](/Users/min/codex/SMM-SKU/render.yaml), so
 Render config used:
 
 - Build command: `pip install -r requirements.txt`
-- Start command: `gunicorn --bind 0.0.0.0:$PORT app:app`
+- Start command: `gunicorn --bind 0.0.0.0:$PORT --workers 1 --timeout 180 app:app`
 
 ### Important note about uploads
 
