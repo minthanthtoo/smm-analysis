@@ -11,9 +11,18 @@ You can choose:
 - No fixed workbook hard-coding: defaults are chosen dynamically using filename heuristics + most recent files.
 - Upload new Excel files directly in the UI (`Upload + refresh files`) without restarting the app.
 - Region-aware uploads: tag uploaded files with a region (or auto-detect from filename).
-- Role + region scope controls:
-  - `Owner` can view `All regions` or a single region.
-  - `Regional manager` is limited to one region scope at a time.
+- RBAC with region/township scoping:
+  - `Owner`: full cross-region access, assign RSMs, assign users to RSMs, assign ASMs, set ASM township scopes, and manage uploaded files.
+  - `RSM`: view/manage only assigned regions, upload files in assigned regions, assign ASM + township scopes for owned regions.
+  - `ASM`: view only assigned townships inside assigned regions.
+  - `User`: view only regions inherited from mapped RSM.
+- Management UI for:
+  - Owner -> assign RSM + region list.
+  - Owner -> map user to RSM.
+  - Owner/RSM -> assign ASM and township visibility per region.
+  - Owner/RSM -> file region update/delete (for uploaded files they have rights to).
+- `Current user` selector in the UI lets you switch perspective and verify each role's scoped view.
+- Current implementation is role-simulation (no login/auth provider yet): access is enforced from selected `user` context.
 - Workbook pickers let you switch overview/detail files at runtime.
 - Main View recreates all sheets from the selected overview workbook as tabs.
 - Reference View also has its own tabs from the selected detail workbook (independent from main tabs).
@@ -30,6 +39,7 @@ You can choose:
 - Handles township name variants automatically (for example `Pyawbwe` vs `Pyaw Bwe`, `Wantwin` vs `Want Twin`).
 - Supported file types: `.xlsx`, `.xlsm`, `.xltx`, `.xltm` (lock files like `~$...` are ignored).
 - Uploaded workbook region metadata is stored in `uploads/workbook_registry.json`.
+- Access mappings are stored in `uploads/access_control.json`.
 
 ## Run
 
