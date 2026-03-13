@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import calendar
 import html
+import json
 import os
 import re
 import socket
@@ -18,7 +19,11 @@ from openpyxl.utils import get_column_letter
 
 ROOT_DIR = Path(__file__).resolve().parent
 UPLOAD_DIR = ROOT_DIR / "uploads"
+WORKBOOK_REGISTRY_PATH = UPLOAD_DIR / "workbook_registry.json"
 SUPPORTED_EXTENSIONS = {".xlsx", ".xlsm", ".xltx", ".xltm"}
+ALLOWED_VIEWER_ROLES = {"owner", "regional_manager"}
+ALL_REGION_TOKEN = "ALL"
+DEFAULT_REGION_TOKEN = "GLOBAL"
 
 MONTH_LOOKUP = {
     name.lower(): idx
@@ -32,6 +37,25 @@ MONTH_LOOKUP.update(
         if idx
     }
 )
+
+REGION_STOP_WORDS = {
+    "analysis",
+    "detail",
+    "for",
+    "main",
+    "master",
+    "month",
+    "monthly",
+    "overview",
+    "reference",
+    "sheet",
+    "sku",
+    "summary",
+    "township",
+    "workbook",
+}
+REGION_STOP_WORDS.update({name.lower() for name in calendar.month_name if name})
+REGION_STOP_WORDS.update({name.lower() for name in calendar.month_abbr if name})
 
 TOWNSHIP_ALIAS = {
     "meiktila": "meiktila",
@@ -360,8 +384,89 @@ def workbook_sheetnames_cached(path_str: str, mtime_ns: int) -> tuple[str, ...]:
     return tuple(workbook.sheetnames)
 
 
-def discover_workbooks() -> list[Path]:
-    workbooks: list[Path] = []
+def normalize_viewer_role(raw_role: str | None) -> str:
+    role = (raw_role or "owner").strip().lower()
+    if role in ALLOWED_VIEWER_ROLES:
+        return role
+    return "owner"
+
+
+def normalize_region_scope(raw_region: str | None) -> str:
+    token = normalize_token(raw_region).upper()
+    if not token or token in {"ALL", "ANY"}:
+        return ALL_REGION_TOKEN
+    return token
+
+
+def normalize_region_token(raw_region: Any) -> str:
+    token = normalize_token(raw_region).upper()
+    if not token:
+        return DEFAULT_REGION_TOKEN
+    if token in {"ALL", "ANY"}:
+        return DEFAULT_REGION_TOKEN
+    return token
+
+
+def infer_region_from_filename(path: Path) -> str:
+    for token in re.split(r"[^A-Za-z0-9]+", path.stem):
+        if not token:
+            continue
+        lowered = token.lower()
+        if lowered in REGION_STOP_WORDS:
+            continue
+        if re.fullmatch(r"20\d{2}", token):
+            continue
+        if token.isdigit():
+            continue
+        cleaned = re.sub(r"[^A-Za-z0-9]+", "", token)
+        if len(cleaned) < 2:
+            continue
+        return cleaned.upper()
+    return DEFAULT_REGION_TOKEN
+
+
+def load_workbook_registry() -> dict[str, dict[str, str]]:
+    if not WORKBOOK_REGISTRY_PATH.exists():
+        return {}
+    try:
+        raw = WORKBOOK_REGISTRY_PATH.read_text(encoding="utf-8")
+        payload = json.loads(raw)
+    except (OSError, ValueError):
+        return {}
+
+    if not isinstance(payload, dict):
+        return {}
+    files_raw = payload.get("files")
+    if not isinstance(files_raw, dict):
+        return {}
+
+    normalized: dict[str, dict[str, str]] = {}
+    for workbook_name, meta in files_raw.items():
+        if not isinstance(workbook_name, str):
+            continue
+        if not isinstance(meta, dict):
+            continue
+        region = normalize_region_token(meta.get("region"))
+        normalized[workbook_name] = {"region": region}
+    return normalized
+
+
+def save_workbook_registry(registry: dict[str, dict[str, str]]) -> None:
+    UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "updated_at": datetime.now().isoformat(timespec="seconds"),
+        "files": registry,
+    }
+    WORKBOOK_REGISTRY_PATH.write_text(
+        json.dumps(payload, indent=2, sort_keys=True),
+        encoding="utf-8",
+    )
+
+
+def discover_workbook_entries() -> list[dict[str, Any]]:
+    registry = load_workbook_registry()
+    entries: list[dict[str, Any]] = []
+    seen_names: set[str] = set()
     search_dirs = [ROOT_DIR]
     if UPLOAD_DIR.exists():
         search_dirs.append(UPLOAD_DIR)
@@ -374,10 +479,21 @@ def discover_workbooks() -> list[Path]:
                 continue
             if path.suffix.lower() not in SUPPORTED_EXTENSIONS:
                 continue
-            workbooks.append(path)
+            if path.name in seen_names:
+                # Keep first entry if duplicate filenames exist in different folders.
+                continue
 
-    workbooks.sort(key=lambda p: p.name.lower())
-    return workbooks
+            meta = registry.get(path.name)
+            region_token = (
+                normalize_region_token(meta.get("region"))
+                if meta and isinstance(meta, dict)
+                else infer_region_from_filename(path)
+            )
+            seen_names.add(path.name)
+            entries.append({"name": path.name, "path": path, "region": region_token})
+
+    entries.sort(key=lambda item: str(item["name"]).lower())
+    return entries
 
 
 def workbook_name_score(path: Path, role: str) -> int:
@@ -409,30 +525,63 @@ def default_workbook(workbooks: list[Path], role: str, avoid_name: str | None = 
 
 
 def resolve_workbook_pair(
-    main_name: str | None, reference_name: str | None
+    main_name: str | None,
+    reference_name: str | None,
+    viewer_role: str | None = None,
+    region_scope: str | None = None,
 ) -> dict[str, Any]:
-    workbooks = discover_workbooks()
-    if not workbooks:
+    entries = discover_workbook_entries()
+    if not entries:
         raise FileNotFoundError("No supported Excel files found in this folder.")
 
-    by_name = {path.name: path for path in workbooks}
-    default_main = default_workbook(workbooks, "main")
+    resolved_role = normalize_viewer_role(viewer_role)
+    requested_region = normalize_region_scope(region_scope)
+    available_regions = sorted({str(entry["region"]) for entry in entries})
+
+    if resolved_role == "owner":
+        selected_region = (
+            requested_region if requested_region in available_regions else ALL_REGION_TOKEN
+        )
+    else:
+        if requested_region in available_regions:
+            selected_region = requested_region
+        else:
+            selected_region = available_regions[0]
+
+    if selected_region == ALL_REGION_TOKEN:
+        visible_entries = entries
+    else:
+        visible_entries = [entry for entry in entries if entry["region"] == selected_region]
+
+    if not visible_entries:
+        if selected_region == ALL_REGION_TOKEN:
+            raise FileNotFoundError("No supported Excel files found in this folder.")
+        raise FileNotFoundError(
+            f"No supported Excel files found for region: {selected_region}."
+        )
+
+    visible_paths = [entry["path"] for entry in visible_entries]
+    by_name = {str(entry["name"]): entry["path"] for entry in visible_entries}
+    default_main = default_workbook(visible_paths, "main")
     default_reference = default_workbook(
-        workbooks,
+        visible_paths,
         "reference",
-        avoid_name=default_main.name if len(workbooks) > 1 else None,
+        avoid_name=default_main.name if len(visible_paths) > 1 else None,
     )
 
     if main_name and main_name not in by_name:
-        raise ValueError(f"Unknown main workbook: {main_name}")
+        raise ValueError(f"Unknown main workbook for current scope: {main_name}")
     if reference_name and reference_name not in by_name:
-        raise ValueError(f"Unknown reference workbook: {reference_name}")
+        raise ValueError(f"Unknown reference workbook for current scope: {reference_name}")
 
     main_path = by_name.get(main_name) if main_name else default_main
     reference_path = by_name.get(reference_name) if reference_name else default_reference
 
     return {
-        "available": [path.name for path in workbooks],
+        "available": [str(entry["name"]) for entry in visible_entries],
+        "regions": available_regions,
+        "viewer_role": resolved_role,
+        "selected_region": selected_region,
         "default_main": default_main.name,
         "default_reference": default_reference.name,
         "main_path": main_path,

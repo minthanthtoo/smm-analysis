@@ -121,6 +121,7 @@ function setEmptyMain(message) {
 }
 
 function setEmptyRef(message) {
+  unwrapSplitViewport(el.refTable);
   el.refTable.innerHTML = `<tbody><tr><td class="empty">${message}</td></tr></tbody>`;
   el.refMeta.textContent = "";
 }
@@ -138,6 +139,52 @@ function getPayloadForCanonical(canonical) {
     return null;
   }
   return state.cache.get(cacheKey(canonical)) || null;
+}
+
+function tableWrapFor(table) {
+  return table ? table.closest(".table-wrap") : null;
+}
+
+function clearStickyStyles(table) {
+  if (!table) {
+    return;
+  }
+  for (const cell of table.querySelectorAll("th, td")) {
+    cell.classList.remove("sticky-col", "sticky-col-boundary", "sticky-col-head");
+    cell.style.removeProperty("left");
+    cell.style.removeProperty("z-index");
+    cell.style.removeProperty("background-color");
+  }
+}
+
+function unwrapSplitViewport(table) {
+  if (!table) {
+    return table;
+  }
+
+  const rightPane = table.parentElement;
+  if (!rightPane || !rightPane.classList.contains("split-pane-right")) {
+    return table;
+  }
+
+  const splitView = rightPane.parentElement;
+  if (!splitView || !splitView.classList.contains("split-view")) {
+    return table;
+  }
+
+  const host = splitView.parentElement;
+  if (!host) {
+    return table;
+  }
+
+  host.insertBefore(table, splitView);
+  splitView.remove();
+
+  const wrap = tableWrapFor(table);
+  if (wrap) {
+    wrap.classList.remove("table-wrap-split");
+  }
+  return table;
 }
 
 async function onMainTabChange(sheetName) {
@@ -577,6 +624,266 @@ function measureColumnWidths(table, totalCols) {
   return widths;
 }
 
+function shouldSplitFrozenViewport(table, frozenCount, widths, totalCols) {
+  if (frozenCount < 2 || frozenCount >= totalCols) {
+    return false;
+  }
+
+  const frozenWidth = widths.slice(0, frozenCount).reduce((sum, width) => sum + width, 0);
+  const totalWidth = widths.reduce((sum, width) => sum + width, 0);
+  const wrap = tableWrapFor(table);
+  const viewportWidth = wrap ? wrap.clientWidth : table.parentElement ? table.parentElement.clientWidth : 0;
+
+  if (viewportWidth > 0 && frozenWidth > viewportWidth * 0.48) {
+    return true;
+  }
+  if (totalWidth > 0 && frozenWidth / totalWidth > 0.55) {
+    return true;
+  }
+  return frozenCount >= 8;
+}
+
+function pruneTableColumns(table, startCol, endColExclusive) {
+  const colgroup = table.querySelector("colgroup");
+  if (colgroup) {
+    const cols = Array.from(colgroup.children);
+    for (let idx = 0; idx < cols.length; idx += 1) {
+      if (idx < startCol || idx >= endColExclusive) {
+        cols[idx].remove();
+      }
+    }
+  }
+
+  for (const row of Array.from(table.rows)) {
+    for (const cell of Array.from(row.cells)) {
+      const cellStart = Number.parseInt(cell.dataset.colStart || "-1", 10);
+      const cellSpan = Math.max(1, Number.parseInt(cell.dataset.colSpan || "1", 10) || 1);
+      if (!Number.isFinite(cellStart) || cellStart < 0) {
+        continue;
+      }
+
+      const cellEnd = cellStart + cellSpan;
+      const overlapStart = Math.max(cellStart, startCol);
+      const overlapEnd = Math.min(cellEnd, endColExclusive);
+      const visibleSpan = overlapEnd - overlapStart;
+
+      if (visibleSpan <= 0) {
+        cell.remove();
+        continue;
+      }
+
+      if (visibleSpan !== cellSpan) {
+        cell.colSpan = visibleSpan;
+      }
+
+      cell.dataset.colStart = String(overlapStart - startCol);
+      cell.dataset.colSpan = String(visibleSpan);
+    }
+  }
+}
+
+function applySplitViewport(table, frozenCount, totalCols, widths) {
+  const host = table.parentElement;
+  if (!host) {
+    return false;
+  }
+
+  const leftTable = table.cloneNode(true);
+  clearStickyStyles(leftTable);
+  clearStickyStyles(table);
+
+  pruneTableColumns(leftTable, 0, frozenCount);
+  pruneTableColumns(table, frozenCount, totalCols);
+
+  const splitView = document.createElement("div");
+  splitView.className = "split-view";
+
+  const leftPane = document.createElement("div");
+  leftPane.className = "split-pane split-pane-left";
+  leftPane.appendChild(leftTable);
+
+  const rightPane = document.createElement("div");
+  rightPane.className = "split-pane split-pane-right";
+  rightPane.appendChild(table);
+
+  splitView.appendChild(leftPane);
+  splitView.appendChild(rightPane);
+  host.replaceChild(splitView, table);
+
+  const wrap = tableWrapFor(table);
+  if (wrap) {
+    wrap.classList.add("table-wrap-split");
+    const height = wrap.clientHeight;
+    if (height > 0) {
+      const maxHeight = `${height}px`;
+      leftPane.style.maxHeight = maxHeight;
+      rightPane.style.maxHeight = maxHeight;
+    }
+  }
+
+  const leftWidth = widths.slice(0, frozenCount).reduce((sum, width) => sum + width, 0);
+  const rightWidth = widths.slice(frozenCount).reduce((sum, width) => sum + width, 0);
+  leftPane.style.minWidth = leftWidth > 0 ? `${Math.min(leftWidth, 560)}px` : "";
+  rightPane.style.minWidth = rightWidth > 0 ? "0" : "";
+
+  let syncLock = false;
+  leftPane.addEventListener(
+    "scroll",
+    () => {
+      if (syncLock) {
+        return;
+      }
+      syncLock = true;
+      rightPane.scrollTop = leftPane.scrollTop;
+      syncLock = false;
+    },
+    { passive: true },
+  );
+  rightPane.addEventListener(
+    "scroll",
+    () => {
+      if (syncLock) {
+        return;
+      }
+      syncLock = true;
+      leftPane.scrollTop = rightPane.scrollTop;
+      syncLock = false;
+    },
+    { passive: true },
+  );
+
+  return true;
+}
+
+function enhanceFrozenViewport(table, frozenCount) {
+  if (!table) {
+    return;
+  }
+
+  const normalizedTable = unwrapSplitViewport(table);
+  const wrap = tableWrapFor(normalizedTable);
+  if (wrap) {
+    wrap.classList.remove("table-wrap-split");
+  }
+
+  if (!Number.isFinite(frozenCount) || frozenCount < 1) {
+    clearStickyStyles(normalizedTable);
+    return;
+  }
+
+  const totalCols = annotateCellGrid(normalizedTable);
+  if (!totalCols) {
+    return;
+  }
+
+  const clampedFrozen = Math.min(Math.max(1, frozenCount), totalCols);
+  const widths = measureColumnWidths(normalizedTable, totalCols);
+  if (shouldSplitFrozenViewport(normalizedTable, clampedFrozen, widths, totalCols)) {
+    const applied = applySplitViewport(normalizedTable, clampedFrozen, totalCols, widths);
+    if (applied) {
+      return;
+    }
+  }
+
+  applyFrozenColumns(normalizedTable, clampedFrozen);
+}
+
+function parseCssColor(text) {
+  if (!text) {
+    return null;
+  }
+  const value = text.trim().toLowerCase();
+  if (!value || value === "transparent") {
+    return { r: 0, g: 0, b: 0, a: 0 };
+  }
+
+  const rgbMatch = value.match(/^rgba?\(([^)]+)\)$/);
+  if (rgbMatch) {
+    const parts = rgbMatch[1].split(",").map((part) => part.trim());
+    if (parts.length < 3) {
+      return null;
+    }
+    const r = Number.parseFloat(parts[0]);
+    const g = Number.parseFloat(parts[1]);
+    const b = Number.parseFloat(parts[2]);
+    const a = parts.length >= 4 ? Number.parseFloat(parts[3]) : 1;
+    if (![r, g, b, a].every((part) => Number.isFinite(part))) {
+      return null;
+    }
+    return {
+      r: Math.max(0, Math.min(255, r)),
+      g: Math.max(0, Math.min(255, g)),
+      b: Math.max(0, Math.min(255, b)),
+      a: Math.max(0, Math.min(1, a)),
+    };
+  }
+
+  const hexMatch = value.match(/^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/);
+  if (hexMatch) {
+    const hex = hexMatch[1];
+    if (hex.length === 3) {
+      const r = Number.parseInt(hex[0] + hex[0], 16);
+      const g = Number.parseInt(hex[1] + hex[1], 16);
+      const b = Number.parseInt(hex[2] + hex[2], 16);
+      return { r, g, b, a: 1 };
+    }
+    if (hex.length === 6) {
+      const r = Number.parseInt(hex.slice(0, 2), 16);
+      const g = Number.parseInt(hex.slice(2, 4), 16);
+      const b = Number.parseInt(hex.slice(4, 6), 16);
+      return { r, g, b, a: 1 };
+    }
+    const a = Number.parseInt(hex.slice(0, 2), 16) / 255;
+    const r = Number.parseInt(hex.slice(2, 4), 16);
+    const g = Number.parseInt(hex.slice(4, 6), 16);
+    const b = Number.parseInt(hex.slice(6, 8), 16);
+    return { r, g, b, a: Math.max(0, Math.min(1, a)) };
+  }
+
+  return null;
+}
+
+function blendColors(foreground, background) {
+  const alpha = foreground.a ?? 1;
+  const r = foreground.r * alpha + background.r * (1 - alpha);
+  const g = foreground.g * alpha + background.g * (1 - alpha);
+  const b = foreground.b * alpha + background.b * (1 - alpha);
+  return {
+    r: Math.round(Math.max(0, Math.min(255, r))),
+    g: Math.round(Math.max(0, Math.min(255, g))),
+    b: Math.round(Math.max(0, Math.min(255, b))),
+  };
+}
+
+function toSolidRgbString(color) {
+  return `rgb(${Math.round(color.r)}, ${Math.round(color.g)}, ${Math.round(color.b)})`;
+}
+
+function resolveOpaqueStickyBackground(cell, table) {
+  const fallbackBaseText =
+    getComputedStyle(document.documentElement).getPropertyValue("--bg-soft").trim() || "#102733";
+  const fallbackBase = parseCssColor(fallbackBaseText) || { r: 16, g: 39, b: 51, a: 1 };
+
+  const candidates = [
+    getComputedStyle(cell).backgroundColor,
+    cell.parentElement ? getComputedStyle(cell.parentElement).backgroundColor : null,
+    getComputedStyle(table).backgroundColor,
+  ];
+
+  for (const candidate of candidates) {
+    const parsed = parseCssColor(candidate || "");
+    if (!parsed || (parsed.a ?? 0) <= 0) {
+      continue;
+    }
+    if ((parsed.a ?? 1) >= 0.995) {
+      return toSolidRgbString(parsed);
+    }
+    return toSolidRgbString(blendColors(parsed, fallbackBase));
+  }
+
+  return toSolidRgbString(fallbackBase);
+}
+
 function applyFrozenColumns(table, frozenCount) {
   if (!table || !Number.isFinite(frozenCount) || frozenCount < 1) {
     return;
@@ -623,24 +930,15 @@ function applyFrozenColumns(table, frozenCount) {
     cell.style.left = `${leftOffsets[start]}px`;
     if (cell.tagName === "TH") {
       cell.classList.add("sticky-col-head");
-      cell.style.zIndex = "8";
+      cell.style.zIndex = "12";
     } else {
-      cell.style.zIndex = "5";
+      cell.style.zIndex = "9";
     }
     if (end === clampedFrozen) {
       cell.classList.add("sticky-col-boundary");
     }
 
-    let bgColor = getComputedStyle(cell).backgroundColor;
-    if (!bgColor || bgColor === "rgba(0, 0, 0, 0)") {
-      bgColor = getComputedStyle(cell.parentElement).backgroundColor;
-    }
-    if (!bgColor || bgColor === "rgba(0, 0, 0, 0)") {
-      bgColor = getComputedStyle(table).backgroundColor;
-    }
-    if (bgColor && bgColor !== "rgba(0, 0, 0, 0)") {
-      cell.style.backgroundColor = bgColor;
-    }
+    cell.style.backgroundColor = resolveOpaqueStickyBackground(cell, table);
   }
 }
 

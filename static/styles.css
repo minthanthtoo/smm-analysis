@@ -273,14 +273,18 @@ td {
   position: sticky;
   left: 0;
   background-clip: padding-box;
+  background-color: var(--bg-soft);
+  z-index: 6;
 }
 
 .sticky-col-head {
-  z-index: 8;
+  z-index: 12;
 }
 
 .sticky-col-boundary {
-  box-shadow: 2px 0 0 rgba(255, 180, 84, 0.45);
+  box-shadow:
+    2px 0 0 rgba(255, 180, 84, 0.45),
+    8px 0 10px rgba(4, 15, 22, 0.45);
 }
 
 tbody tr:nth-child(even) {
