@@ -36,6 +36,7 @@ const state = {
   busyDepth: 0,
   lastLoadAt: null,
   fileRows: [],
+  modalReturnFocus: null,
 };
 
 const POLL_INTERVAL_MS = 30000;
@@ -49,8 +50,10 @@ const el = {
   onboardingToggleBtn: document.getElementById("onboardingToggleBtn"),
   onboardingSteps: document.getElementById("onboardingSteps"),
   roleInfoBtn: document.getElementById("roleInfoBtn"),
+  roleInfoInlineBtn: document.getElementById("roleInfoInlineBtn"),
   roleInfoModal: document.getElementById("roleInfoModal"),
   roleInfoCloseBtn: document.getElementById("roleInfoCloseBtn"),
+  roleInfoDoneBtn: document.getElementById("roleInfoDoneBtn"),
   mainWorkbookSelect: document.getElementById("mainWorkbookSelect"),
   referenceWorkbookSelect: document.getElementById("referenceWorkbookSelect"),
   mainWorkbookName: document.getElementById("mainWorkbookName"),
@@ -258,17 +261,61 @@ function setStatusError(err) {
   updateLoadHealth(`Status: ${message}`);
 }
 
-function setModalOpen(open) {
+function setRoleInfoTriggerExpanded(expanded) {
+  const value = expanded ? "true" : "false";
+  if (el.roleInfoBtn) {
+    el.roleInfoBtn.setAttribute("aria-expanded", value);
+  }
+  if (el.roleInfoInlineBtn) {
+    el.roleInfoInlineBtn.setAttribute("aria-expanded", value);
+  }
+}
+
+function getRoleInfoModalFocusables() {
+  if (!el.roleInfoModal) {
+    return [];
+  }
+  return Array.from(
+    el.roleInfoModal.querySelectorAll(
+      "button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])",
+    ),
+  ).filter((node) => !node.hasAttribute("disabled") && node.getAttribute("aria-hidden") !== "true");
+}
+
+function setModalOpen(open, triggerElement = null) {
   if (!el.roleInfoModal) {
     return;
   }
   if (open) {
-    el.roleInfoModal.classList.remove("hidden");
+    const activeElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    state.modalReturnFocus =
+      triggerElement instanceof HTMLElement ? triggerElement : activeElement || state.modalReturnFocus;
+    el.roleInfoModal.hidden = false;
     el.roleInfoModal.setAttribute("aria-hidden", "false");
+    setRoleInfoTriggerExpanded(true);
+    document.body.classList.add("modal-open");
+    const focusTarget =
+      el.roleInfoCloseBtn ||
+      el.roleInfoDoneBtn ||
+      el.roleInfoModal.querySelector(".modal-card");
+    if (focusTarget && typeof focusTarget.focus === "function") {
+      window.requestAnimationFrame(() => {
+        focusTarget.focus();
+      });
+    }
     return;
   }
-  el.roleInfoModal.classList.add("hidden");
+  el.roleInfoModal.hidden = true;
   el.roleInfoModal.setAttribute("aria-hidden", "true");
+  setRoleInfoTriggerExpanded(false);
+  document.body.classList.remove("modal-open");
+  const returnTarget = state.modalReturnFocus;
+  state.modalReturnFocus = null;
+  if (returnTarget && document.contains(returnTarget)) {
+    window.requestAnimationFrame(() => {
+      returnTarget.focus();
+    });
+  }
 }
 
 function setOnboardingExpanded(expanded) {
@@ -303,6 +350,7 @@ function setInteractiveControlsDisabled(disabled) {
     el.searchInput,
     el.onboardingToggleBtn,
     el.roleInfoBtn,
+    el.roleInfoInlineBtn,
     el.assignRsmUsernameInput,
     el.assignRsmDisplayInput,
     el.assignRsmRegionsInput,
@@ -2398,12 +2446,22 @@ function bindEvents() {
     });
   }
   if (el.roleInfoBtn) {
-    el.roleInfoBtn.addEventListener("click", () => {
-      setModalOpen(true);
+    el.roleInfoBtn.addEventListener("click", (event) => {
+      setModalOpen(true, event.currentTarget);
+    });
+  }
+  if (el.roleInfoInlineBtn) {
+    el.roleInfoInlineBtn.addEventListener("click", (event) => {
+      setModalOpen(true, event.currentTarget);
     });
   }
   if (el.roleInfoCloseBtn) {
     el.roleInfoCloseBtn.addEventListener("click", () => {
+      setModalOpen(false);
+    });
+  }
+  if (el.roleInfoDoneBtn) {
+    el.roleInfoDoneBtn.addEventListener("click", () => {
       setModalOpen(false);
     });
   }
@@ -2413,9 +2471,34 @@ function bindEvents() {
         setModalOpen(false);
       }
     });
+    el.roleInfoModal.addEventListener("keydown", (event) => {
+      if (event.key !== "Tab" || el.roleInfoModal.hidden) {
+        return;
+      }
+      const focusables = getRoleInfoModalFocusables();
+      if (!focusables.length) {
+        return;
+      }
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement;
+
+      if (event.shiftKey) {
+        if (active === first || !focusables.includes(active)) {
+          last.focus();
+          event.preventDefault();
+        }
+        return;
+      }
+
+      if (active === last) {
+        first.focus();
+        event.preventDefault();
+      }
+    });
   }
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") {
+    if (event.key === "Escape" && el.roleInfoModal && !el.roleInfoModal.hidden) {
       setModalOpen(false);
     }
   });
@@ -2737,6 +2820,7 @@ function bindEvents() {
 (async function init() {
   try {
     setOnboardingExpanded(false);
+    setModalOpen(false);
     updateLoadHealth();
     bindEvents();
     await refreshAccessContext();

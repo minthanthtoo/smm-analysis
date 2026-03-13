@@ -23,7 +23,18 @@
             Overview workbook: <strong id="mainWorkbookName">-</strong> · Detail workbook:
             <strong id="referenceWorkbookName">-</strong> · User:
             <strong id="currentUserName">owner</strong> · Role:
-            <strong id="viewerRoleName">Owner</strong> · Region:
+            <strong id="viewerRoleName">Owner</strong>
+            <button
+              id="roleInfoInlineBtn"
+              type="button"
+              class="inline-help-btn"
+              aria-haspopup="dialog"
+              aria-controls="roleInfoModal"
+              aria-expanded="false"
+            >
+              View access guide
+            </button>
+            · Region:
             <strong id="regionName">All regions</strong>
           </p>
         </div>
@@ -70,8 +81,15 @@
           <button id="onboardingToggleBtn" type="button" class="action-btn action-btn-ghost onboarding-toggle">
             အသေးစိတ် onboarding ပြရန်
           </button>
-          <button id="roleInfoBtn" type="button" class="action-btn action-btn-ghost">
-            Role & Permission အချက်အလက်
+          <button
+            id="roleInfoBtn"
+            type="button"
+            class="action-btn action-btn-ghost"
+            aria-haspopup="dialog"
+            aria-controls="roleInfoModal"
+            aria-expanded="false"
+          >
+            Role & Permission Guide
           </button>
         </div>
         <div class="load-health" aria-live="polite">
@@ -329,8 +347,15 @@
       </section>
     </main>
 
-    <div id="roleInfoModal" class="modal hidden" aria-hidden="true">
-      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="roleInfoTitle">
+    <div id="roleInfoModal" class="modal" hidden aria-hidden="true">
+      <div
+        class="modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="roleInfoTitle"
+        aria-describedby="roleInfoDescription"
+        tabindex="-1"
+      >
         <div class="modal-head">
           <h3 id="roleInfoTitle">Role & Permission (မြန်မာ)</h3>
           <button id="roleInfoCloseBtn" type="button" class="modal-close" aria-label="Close">
@@ -338,7 +363,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <p>Role အလိုက် permission များကို အောက်ပါဇယားအတိုင်း အသုံးပြုပါ။</p>
+          <p id="roleInfoDescription">Role အလိုက် permission များကို အောက်ပါဇယားအတိုင်း အသုံးပြုပါ။</p>
           <div class="permission-table-wrap">
             <table class="permission-table">
               <thead>
@@ -399,6 +424,11 @@
           <p>
             မှတ်ချက်: Tab များသည် selected workbook ထဲက visible sheets များကိုသာပြသပါသည်။ hidden sheets များကို view တွင် မထည့်သွင်းပါ။
           </p>
+          <div class="modal-actions">
+            <button id="roleInfoDoneBtn" type="button" class="action-btn action-btn-sm">
+              နားလည်ပါပြီ
+            </button>
+          </div>
         </div>
       </div>
     </div>

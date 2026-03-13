@@ -29,6 +29,10 @@ body {
   background: radial-gradient(circle at 15% 15%, #18435a 0%, #07161f 44%, #050f14 100%);
 }
 
+body.modal-open {
+  overflow: hidden;
+}
+
 .page-bg {
   position: fixed;
   inset: 0;
@@ -72,6 +76,28 @@ body {
 
 .subtitle strong {
   overflow-wrap: anywhere;
+}
+
+.inline-help-btn {
+  margin-left: 8px;
+  border: 1px solid rgba(160, 201, 222, 0.48);
+  border-radius: 999px;
+  background: rgba(7, 21, 30, 0.72);
+  color: #d7ebf7;
+  padding: 3px 10px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+
+.inline-help-btn:hover {
+  border-color: rgba(255, 180, 84, 0.9);
+  background: rgba(255, 180, 84, 0.22);
+}
+
+.inline-help-btn:focus-visible {
+  outline: 2px solid rgba(255, 180, 84, 0.9);
+  outline-offset: 2px;
 }
 
 .panel {
@@ -726,6 +752,11 @@ th.right {
   padding: 14px;
 }
 
+.modal[hidden],
+.modal.hidden {
+  display: none !important;
+}
+
 .modal-card {
   width: min(100%, 700px);
   max-height: min(86vh, 760px);
@@ -735,6 +766,10 @@ th.right {
   background:
     linear-gradient(160deg, rgba(15, 43, 58, 0.96) 0%, rgba(6, 19, 28, 0.98) 100%);
   padding: 14px;
+}
+
+.modal-card:focus {
+  outline: none;
 }
 
 .modal-head {
@@ -767,6 +802,12 @@ th.right {
 
 .modal-body p {
   margin: 0 0 8px;
+}
+
+.modal-actions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .permission-table-wrap {
@@ -858,6 +899,12 @@ th.right {
   .modal-card {
     max-height: 90vh;
     padding: 12px;
+  }
+
+  .inline-help-btn {
+    margin-left: 6px;
+    margin-top: 6px;
+    display: inline-flex;
   }
 }
 
