@@ -24,9 +24,19 @@ You can choose:
 - `Current user` selector in the UI lets you switch perspective and verify each role's scoped view.
 - Current implementation is role-simulation (no login/auth provider yet): access is enforced from selected `user` context.
 - Workbook pickers let you switch overview/detail files at runtime.
+- Onboarding, access-management forms, and regional file management are organized directly inside the ribbon tabs.
 - Main View recreates all sheets from the selected overview workbook as tabs.
 - Reference View also has its own tabs from the selected detail workbook (independent from main tabs).
+- Main/Reference sheet tabs are shown at the bottom (Excel-like) and Owner/RSM can rename sheet tabs inline (writes directly to the workbook file).
+- Ribbon can be collapsed/expanded (Excel-like) via toggle button, tab double-click, or `Ctrl+F1`.
+- Main window chrome now follows Excel desktop style (title bar, menu strip, ribbon band, and formula bar).
+- Fixed Excel-style bottom status bar includes active-cell/range info, multi-cell selection stats (Count/Numbers/Sum/Avg/Min/Max), and zoom controls.
+- Grid selection supports drag-range selection plus additive multi-area selection using `Ctrl`/`Cmd`.
+- Excel-style grid context menu is available via right-click (desktop) and long-press (mobile) with copy/selection/zoom actions.
+- Main + Detail panels split left/right on large landscape screens; on smaller/vertical screens the Detail panel becomes a bottom drawer (expand/collapse).
 - Main overview table preserves the source sheet formatting (merged headers, cell styles, row/column layout) while filtering month columns.
+- Workbook-native hidden rows/columns are respected in the styled main view.
+- Workbook `freeze_panes` is respected (frozen rows + columns), with automatic identity-column freeze fallback when no explicit freeze is defined.
 - Main overview keeps identity columns and shows only selected month groups to avoid long horizontal scrolling.
 - Main month-group detection is adaptive (supports variable monthly layouts such as Bot/Lit, PK/Bot/Liter, and single-column month patterns).
 - Filter long monthly columns by:
@@ -40,6 +50,20 @@ You can choose:
 - Supported file types: `.xlsx`, `.xlsm`, `.xltx`, `.xltm` (lock files like `~$...` are ignored).
 - Uploaded workbook region metadata is stored in `uploads/workbook_registry.json`.
 - Access mappings are stored in `uploads/access_control.json`.
+
+## Frontend Code Structure
+
+The frontend is modularized into separate runtime files:
+
+- `static/modules/app_state.js`: shared app state object, DOM element registry, and month label constants.
+- `static/modules/ribbon.js`: ribbon-focused UI sync/utilities (tab switching, mirror controls, summary sync).
+- `static/app.js`: main application orchestration (API calls, rendering, RBAC behaviors, event wiring).
+
+`templates/index.html` loads these in order: state module -> ribbon module -> main runtime.
+
+## Excel Parity Research
+
+Feature-by-feature Excel applicability and WYSIWYG gap analysis is documented in [`docs/excel-wysiwyg-gap-analysis.md`](/Users/min/codex/SMM-SKU/docs/excel-wysiwyg-gap-analysis.md).
 
 ## Run
 

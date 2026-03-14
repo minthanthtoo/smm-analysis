@@ -1,0 +1,85 @@
+    <div id="roleInfoModal" class="modal" hidden aria-hidden="true">
+      <div
+        class="modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="roleInfoTitle"
+        aria-describedby="roleInfoDescription"
+        tabindex="-1"
+      >
+        <div class="modal-head">
+          <h3 id="roleInfoTitle">Role & Permission (မြန်မာ)</h3>
+          <button id="roleInfoCloseBtn" type="button" class="modal-close" aria-label="Close">
+            ✕
+          </button>
+        </div>
+        <div class="modal-body">
+          <p id="roleInfoDescription">Role အလိုက် permission များကို အောက်ပါဇယားအတိုင်း အသုံးပြုပါ။</p>
+          <div class="permission-table-wrap">
+            <table class="permission-table">
+              <thead>
+                <tr>
+                  <th>လုပ်ဆောင်ချက်</th>
+                  <th>Owner</th>
+                  <th>RSM</th>
+                  <th>ASM</th>
+                  <th>User</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>All regions view</td>
+                  <td>✓</td>
+                  <td>—</td>
+                  <td>—</td>
+                  <td>—</td>
+                </tr>
+                <tr>
+                  <td>Assigned region view</td>
+                  <td>✓</td>
+                  <td>✓</td>
+                  <td>✓</td>
+                  <td>✓</td>
+                </tr>
+                <tr>
+                  <td>Workbook upload/update/delete</td>
+                  <td>✓</td>
+                  <td>✓ (assigned region)</td>
+                  <td>—</td>
+                  <td>—</td>
+                </tr>
+                <tr>
+                  <td>RSM assignment</td>
+                  <td>✓</td>
+                  <td>—</td>
+                  <td>—</td>
+                  <td>—</td>
+                </tr>
+                <tr>
+                  <td>ASM assignment / township scope</td>
+                  <td>✓</td>
+                  <td>✓</td>
+                  <td>—</td>
+                  <td>—</td>
+                </tr>
+                <tr>
+                  <td>Visible sheet tabs only</td>
+                  <td>✓</td>
+                  <td>✓</td>
+                  <td>✓</td>
+                  <td>✓</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            မှတ်ချက်: Tab များသည် selected workbook ထဲက visible sheets များကိုသာပြသပါသည်။ hidden sheets များကို view တွင် မထည့်သွင်းပါ။
+          </p>
+          <div class="modal-actions">
+            <button id="roleInfoDoneBtn" type="button" class="action-btn action-btn-sm">
+              နားလည်ပါပြီ
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>

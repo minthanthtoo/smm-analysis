@@ -22,6 +22,9 @@ UPLOAD_DIR = ROOT_DIR / "uploads"
 WORKBOOK_REGISTRY_PATH = UPLOAD_DIR / "workbook_registry.json"
 ACCESS_CONTROL_PATH = UPLOAD_DIR / "access_control.json"
 SUPPORTED_EXTENSIONS = {".xlsx", ".xlsm", ".xltx", ".xltm"}
+MACRO_ENABLED_EXTENSIONS = {".xlsm", ".xltm"}
+EXCEL_SHEET_TITLE_MAX_LENGTH = 31
+EXCEL_SHEET_TITLE_INVALID_CHARS = set("\\/*?:[]")
 ROLE_OWNER = "owner"
 ROLE_RSM = "rsm"
 ROLE_ASM = "asm"
@@ -1380,6 +1383,21 @@ def workbook_entry_by_name(entries: list[dict[str, Any]], filename: str) -> dict
     return None
 
 
+def workbook_entry_by_path(entries: list[dict[str, Any]], path: Path) -> dict[str, Any] | None:
+    try:
+        target = path.resolve()
+    except Exception:
+        target = path
+    for entry in entries:
+        try:
+            candidate = Path(entry["path"]).resolve()
+        except Exception:
+            continue
+        if candidate == target:
+            return entry
+    return None
+
+
 def is_uploaded_workbook_entry(entry: dict[str, Any]) -> bool:
     try:
         path = Path(entry["path"]).resolve()
@@ -1391,3 +1409,49 @@ def is_uploaded_workbook_entry(entry: dict[str, Any]) -> bool:
         return False
     return uploads_root in path.parents
 
+
+def validate_sheet_title_input(raw_title: Any) -> tuple[str | None, str | None]:
+    title = str(raw_title or "").strip()
+    if not title:
+        return None, "Sheet name cannot be empty."
+    if len(title) > EXCEL_SHEET_TITLE_MAX_LENGTH:
+        return None, f"Sheet name must be {EXCEL_SHEET_TITLE_MAX_LENGTH} characters or fewer."
+    invalid_found = sorted({ch for ch in title if ch in EXCEL_SHEET_TITLE_INVALID_CHARS})
+    if invalid_found:
+        invalid_display = " ".join(invalid_found)
+        return None, f"Sheet name contains invalid characters: {invalid_display}"
+    return title, None
+
+
+def rename_sheet_in_workbook(path: Path, old_sheet_name: str, new_sheet_name: str) -> tuple[str, str]:
+    normalized_old, old_error = validate_sheet_title_input(old_sheet_name)
+    if old_error:
+        raise ValueError(old_error)
+
+    normalized_new, new_error = validate_sheet_title_input(new_sheet_name)
+    if new_error:
+        raise ValueError(new_error)
+
+    if normalized_old == normalized_new:
+        return normalized_old, normalized_new
+
+    workbook = load_workbook(
+        path,
+        read_only=False,
+        data_only=False,
+        keep_links=True,
+        keep_vba=path.suffix.lower() in MACRO_ENABLED_EXTENSIONS,
+    )
+    try:
+        if normalized_old not in workbook.sheetnames:
+            raise ValueError(f"Unknown sheet name: {normalized_old}")
+        if normalized_new in workbook.sheetnames:
+            raise ValueError(f"Sheet name already exists: {normalized_new}")
+
+        worksheet = workbook[normalized_old]
+        worksheet.title = normalized_new
+        workbook.save(path)
+    finally:
+        workbook.close()
+
+    return normalized_old, normalized_new

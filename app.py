@@ -1,7 +1,12 @@
+import time
+from pathlib import Path
+from typing import Any
+
 from flask import Flask, abort, jsonify, render_template, request
 
 from smm_services import *
 from smm_styled import build_main_sheet_html_cached, clear_styled_cache, parse_clamped_int
+from smm_runtime import resolve_runtime_host_port
 
 app = Flask(__name__)
 
@@ -267,6 +272,64 @@ def api_file_delete(filename: str):
     return jsonify({"deleted": str(entry["name"])})
 
 
+@app.route("/api/workbook/rename-sheet", methods=["POST"])
+def api_workbook_rename_sheet():
+    principal = principal_from_request()
+    if principal["role"] not in {ROLE_OWNER, ROLE_RSM}:
+        return jsonify({"error": "Only Owner or RSM can rename workbook sheets."}), 403
+
+    payload = request_json_payload()
+    workbook_kind = str(payload.get("workbook") or request.form.get("workbook") or "").strip().lower()
+    if workbook_kind not in {"main", "reference"}:
+        return jsonify({"error": "Missing or invalid field: workbook (main/reference)."}), 400
+
+    old_sheet_name = payload.get("old_sheet_name") or request.form.get("old_sheet_name")
+    new_sheet_name = payload.get("new_sheet_name") or request.form.get("new_sheet_name")
+
+    try:
+        selection = workbook_selection_for_principal(
+            principal,
+            payload.get("main") or request.form.get("main") or request.args.get("main"),
+            payload.get("reference") or request.form.get("reference") or request.args.get("reference"),
+        )
+    except FileNotFoundError as exc:
+        return jsonify({"error": str(exc)}), 404
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 400
+
+    target_path = selection["main_path"] if workbook_kind == "main" else selection["reference_path"]
+    entry = workbook_entry_by_path(principal["entries"], target_path)
+    if not entry:
+        return jsonify({"error": f"Unknown workbook entry: {target_path.name}"}), 404
+
+    workbook_region = str(entry.get("region") or "")
+    if not principal_can_manage_region(principal, workbook_region):
+        return jsonify({"error": "No permission to edit sheets in this workbook."}), 403
+
+    try:
+        renamed_from, renamed_to = rename_sheet_in_workbook(
+            target_path,
+            str(old_sheet_name or ""),
+            str(new_sheet_name or ""),
+        )
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 400
+    except OSError as exc:
+        return jsonify({"error": f"Failed to save workbook: {exc}"}), 500
+
+    clear_workbook_caches()
+    return jsonify(
+        {
+            "updated": True,
+            "workbook": target_path.name,
+            "workbook_kind": workbook_kind,
+            "region": workbook_region,
+            "old_sheet_name": renamed_from,
+            "new_sheet_name": renamed_to,
+        }
+    )
+
+
 @app.route("/api/workbooks")
 def api_workbooks():
     principal = principal_from_request()
@@ -512,8 +575,12 @@ def api_main_styled(canonical: str):
             "row_count": html_payload["row_count"],
             "col_count": html_payload["col_count"],
             "frozen_count": html_payload["frozen_count"],
+            "frozen_rows": html_payload.get("frozen_rows", 0),
+            "frozen_columns": html_payload.get("frozen_columns", html_payload["frozen_count"]),
             "selected_month_labels": html_payload["selected_month_labels"],
             "available_months": html_payload["available_months"],
+            "hidden_rows_skipped": html_payload.get("hidden_rows_skipped", 0),
+            "hidden_columns_skipped": html_payload.get("hidden_columns_skipped", 0),
             "html": html_payload["html"],
         }
     )
@@ -573,33 +640,15 @@ def api_main_styled_sheet():
             "row_count": html_payload["row_count"],
             "col_count": html_payload["col_count"],
             "frozen_count": html_payload["frozen_count"],
+            "frozen_rows": html_payload.get("frozen_rows", 0),
+            "frozen_columns": html_payload.get("frozen_columns", html_payload["frozen_count"]),
             "selected_month_labels": html_payload["selected_month_labels"],
             "available_months": html_payload["available_months"],
+            "hidden_rows_skipped": html_payload.get("hidden_rows_skipped", 0),
+            "hidden_columns_skipped": html_payload.get("hidden_columns_skipped", 0),
             "html": html_payload["html"],
         }
     )
-
-
-def pick_available_port(candidates: list[int]) -> int:
-    for port in candidates:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-            try:
-                sock.bind(("127.0.0.1", port))
-                return port
-            except OSError:
-                continue
-    raise RuntimeError("No available port found in candidate list.")
-
-
-def resolve_runtime_host_port() -> tuple[str, int]:
-    render_port = os.getenv("PORT")
-    if render_port:
-        try:
-            return "0.0.0.0", int(render_port)
-        except ValueError as exc:
-            raise RuntimeError("PORT environment variable must be an integer.") from exc
-
-    return "127.0.0.1", pick_available_port([5055, 8000, 8080, 5000])
 
 
 if __name__ == "__main__":

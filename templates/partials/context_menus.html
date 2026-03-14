@@ -1,0 +1,50 @@
+    <div id="gridContextMenu" class="grid-context-menu" role="menu" aria-hidden="true" hidden>
+      <p id="gridContextTitle" class="grid-context-title">Cell</p>
+      <div class="grid-context-group" role="group" aria-label="Clipboard">
+        <p class="grid-context-group-title">Clipboard</p>
+        <button id="ctxCopyBtn" type="button" class="grid-context-item" role="menuitem">Copy selection</button>
+        <button id="ctxPasteBtn" type="button" class="grid-context-item" role="menuitem">Paste</button>
+        <button id="ctxClearSelectionBtn" type="button" class="grid-context-item" role="menuitem">Clear selection</button>
+      </div>
+      <div class="grid-context-separator" aria-hidden="true"></div>
+      <div class="grid-context-group" role="group" aria-label="Freeze">
+        <p class="grid-context-group-title">Freeze</p>
+        <button id="ctxFreezePanesBtn" type="button" class="grid-context-item" role="menuitem">Freeze panes</button>
+        <button id="ctxUnfreezePanesBtn" type="button" class="grid-context-item" role="menuitem">Unfreeze panes</button>
+      </div>
+      <div class="grid-context-separator" aria-hidden="true"></div>
+      <div class="grid-context-group" role="group" aria-label="Visibility">
+        <p class="grid-context-group-title">Visibility</p>
+        <button id="ctxHideRowsBtn" type="button" class="grid-context-item" role="menuitem">Hide rows</button>
+        <button id="ctxUnhideRowsBtn" type="button" class="grid-context-item" role="menuitem">Unhide rows</button>
+        <button id="ctxHideColsBtn" type="button" class="grid-context-item" role="menuitem">Hide columns</button>
+        <button id="ctxUnhideColsBtn" type="button" class="grid-context-item" role="menuitem">Unhide columns</button>
+        <button id="ctxHideBothBtn" type="button" class="grid-context-item" role="menuitem">Hide rows + columns</button>
+        <button id="ctxUnhideBothBtn" type="button" class="grid-context-item" role="menuitem">Unhide rows + columns</button>
+      </div>
+      <div class="grid-context-separator" aria-hidden="true"></div>
+      <div class="grid-context-group" role="group" aria-label="Rows and columns">
+        <p class="grid-context-group-title">Rows / Columns</p>
+        <button id="ctxInsertRowAboveBtn" type="button" class="grid-context-item" role="menuitem">Insert row above</button>
+        <button id="ctxInsertRowBelowBtn" type="button" class="grid-context-item" role="menuitem">Insert row below</button>
+        <button id="ctxDeleteRowBtn" type="button" class="grid-context-item" role="menuitem">Delete row</button>
+        <button id="ctxInsertColLeftBtn" type="button" class="grid-context-item" role="menuitem">Insert column left</button>
+        <button id="ctxInsertColRightBtn" type="button" class="grid-context-item" role="menuitem">Insert column right</button>
+        <button id="ctxDeleteColBtn" type="button" class="grid-context-item" role="menuitem">Delete column</button>
+      </div>
+      <div class="grid-context-separator" aria-hidden="true"></div>
+      <div class="grid-context-group" role="group" aria-label="Selection and view">
+        <p class="grid-context-group-title">Selection / View</p>
+        <button id="ctxSelectRowBtn" type="button" class="grid-context-item" role="menuitem">Select row</button>
+        <button id="ctxSelectColumnBtn" type="button" class="grid-context-item" role="menuitem">Select column</button>
+        <button id="ctxSelectAllBtn" type="button" class="grid-context-item" role="menuitem">Select all (view)</button>
+        <button id="ctxOpenDetailsBtn" type="button" class="grid-context-item" role="menuitem">Open details panel</button>
+        <button id="ctxZoomInBtn" type="button" class="grid-context-item" role="menuitem">Zoom in</button>
+        <button id="ctxZoomOutBtn" type="button" class="grid-context-item" role="menuitem">Zoom out</button>
+      </div>
+    </div>
+
+    <div id="sheetTabContextMenu" class="grid-context-menu sheet-tab-context-menu" role="menu" aria-hidden="true" hidden>
+      <p id="sheetTabContextTitle" class="grid-context-title">Sheet</p>
+      <button id="sheetTabCtxRenameBtn" type="button" class="grid-context-item" role="menuitem">Rename sheet</button>
+    </div>

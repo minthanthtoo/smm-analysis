@@ -1,0 +1,34 @@
+    <footer id="excelStatusBar" class="excel-statusbar" aria-label="Workbook status bar">
+      <div class="excel-status-section excel-status-primary">
+        <span id="statusSelectionScope" class="status-pill">No Selection</span>
+        <span id="statusSelectionAddress" class="status-mono">Ready</span>
+        <span id="statusSelectionRange" class="status-mono status-muted">Select cells to see details</span>
+      </div>
+      <div class="excel-status-section excel-status-metrics">
+        <span id="statusSelectionCellCount" class="status-mono">Cells: 0</span>
+        <span id="statusSelectionCount" class="status-mono">CountA: 0</span>
+        <span id="statusSelectionNumericCount" class="status-mono">Numbers: 0</span>
+        <span id="statusSelectionSum" class="status-mono">Sum: -</span>
+        <span id="statusSelectionAvg" class="status-mono">Avg: -</span>
+        <span id="statusSelectionMin" class="status-mono">Min: -</span>
+        <span id="statusSelectionMax" class="status-mono">Max: -</span>
+      </div>
+      <div class="excel-status-section excel-status-zoom">
+        <button id="zoomOutBtn" type="button" class="status-zoom-btn" aria-label="Zoom out">-</button>
+        <input
+          id="zoomRangeInput"
+          class="status-zoom-slider"
+          type="range"
+          min="60"
+          max="180"
+          step="10"
+          value="100"
+          aria-label="Grid zoom"
+        />
+        <button id="zoomInBtn" type="button" class="status-zoom-btn" aria-label="Zoom in">+</button>
+        <button id="zoomResetBtn" type="button" class="status-zoom-btn status-zoom-reset" aria-label="Reset zoom to 100%">
+          100%
+        </button>
+        <span id="zoomValueLabel" class="status-mono status-zoom-value">100%</span>
+      </div>
+    </footer>

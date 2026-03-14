@@ -1,0 +1,86 @@
+      <section id="viewsSplit" class="views-split" aria-label="Main and detail split views">
+        <section id="mainViewPanel" class="panel view-panel">
+          <div class="panel-head">
+            <h2 id="mainPanelTitle">Main View</h2>
+            <span id="mainMeta" class="meta"></span>
+          </div>
+          <label class="sheet-tab-select-wrap">
+            Main sheet (overview workbook only)
+            <select id="mainTabSelect"></select>
+          </label>
+          <div id="mainTableWrap" class="table-wrap">
+            <div id="mainTable" class="main-table-host"></div>
+          </div>
+        </section>
+
+        <div
+          id="viewsSplitHandle"
+          class="views-split-handle"
+          role="separator"
+          aria-label="Resize main and detail panes"
+          aria-orientation="vertical"
+          tabindex="0"
+        ></div>
+
+        <section id="referenceViewPanel" class="panel view-panel detail-panel">
+          <div class="panel-head panel-head-actions">
+            <h2 id="referencePanelTitle">Reference Detail</h2>
+            <div class="panel-head-action-pack">
+              <span id="refMeta" class="meta"></span>
+              <button
+                id="referenceDrawerToggleBtn"
+                type="button"
+                class="action-btn action-btn-ghost action-btn-sm drawer-toggle-btn"
+                aria-expanded="true"
+                aria-controls="referenceDrawerBody"
+                hidden
+              >
+                Collapse details
+              </button>
+            </div>
+          </div>
+          <div id="referenceDrawerBody" class="drawer-body">
+            <label class="sheet-tab-select-wrap">
+              Reference sheet (detail workbook only)
+              <select id="referenceTabSelect"></select>
+            </label>
+            <div class="control-grid ref-control-grid">
+              <label>
+                Detail workbook
+                <select id="referenceWorkbookMirrorSelect"></select>
+              </label>
+              <label>
+                Ref filter mode
+                <select id="refModeSelect">
+                  <option value="past_months">Past N months</option>
+                  <option value="same_month_years">Same month across past N years</option>
+                </select>
+              </label>
+              <label>
+                Ref N value
+                <input id="refNInput" type="number" min="1" max="60" value="6" />
+              </label>
+              <label id="refMonthWrapper" class="hidden">
+                Ref month
+                <select id="refMonthSelect"></select>
+              </label>
+              <label>
+                Metric (detail table)
+                <select id="metricSelect">
+                  <option value="liter">Liter</option>
+                  <option value="pk">PK</option>
+                  <option value="bottle">Bottle</option>
+                  <option value="all">All (PK + Bottle + Liter)</option>
+                </select>
+              </label>
+              <label>
+                Product filter (detail table)
+                <input id="searchInput" type="text" placeholder="Type product name..." />
+              </label>
+            </div>
+            <div id="referenceTableWrap" class="table-wrap">
+              <table id="refTable"></table>
+            </div>
+          </div>
+        </section>
+      </section>

@@ -1,0 +1,66 @@
+      <section class="panel controls legacy-core-controls hidden" aria-hidden="true">
+        <div class="control-groups">
+          <div class="control-group">
+            <h3>Scope</h3>
+            <div class="control-grid">
+              <label>
+                Current user
+                <select id="userSelect"></select>
+              </label>
+              <label>
+                Region scope
+                <select id="regionSelect"></select>
+              </label>
+            </div>
+          </div>
+          <div class="control-group">
+            <h3>Workbook Selection</h3>
+            <div class="control-grid">
+              <label>
+                Overview workbook
+                <select id="mainWorkbookSelect"></select>
+              </label>
+              <label>
+                Detail workbook
+                <select id="referenceWorkbookSelect"></select>
+              </label>
+            </div>
+          </div>
+          <div class="control-group">
+            <h3>Upload (Owner/RSM)</h3>
+            <div class="control-grid">
+              <label>
+                Load new Excel files
+                <input id="uploadInput" type="file" accept=".xlsx,.xlsm,.xltx,.xltm" multiple />
+              </label>
+              <label>
+                Upload region
+                <input id="uploadRegionInput" type="text" placeholder="Leave blank to auto-detect from filename" />
+              </label>
+              <div class="upload-actions">
+                <button id="uploadBtn" type="button" class="action-btn">Upload + refresh files</button>
+              </div>
+            </div>
+          </div>
+          <div class="control-group">
+            <h3>Main Filters</h3>
+            <div class="control-grid">
+              <label>
+                Main filter mode
+                <select id="mainModeSelect">
+                  <option value="past_months">Past N months</option>
+                  <option value="same_month_years">Same month across past N years</option>
+                </select>
+              </label>
+              <label>
+                Main N value
+                <input id="mainNInput" type="number" min="1" max="60" value="6" />
+              </label>
+              <label id="mainMonthWrapper" class="hidden">
+                Main month
+                <select id="mainMonthSelect"></select>
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>

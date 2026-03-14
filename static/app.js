@@ -1,136 +1,256 @@
-const state = {
-  workbooks: [],
-  regions: [],
-  allRegions: [],
-  users: [],
-  assignments: {
-    rsm_regions: {},
-    user_to_rsm: {},
-    asm_townships: {},
-  },
-  permissions: {
-    can_upload: false,
-    can_manage_rsm: false,
-    can_manage_asm: false,
-    can_manage_files: false,
-  },
-  viewerRole: "owner",
-  currentUser: "owner",
-  currentUserDisplayName: "Owner",
-  canViewAllRegions: true,
-  selectedRegion: "ALL",
-  selectedMainWorkbook: null,
-  selectedReferenceWorkbook: null,
-  regionTownships: {},
-  mainSheetTabs: [],
-  referenceSheetTabs: [],
-  mainAvailableMonths: new Map(),
-  cache: new Map(),
-  selectedRefCanonical: null,
-  selectedMainSheetName: null,
-  selectedReferenceSheetName: null,
-  pairVersion: null,
-  mainStyledRequestKey: null,
-  pollHandle: null,
-  isRefreshing: false,
-  busyDepth: 0,
-  lastLoadAt: null,
-  fileRows: [],
-  modalReturnFocus: null,
-};
+const App = window.SMMApp || {};
+const state = App.state;
+const el = App.el;
+const monthLabels = App.monthLabels;
+const ribbonApi = App.ribbon || {};
+const appUtils = App.utils || {};
+
+if (!state || !el || !Array.isArray(monthLabels)) {
+  throw new Error("App modules failed to initialize. Load app_state.js and ribbon.js before app.js.");
+}
+
+const requiredUtils = [
+  "formatClockTime",
+  "formatMetricNumber",
+  "normalizeSheetName",
+  "sanitizeSheetTabs",
+  "roleLabel",
+  "normalizeRoleToken",
+  "regionLabel",
+  "escapeHtml",
+  "modeIsSameMonthYears",
+  "currentN",
+  "hasAnyMetricValue",
+  "monthCoverageMap",
+  "isNumericCellText",
+  "selectionScopeLabel",
+  "normalizeViewScope",
+  "columnToExcelLabel",
+  "pointToAddress",
+  "parseNumericCellValue",
+  "formatValue",
+];
+const missingUtils = requiredUtils.filter((name) => typeof appUtils[name] !== "function");
+if (missingUtils.length > 0) {
+  throw new Error(`App utility module missing helpers: ${missingUtils.join(", ")}`);
+}
+
+const {
+  formatClockTime,
+  formatMetricNumber,
+  normalizeSheetName,
+  sanitizeSheetTabs,
+  roleLabel,
+  normalizeRoleToken,
+  regionLabel,
+  escapeHtml,
+  modeIsSameMonthYears,
+  currentN,
+  hasAnyMetricValue,
+  monthCoverageMap,
+  isNumericCellText,
+  selectionScopeLabel,
+  normalizeViewScope,
+  columnToExcelLabel,
+  pointToAddress,
+  parseNumericCellValue,
+  formatValue,
+} = appUtils;
 
 const POLL_INTERVAL_MS = 30000;
-
-const el = {
-  userSelect: document.getElementById("userSelect"),
-  regionSelect: document.getElementById("regionSelect"),
-  uploadInput: document.getElementById("uploadInput"),
-  uploadRegionInput: document.getElementById("uploadRegionInput"),
-  uploadBtn: document.getElementById("uploadBtn"),
-  onboardingToggleBtn: document.getElementById("onboardingToggleBtn"),
-  onboardingSteps: document.getElementById("onboardingSteps"),
-  roleInfoBtn: document.getElementById("roleInfoBtn"),
-  roleInfoInlineBtn: document.getElementById("roleInfoInlineBtn"),
-  roleInfoModal: document.getElementById("roleInfoModal"),
-  roleInfoCloseBtn: document.getElementById("roleInfoCloseBtn"),
-  roleInfoDoneBtn: document.getElementById("roleInfoDoneBtn"),
-  mainWorkbookSelect: document.getElementById("mainWorkbookSelect"),
-  referenceWorkbookSelect: document.getElementById("referenceWorkbookSelect"),
-  mainWorkbookName: document.getElementById("mainWorkbookName"),
-  referenceWorkbookName: document.getElementById("referenceWorkbookName"),
-  currentUserName: document.getElementById("currentUserName"),
-  viewerRoleName: document.getElementById("viewerRoleName"),
-  regionName: document.getElementById("regionName"),
-  roleOnboardingText: document.getElementById("roleOnboardingText"),
-  roleCardOwner: document.getElementById("roleCardOwner"),
-  roleCardRsm: document.getElementById("roleCardRsm"),
-  roleCardAsm: document.getElementById("roleCardAsm"),
-  roleCardUser: document.getElementById("roleCardUser"),
-  mainLoadChip: document.getElementById("mainLoadChip"),
-  referenceLoadChip: document.getElementById("referenceLoadChip"),
-  mainTabsChip: document.getElementById("mainTabsChip"),
-  referenceTabsChip: document.getElementById("referenceTabsChip"),
-  loadStageChip: document.getElementById("loadStageChip"),
-  mainPanelTitle: document.getElementById("mainPanelTitle"),
-  referencePanelTitle: document.getElementById("referencePanelTitle"),
-  mainTabSelect: document.getElementById("mainTabSelect"),
-  mainSheetTabs: document.getElementById("mainSheetTabs"),
-  referenceTabSelect: document.getElementById("referenceTabSelect"),
-  referenceSheetTabs: document.getElementById("referenceSheetTabs"),
-  mainModeSelect: document.getElementById("mainModeSelect"),
-  mainNInput: document.getElementById("mainNInput"),
-  mainMonthWrapper: document.getElementById("mainMonthWrapper"),
-  mainMonthSelect: document.getElementById("mainMonthSelect"),
-  refModeSelect: document.getElementById("refModeSelect"),
-  refNInput: document.getElementById("refNInput"),
-  refMonthWrapper: document.getElementById("refMonthWrapper"),
-  refMonthSelect: document.getElementById("refMonthSelect"),
-  metricSelect: document.getElementById("metricSelect"),
-  searchInput: document.getElementById("searchInput"),
-  statusText: document.getElementById("statusText"),
-  statusHint: document.getElementById("statusHint"),
-  mainTable: document.getElementById("mainTable"),
-  refTable: document.getElementById("refTable"),
-  mainMeta: document.getElementById("mainMeta"),
-  refMeta: document.getElementById("refMeta"),
-  accessHint: document.getElementById("accessHint"),
-  usersList: document.getElementById("usersList"),
-  assignRsmForm: document.getElementById("assignRsmForm"),
-  assignRsmUsernameInput: document.getElementById("assignRsmUsernameInput"),
-  assignRsmDisplayInput: document.getElementById("assignRsmDisplayInput"),
-  assignRsmRegionsInput: document.getElementById("assignRsmRegionsInput"),
-  mapUserRsmForm: document.getElementById("mapUserRsmForm"),
-  mapUserUsernameInput: document.getElementById("mapUserUsernameInput"),
-  mapUserRsmSelect: document.getElementById("mapUserRsmSelect"),
-  assignAsmForm: document.getElementById("assignAsmForm"),
-  assignAsmUsernameInput: document.getElementById("assignAsmUsernameInput"),
-  assignAsmDisplayInput: document.getElementById("assignAsmDisplayInput"),
-  assignAsmRsmWrap: document.getElementById("assignAsmRsmWrap"),
-  assignAsmRsmSelect: document.getElementById("assignAsmRsmSelect"),
-  assignAsmRegionSelect: document.getElementById("assignAsmRegionSelect"),
-  assignAsmTownshipsSelect: document.getElementById("assignAsmTownshipsSelect"),
-  asmTownshipForm: document.getElementById("asmTownshipForm"),
-  asmTownshipUserSelect: document.getElementById("asmTownshipUserSelect"),
-  asmTownshipRegionSelect: document.getElementById("asmTownshipRegionSelect"),
-  asmTownshipSelect: document.getElementById("asmTownshipSelect"),
-  refreshFilesBtn: document.getElementById("refreshFilesBtn"),
-  filesTableBody: document.getElementById("filesTableBody"),
-};
-
-const monthLabels = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
+const MIN_ZOOM_PERCENT = 60;
+const MAX_ZOOM_PERCENT = 180;
+const ZOOM_STEP = 10;
+const LONG_PRESS_OPEN_MS = 480;
+const MIN_VIEWS_MAIN_RATIO = 0.28;
+const MAX_VIEWS_MAIN_RATIO = 0.78;
+const VIEWS_SPLIT_KEY_STEP = 0.03;
+const THEME_PREF_STORAGE_KEY = "smm.themePreference";
+const MAX_AUTO_FROZEN_ROWS = 6;
+const AUTO_FROZEN_ROW_RATIO_THRESHOLD = 0.25;
+const GRID_SELECTION_EDGE_CLASSNAMES = [
+  "grid-cell-edge-top",
+  "grid-cell-edge-right",
+  "grid-cell-edge-bottom",
+  "grid-cell-edge-left",
 ];
+const GRID_SELECTION_CLASSNAMES = ["grid-cell-selected", "grid-cell-active", ...GRID_SELECTION_EDGE_CLASSNAMES];
+const FORMULA_FUNCTION_NAMES = new Set([
+  "SUM",
+  "AVERAGE",
+  "AVG",
+  "MIN",
+  "MAX",
+  "COUNT",
+  "COUNTA",
+  "IF",
+  "ABS",
+  "ROUND",
+  "ROUNDUP",
+  "ROUNDDOWN",
+  "LEN",
+]);
+const themeMediaQuery =
+  typeof window.matchMedia === "function" ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+let floatingMetricsRafId = 0;
+let inMemoryClipboardText = "";
+
+function scheduleFloatingLayoutMetricsSync() {
+  if (typeof window.requestAnimationFrame !== "function") {
+    syncFloatingLayoutMetrics();
+    return;
+  }
+  if (floatingMetricsRafId) {
+    return;
+  }
+  floatingMetricsRafId = window.requestAnimationFrame(() => {
+    floatingMetricsRafId = 0;
+    syncFloatingLayoutMetrics();
+  });
+}
+
+const createThemeApi = App.createThemeApi;
+if (typeof createThemeApi !== "function") {
+  throw new Error("Theme module failed to initialize. Load theme.js before app.js.");
+}
+const { readStoredThemePreference, applyThemePreference } = createThemeApi({
+  state,
+  el,
+  themeMediaQuery,
+  storageKey: THEME_PREF_STORAGE_KEY,
+  scheduleLayoutSync: scheduleFloatingLayoutMetricsSync,
+});
+
+function copySelectOptions(source, target) {
+  if (typeof ribbonApi.copySelectOptions === "function") {
+    ribbonApi.copySelectOptions(source, target);
+    return;
+  }
+  if (!source || !target) {
+    return;
+  }
+  target.innerHTML = "";
+}
+
+function setRibbonTab(name) {
+  if (typeof ribbonApi.setRibbonTab === "function") {
+    ribbonApi.setRibbonTab(el, name);
+  }
+  scheduleFloatingLayoutMetricsSync();
+}
+
+function triggerChange(control) {
+  if (typeof ribbonApi.triggerChange === "function") {
+    ribbonApi.triggerChange(control);
+    return;
+  }
+  if (!control) {
+    return;
+  }
+  control.dispatchEvent(new Event("change", { bubbles: true }));
+}
+
+function triggerInput(control) {
+  if (typeof ribbonApi.triggerInput === "function") {
+    ribbonApi.triggerInput(control);
+    return;
+  }
+  if (!control) {
+    return;
+  }
+  control.dispatchEvent(new Event("input", { bubbles: true }));
+}
+
+function syncUploadRegionInputs(source) {
+  if (typeof ribbonApi.syncUploadRegionInputs === "function") {
+    ribbonApi.syncUploadRegionInputs(el, source);
+    return;
+  }
+  const value = source && "value" in source ? source.value : "";
+  if (el.uploadRegionInput && source !== el.uploadRegionInput) {
+    el.uploadRegionInput.value = value;
+  }
+}
+
+function syncRibbonFromCore() {
+  if (typeof ribbonApi.syncRibbonFromCore === "function") {
+    ribbonApi.syncRibbonFromCore({
+      el,
+      state,
+      roleLabel,
+      setText,
+    });
+  }
+}
+
+function scrollToNode(node) {
+  if (typeof ribbonApi.scrollToNode === "function") {
+    ribbonApi.scrollToNode(node);
+    return;
+  }
+  if (!node || typeof node.scrollIntoView !== "function") {
+    return;
+  }
+  node.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+async function refreshAllCommandData() {
+  beginBusy("Refreshing all sections...");
+  try {
+    await refreshAccessContext();
+    await loadWorkbookOptions();
+    await loadSheets();
+    await loadFiles();
+  } finally {
+    endBusy();
+  }
+}
+
+function syncFloatingLayoutMetrics() {
+  const root = document.documentElement;
+  if (!root) {
+    return;
+  }
+
+  const height = (node) => {
+    if (!node || !(node instanceof HTMLElement)) {
+      return 0;
+    }
+    if (node.hidden) {
+      return 0;
+    }
+    const rect = node.getBoundingClientRect();
+    if (!Number.isFinite(rect.height) || rect.height <= 0) {
+      return 0;
+    }
+    return Math.ceil(rect.height);
+  };
+
+  const chromeHeight = height(el.excelChrome);
+  const workbookBarHeight = height(el.workbookBars);
+  const ribbonTabsBarHeight = height(el.ribbonTabsBar);
+  const ribbonPanelHeight = height(el.ribbonRoot);
+  const formulaBarHeight = height(el.formulaBar);
+
+  let topOffset = 0;
+  root.style.setProperty("--floating-top-chrome-offset", `${topOffset}px`);
+  topOffset += chromeHeight;
+  root.style.setProperty("--floating-top-workbook-offset", `${topOffset}px`);
+  topOffset += workbookBarHeight;
+  root.style.setProperty("--floating-top-tabs-offset", `${topOffset}px`);
+  topOffset += ribbonTabsBarHeight;
+  root.style.setProperty("--floating-top-ribbon-offset", `${topOffset}px`);
+  topOffset += ribbonPanelHeight;
+  root.style.setProperty("--floating-top-formula-offset", `${topOffset}px`);
+  topOffset += formulaBarHeight;
+  root.style.setProperty("--floating-top-total", `${topOffset}px`);
+
+  const statusHeight = height(el.excelStatusBar);
+  const tabsDockHeight = height(el.sheetTabsDock);
+  root.style.setProperty("--floating-bottom-status-h", `${statusHeight}px`);
+  root.style.setProperty("--floating-bottom-tabs-h", `${tabsDockHeight}px`);
+  root.style.setProperty("--floating-bottom-total", `${statusHeight + tabsDockHeight}px`);
+}
 
 function setText(node, value) {
   if (!node) {
@@ -146,6 +266,17 @@ function appendText(node, value) {
   node.textContent = `${node.textContent || ""}${value}`;
 }
 
+function isEditableEventTarget(target) {
+  if (!(target instanceof HTMLElement)) {
+    return false;
+  }
+  if (target.isContentEditable) {
+    return true;
+  }
+  const tag = target.tagName;
+  return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
+}
+
 function setChip(node, text, tone) {
   if (!node) {
     return;
@@ -156,11 +287,13 @@ function setChip(node, text, tone) {
   }
 }
 
-function formatClockTime(value) {
-  if (!(value instanceof Date)) {
-    return "";
+function clampZoomPercent(value) {
+  const parsed = Number.parseInt(String(value || ""), 10);
+  if (!Number.isFinite(parsed)) {
+    return 100;
   }
-  return value.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+  const snapped = Math.round(parsed / ZOOM_STEP) * ZOOM_STEP;
+  return Math.max(MIN_ZOOM_PERCENT, Math.min(MAX_ZOOM_PERCENT, snapped));
 }
 
 function roleOnboardingText(role) {
@@ -329,6 +462,209 @@ function setOnboardingExpanded(expanded) {
   );
 }
 
+function setRibbonCollapsed(collapsed) {
+  state.ribbonCollapsed = Boolean(collapsed);
+  document.body.classList.toggle("ribbon-collapsed", state.ribbonCollapsed);
+  if (el.ribbonToggleBtn) {
+    el.ribbonToggleBtn.setAttribute("aria-expanded", state.ribbonCollapsed ? "false" : "true");
+    setText(el.ribbonToggleBtn, state.ribbonCollapsed ? "Expand Ribbon" : "Collapse Ribbon");
+  }
+  scheduleFloatingLayoutMetricsSync();
+}
+
+function setSheetZoom(percent) {
+  const zoom = clampZoomPercent(percent);
+  state.sheetZoomPercent = zoom;
+  document.documentElement.style.setProperty("--sheet-zoom", String(zoom / 100));
+
+  if (el.zoomRangeInput && el.zoomRangeInput.value !== String(zoom)) {
+    el.zoomRangeInput.value = String(zoom);
+  }
+  if (el.zoomValueLabel) {
+    setText(el.zoomValueLabel, `${zoom}%`);
+  }
+}
+
+function adjustSheetZoom(delta) {
+  const next = clampZoomPercent((state.sheetZoomPercent || 100) + delta);
+  setSheetZoom(next);
+}
+
+function resetSelectionStatusBar() {
+  refreshStatusSelectionScopeLabel();
+  setText(el.statusSelectionAddress, "Ready");
+  setText(el.statusSelectionRange, "Select cells to see details");
+  setText(el.statusSelectionCellCount, "Cells: 0");
+  setText(el.statusSelectionCount, "CountA: 0");
+  setText(el.statusSelectionNumericCount, "Numbers: 0");
+  setText(el.statusSelectionSum, "Sum: -");
+  setText(el.statusSelectionAvg, "Avg: -");
+  setText(el.statusSelectionMin, "Min: -");
+  setText(el.statusSelectionMax, "Max: -");
+  if (el.formulaNameBox) {
+    el.formulaNameBox.value = "A1";
+  }
+  if (el.formulaInput) {
+    el.formulaInput.value = "";
+  }
+  scheduleFloatingLayoutMetricsSync();
+}
+
+function clampViewsMainRatio(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) {
+    return 0.54;
+  }
+  return Math.min(MAX_VIEWS_MAIN_RATIO, Math.max(MIN_VIEWS_MAIN_RATIO, numeric));
+}
+
+function setViewsSplitRatio(ratio) {
+  state.viewsSplitRatio = clampViewsMainRatio(ratio);
+  if (!el.viewsSplit) {
+    return;
+  }
+  const percent = `${(state.viewsSplitRatio * 100).toFixed(2)}%`;
+  el.viewsSplit.style.setProperty("--views-main-width", percent);
+}
+
+function setDesktopDetailCollapsed(collapsed) {
+  const drawerMode = document.body.classList.contains("detail-drawer-mode");
+  state.desktopDetailCollapsed = Boolean(collapsed);
+  const collapsedDesktop = state.desktopDetailCollapsed && !drawerMode;
+  document.body.classList.toggle("desktop-detail-collapsed", collapsedDesktop);
+
+  if (collapsedDesktop && !hasGridSelection() && state.activeViewScope === "reference") {
+    setActiveViewScope("main");
+  }
+
+  if (el.referencePanelToggleBtn) {
+    el.referencePanelToggleBtn.setAttribute("aria-expanded", collapsedDesktop ? "false" : "true");
+    setText(el.referencePanelToggleBtn, collapsedDesktop ? "Expand detail pane" : "Collapse detail pane");
+  }
+
+  if (el.viewsSplitHandle) {
+    el.viewsSplitHandle.hidden = drawerMode || collapsedDesktop;
+  }
+}
+
+function shouldUseReferenceDrawerMode() {
+  return false;
+}
+
+function setReferenceDrawerExpanded(expanded) {
+  if (!el.referenceViewPanel) {
+    return;
+  }
+
+  const drawerMode = document.body.classList.contains("detail-drawer-mode");
+  const effectiveExpanded = drawerMode ? Boolean(expanded) : true;
+  state.referenceDrawerExpanded = effectiveExpanded;
+
+  el.referenceViewPanel.classList.toggle("drawer-expanded", effectiveExpanded);
+  document.body.classList.toggle("detail-drawer-open", drawerMode && effectiveExpanded);
+
+  if (el.referenceDrawerToggleBtn) {
+    el.referenceDrawerToggleBtn.setAttribute("aria-expanded", effectiveExpanded ? "true" : "false");
+    setText(el.referenceDrawerToggleBtn, effectiveExpanded ? "Collapse details" : "Expand details");
+  }
+
+  if (el.referenceDrawerBody) {
+    el.referenceDrawerBody.setAttribute("aria-hidden", drawerMode && !effectiveExpanded ? "true" : "false");
+  }
+}
+
+function syncReferenceDrawerMode() {
+  const drawerMode = shouldUseReferenceDrawerMode();
+  document.body.classList.toggle("detail-drawer-mode", drawerMode);
+
+  if (el.referenceDrawerToggleBtn) {
+    el.referenceDrawerToggleBtn.hidden = !drawerMode;
+  }
+  if (el.referencePanelToggleBtn) {
+    el.referencePanelToggleBtn.hidden = drawerMode;
+  }
+
+  if (drawerMode) {
+    setDesktopDetailCollapsed(false);
+    setReferenceDrawerExpanded(state.referenceDrawerExpanded);
+  } else {
+    setReferenceDrawerExpanded(true);
+    setDesktopDetailCollapsed(state.desktopDetailCollapsed);
+    setViewsSplitRatio(state.viewsSplitRatio);
+  }
+  syncFloatingLayoutMetrics();
+}
+
+function resizeViewsSplitFromClientX(clientX) {
+  if (!el.viewsSplit || !el.viewsSplitHandle) {
+    return;
+  }
+  const rect = el.viewsSplit.getBoundingClientRect();
+  if (!Number.isFinite(rect.width) || rect.width <= 0) {
+    return;
+  }
+  const handleRect = el.viewsSplitHandle.getBoundingClientRect();
+  const handleWidth = Math.max(6, Number(handleRect.width || 0));
+  const usableWidth = Math.max(1, rect.width - handleWidth);
+  const ratio = (Number(clientX) - rect.left - handleWidth / 2) / usableWidth;
+  setViewsSplitRatio(ratio);
+}
+
+function beginViewsSplitDrag(event) {
+  if (!event || !el.viewsSplit || !el.viewsSplitHandle) {
+    return;
+  }
+  if (Number(event.button) !== 0) {
+    return;
+  }
+  if (document.body.classList.contains("detail-drawer-mode") || state.desktopDetailCollapsed) {
+    return;
+  }
+
+  state.viewsSplitDragActive = true;
+  el.viewsSplit.classList.add("is-resizing");
+
+  const pointerId = Number(event.pointerId);
+  if (Number.isFinite(pointerId) && typeof el.viewsSplitHandle.setPointerCapture === "function") {
+    try {
+      el.viewsSplitHandle.setPointerCapture(pointerId);
+    } catch (_err) {
+      // Ignore capture failures and still resize using document listeners.
+    }
+  }
+
+  const stopDrag = () => {
+    if (!state.viewsSplitDragActive) {
+      return;
+    }
+    state.viewsSplitDragActive = false;
+    el.viewsSplit.classList.remove("is-resizing");
+    document.removeEventListener("pointermove", onPointerMove);
+    document.removeEventListener("pointerup", stopDrag);
+    document.removeEventListener("pointercancel", stopDrag);
+
+    if (Number.isFinite(pointerId) && typeof el.viewsSplitHandle.releasePointerCapture === "function") {
+      try {
+        el.viewsSplitHandle.releasePointerCapture(pointerId);
+      } catch (_err) {
+        // Ignore capture release failures.
+      }
+    }
+  };
+
+  const onPointerMove = (moveEvent) => {
+    if (!state.viewsSplitDragActive) {
+      return;
+    }
+    resizeViewsSplitFromClientX(moveEvent.clientX);
+  };
+
+  document.addEventListener("pointermove", onPointerMove);
+  document.addEventListener("pointerup", stopDrag);
+  document.addEventListener("pointercancel", stopDrag);
+  resizeViewsSplitFromClientX(event.clientX);
+}
+
 function setInteractiveControlsDisabled(disabled) {
   const controls = [
     el.userSelect,
@@ -336,8 +672,10 @@ function setInteractiveControlsDisabled(disabled) {
     el.uploadInput,
     el.uploadRegionInput,
     el.uploadBtn,
+    el.ribbonToggleBtn,
     el.mainWorkbookSelect,
     el.referenceWorkbookSelect,
+    el.referenceWorkbookMirrorSelect,
     el.mainModeSelect,
     el.mainNInput,
     el.mainMonthSelect,
@@ -351,6 +689,7 @@ function setInteractiveControlsDisabled(disabled) {
     el.onboardingToggleBtn,
     el.roleInfoBtn,
     el.roleInfoInlineBtn,
+    el.themeSelect,
     el.assignRsmUsernameInput,
     el.assignRsmDisplayInput,
     el.assignRsmRegionsInput,
@@ -365,6 +704,88 @@ function setInteractiveControlsDisabled(disabled) {
     el.asmTownshipRegionSelect,
     el.asmTownshipSelect,
     el.refreshFilesBtn,
+    el.ribbonRefreshAllBtn,
+    el.ribbonRefreshFilesBtn,
+    el.ribbonRoleGuideBtn,
+    el.ribbonOnboardingBtn,
+    el.ribbonGoMainBtn,
+    el.ribbonGoRefBtn,
+    el.ribbonGoAccessBtn,
+    el.ribbonGoFilesBtn,
+    el.ribbonUserSelect,
+    el.ribbonRegionSelect,
+    el.ribbonMainWorkbookSelect,
+    el.ribbonReferenceWorkbookSelect,
+    el.ribbonMainModeSelect,
+    el.ribbonMainNInput,
+    el.ribbonMainMonthSelect,
+    el.ribbonRefModeSelect,
+    el.ribbonRefNInput,
+    el.ribbonRefMonthSelect,
+    el.ribbonMetricSelect,
+    el.ribbonSearchInput,
+    el.ribbonOpenRoleGuideBtn,
+    el.ribbonJumpAssignRsmBtn,
+    el.ribbonJumpMapUserBtn,
+    el.ribbonJumpAssignAsmBtn,
+    el.ribbonJumpTownshipBtn,
+    el.ribbonUploadInput,
+    el.ribbonUploadRegionInput,
+    el.ribbonUploadBtn,
+    el.ribbonFreezePanesBtn,
+    el.ribbonFreezeTopRowBtn,
+    el.ribbonFreezeFirstColBtn,
+    el.ribbonUnfreezePanesBtn,
+    el.ribbonSelectRowBtn,
+    el.ribbonSelectColumnBtn,
+    el.ribbonSelectAllBtn,
+    el.ribbonInsertRowAboveBtn,
+    el.ribbonInsertRowBelowBtn,
+    el.ribbonDeleteRowBtn,
+    el.ribbonHideRowsBtn,
+    el.ribbonUnhideRowsBtn,
+    el.ribbonInsertColLeftBtn,
+    el.ribbonInsertColRightBtn,
+    el.ribbonDeleteColBtn,
+    el.ribbonHideColsBtn,
+    el.ribbonUnhideColsBtn,
+    el.referenceDrawerToggleBtn,
+    el.referencePanelToggleBtn,
+    el.viewsSplitHandle,
+    el.zoomOutBtn,
+    el.zoomRangeInput,
+    el.zoomInBtn,
+    el.zoomResetBtn,
+    el.formulaNameBox,
+    el.formulaInput,
+    el.formulaCancelBtn,
+    el.formulaApplyBtn,
+    el.formulaFxBtn,
+    el.ctxCopyBtn,
+    el.ctxPasteBtn,
+    el.ctxClearSelectionBtn,
+    el.ctxFreezePanesBtn,
+    el.ctxUnfreezePanesBtn,
+    el.ctxHideRowsBtn,
+    el.ctxUnhideRowsBtn,
+    el.ctxHideColsBtn,
+    el.ctxUnhideColsBtn,
+    el.ctxHideBothBtn,
+    el.ctxUnhideBothBtn,
+    el.ctxInsertRowAboveBtn,
+    el.ctxInsertRowBelowBtn,
+    el.ctxDeleteRowBtn,
+    el.ctxInsertColLeftBtn,
+    el.ctxInsertColRightBtn,
+    el.ctxDeleteColBtn,
+    el.ctxSelectRowBtn,
+    el.ctxSelectColumnBtn,
+    el.ctxSelectAllBtn,
+    el.ctxOpenDetailsBtn,
+    el.ctxZoomInBtn,
+    el.ctxZoomOutBtn,
+    el.sheetTabCtxRenameBtn,
+    ...(Array.isArray(el.ribbonTabButtons) ? el.ribbonTabButtons : []),
   ];
   for (const control of controls) {
     if (!control) {
@@ -372,45 +793,10 @@ function setInteractiveControlsDisabled(disabled) {
     }
     control.disabled = Boolean(disabled);
   }
-}
 
-function normalizeSheetName(value) {
-  if (typeof value !== "string") {
-    return "";
+  for (const renameInput of Array.from(document.querySelectorAll(".sheet-tab-rename-input"))) {
+    renameInput.disabled = Boolean(disabled);
   }
-  return value;
-}
-
-function sanitizeSheetTabs(tabs, allowedNames) {
-  const nameSet = new Set(
-    Array.isArray(allowedNames)
-      ? allowedNames.map((item) => normalizeSheetName(item)).filter(Boolean)
-      : [],
-  );
-  const useAllowedNames = nameSet.size > 0;
-  const normalized = [];
-  const seen = new Set();
-  for (const rawTab of Array.isArray(tabs) ? tabs : []) {
-    if (!rawTab || typeof rawTab !== "object") {
-      continue;
-    }
-    const sheetName = normalizeSheetName(rawTab.sheet_name);
-    if (!sheetName || seen.has(sheetName)) {
-      continue;
-    }
-    if (useAllowedNames && !nameSet.has(sheetName)) {
-      continue;
-    }
-    seen.add(sheetName);
-    normalized.push({
-      sheet_name: sheetName,
-      canonical: typeof rawTab.canonical === "string" && rawTab.canonical ? rawTab.canonical : null,
-      filterable: Boolean(rawTab.filterable),
-      has_reference: Boolean(rawTab.has_reference),
-      has_main: Boolean(rawTab.has_main),
-    });
-  }
-  return normalized;
 }
 
 async function fetchJson(url) {
@@ -428,36 +814,6 @@ async function fetchJson(url) {
     throw new Error(message);
   }
   return res.json();
-}
-
-function roleLabel(role) {
-  if (role === "regional_manager") {
-    return "RSM";
-  }
-  if (role === "rsm") {
-    return "RSM";
-  }
-  if (role === "asm") {
-    return "ASM";
-  }
-  if (role === "user") {
-    return "User";
-  }
-  return "Owner";
-}
-
-function normalizeRoleToken(role) {
-  if (role === "regional_manager") {
-    return "rsm";
-  }
-  if (role === "owner" || role === "rsm" || role === "asm" || role === "user") {
-    return role;
-  }
-  return "owner";
-}
-
-function regionLabel(region) {
-  return region === "ALL" ? "All regions" : region || "-";
 }
 
 function scopeQuery() {
@@ -534,6 +890,7 @@ function populateUserSelect() {
   if (state.currentUser) {
     el.userSelect.value = state.currentUser;
   }
+  syncRibbonFromCore();
 }
 
 function populateRegionSelect() {
@@ -564,6 +921,7 @@ function populateRegionSelect() {
 
   el.regionSelect.value = state.selectedRegion || (allowAll ? "ALL" : regions[0] || "ALL");
   el.regionSelect.disabled = !allowAll && regions.length <= 1;
+  syncRibbonFromCore();
 }
 
 function applyScopePayload(payload) {
@@ -628,12 +986,19 @@ function applyScopePayload(payload) {
 function updateWorkbookLabels() {
   setText(el.mainWorkbookName, state.selectedMainWorkbook || "-");
   setText(el.referenceWorkbookName, state.selectedReferenceWorkbook || "-");
+  setText(el.mainWorkbookBarName, state.selectedMainWorkbook || "-");
+  setText(el.referenceWorkbookBarName, state.selectedReferenceWorkbook || "-");
+  setText(el.mainTabsDockLabel, `Main Sheets · ${state.selectedMainWorkbook || "-"}`);
+  setText(el.referenceTabsDockLabel, `Detail Sheets · ${state.selectedReferenceWorkbook || "-"}`);
   setText(el.currentUserName, state.currentUserDisplayName || state.currentUser || "-");
   setText(el.viewerRoleName, roleLabel(state.viewerRole));
   setText(el.regionName, regionLabel(state.selectedRegion));
   setText(el.mainPanelTitle, `Main View (${state.selectedMainWorkbook || "-"})`);
   setText(el.referencePanelTitle, `Reference Detail (${state.selectedReferenceWorkbook || "-"})`);
+  refreshStatusSelectionScopeLabel();
   updateLoadHealth();
+  syncRibbonFromCore();
+  syncFloatingLayoutMetrics();
 }
 
 function setSelectOptions(selectElement, values, selectedValue = null) {
@@ -699,15 +1064,6 @@ function setTownshipSelect(selectElement, region, selectedTownships = []) {
     option.selected = selectedTownships.includes(township);
     selectElement.appendChild(option);
   }
-}
-
-function escapeHtml(value) {
-  return String(value || "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
 }
 
 function renderUsersList() {
@@ -782,6 +1138,15 @@ function syncAccessControls() {
   if (el.uploadRegionInput) {
     el.uploadRegionInput.disabled = !permissions.can_upload;
   }
+  if (el.ribbonUploadBtn) {
+    el.ribbonUploadBtn.disabled = !permissions.can_upload;
+  }
+  if (el.ribbonUploadInput) {
+    el.ribbonUploadInput.disabled = !permissions.can_upload;
+  }
+  if (el.ribbonUploadRegionInput) {
+    el.ribbonUploadRegionInput.disabled = !permissions.can_upload;
+  }
 
   setSelectOptionsFromUsers(el.mapUserRsmSelect, rsmUsers, null, el.mapUserRsmSelect?.value || null);
   setSelectOptionsFromUsers(el.assignAsmRsmSelect, rsmUsers, null, el.assignAsmRsmSelect?.value || null);
@@ -821,6 +1186,7 @@ function syncAccessControls() {
   );
 
   renderUsersList();
+  syncRibbonFromCore();
 }
 
 function scopedUrl(path) {
@@ -1024,12 +1390,18 @@ async function refreshAccessAndFiles() {
 function setEmptyMain(message) {
   el.mainTable.innerHTML = `<div class="empty">${message}</div>`;
   setText(el.mainMeta, "");
+  if (state.selectionScope === "main") {
+    clearGridSelectionModel();
+  }
 }
 
 function setEmptyRef(message) {
   unwrapSplitViewport(el.refTable);
   el.refTable.innerHTML = `<tbody><tr><td class="empty">${message}</td></tr></tbody>`;
   setText(el.refMeta, "");
+  if (state.selectionScope === "reference") {
+    clearGridSelectionModel();
+  }
 }
 
 function getMainTabMeta(sheetName = state.selectedMainSheetName) {
@@ -1051,15 +1423,64 @@ function tableWrapFor(table) {
   return table ? table.closest(".table-wrap") : null;
 }
 
+function excelRowHeightPx(row) {
+  if (!row || !row.dataset) {
+    return null;
+  }
+  const rawHeight = row.dataset.excelRowHeight;
+  if (!rawHeight) {
+    return null;
+  }
+  const parsed = Number.parseFloat(rawHeight);
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return null;
+  }
+  return Math.max(1, Math.round(parsed));
+}
+
+function restoreExcelRowHeight(row) {
+  if (!row) {
+    return null;
+  }
+  const rowHeightPx = excelRowHeightPx(row);
+  if (!rowHeightPx) {
+    row.style.removeProperty("height");
+    row.style.removeProperty("min-height");
+    return null;
+  }
+  const rowHeightCss = `${rowHeightPx}px`;
+  row.style.height = rowHeightCss;
+  row.style.minHeight = rowHeightCss;
+  return rowHeightPx;
+}
+
+function effectiveRowHeightPx(row) {
+  if (!row) {
+    return 1;
+  }
+  const measured = Math.ceil(row.getBoundingClientRect().height);
+  if (Number.isFinite(measured) && measured > 0) {
+    return measured;
+  }
+  return excelRowHeightPx(row) || 1;
+}
+
 function clearStickyStyles(table) {
   if (!table) {
     return;
   }
   for (const row of table.rows || []) {
-    row.style.removeProperty("height");
+    restoreExcelRowHeight(row);
   }
   for (const cell of table.querySelectorAll("th, td")) {
-    cell.classList.remove("sticky-col", "sticky-col-boundary", "sticky-col-head", "split-head-cell");
+    cell.classList.remove(
+      "sticky-col",
+      "sticky-col-boundary",
+      "sticky-col-head",
+      "sticky-row",
+      "sticky-row-boundary",
+      "split-head-cell",
+    );
     cell.style.removeProperty("left");
     cell.style.removeProperty("position");
     cell.style.removeProperty("top");
@@ -1111,6 +1532,7 @@ function unwrapSplitViewport(table) {
 }
 
 async function onMainTabChange(sheetName) {
+  setActiveViewScope("main");
   state.selectedMainSheetName = sheetName;
   state.mainStyledRequestKey = null;
 
@@ -1123,7 +1545,149 @@ async function onMainTabChange(sheetName) {
   await render();
 }
 
+function canEditWorkbookTabs() {
+  const permissions = state.permissions || {};
+  return Boolean(permissions.can_manage_files || permissions.can_upload);
+}
+
+async function renameWorkbookSheet(view, oldSheetName, nextSheetName) {
+  const oldName = String(oldSheetName || "").trim();
+  const newName = String(nextSheetName || "").trim();
+  if (!oldName || !newName || oldName === newName) {
+    return false;
+  }
+
+  beginBusy(`Renaming sheet "${oldName}"...`);
+  try {
+    const payload = await postScopedJson("/api/workbook/rename-sheet", {
+      workbook: view,
+      old_sheet_name: oldName,
+      new_sheet_name: newName,
+      main: state.selectedMainWorkbook,
+      reference: state.selectedReferenceWorkbook,
+    });
+
+    state.cache.clear();
+    state.mainStyledRequestKey = null;
+    state.mainAvailableMonths.clear();
+    if (view === "main") {
+      if (state.selectedMainSheetName === oldName) {
+        state.selectedMainSheetName = payload.new_sheet_name || newName;
+      }
+    } else {
+      if (state.selectedReferenceSheetName === oldName) {
+        state.selectedReferenceSheetName = payload.new_sheet_name || newName;
+      }
+    }
+
+    await loadSheets();
+    setText(
+      el.statusText,
+      `Renamed ${view} sheet "${oldName}" to "${payload.new_sheet_name || newName}".`,
+    );
+    return true;
+  } finally {
+    endBusy();
+  }
+}
+
+function beginSheetTabRename(view, tabName, tabItem, tabButton, editButton) {
+  if (!canEditWorkbookTabs() || !tabItem || !tabButton) {
+    return;
+  }
+  if (tabItem.dataset.renaming === "true") {
+    return;
+  }
+
+  const currentName = String(tabName || "").trim();
+  if (!currentName) {
+    return;
+  }
+
+  tabItem.dataset.renaming = "true";
+  tabButton.hidden = true;
+  if (editButton) {
+    editButton.hidden = true;
+  }
+
+  const input = document.createElement("input");
+  input.type = "text";
+  input.className = "sheet-tab-rename-input";
+  input.maxLength = 31;
+  input.value = currentName;
+  input.setAttribute("aria-label", `Rename ${view} sheet ${currentName}`);
+  tabItem.appendChild(input);
+
+  let closed = false;
+  const restore = () => {
+    if (closed) {
+      return;
+    }
+    closed = true;
+    tabItem.dataset.renaming = "false";
+    input.remove();
+    tabButton.hidden = false;
+    if (editButton) {
+      editButton.hidden = false;
+    }
+  };
+
+  const commit = async () => {
+    if (closed) {
+      return;
+    }
+    const candidate = String(input.value || "").trim();
+    if (!candidate || candidate === currentName) {
+      restore();
+      tabButton.focus();
+      return;
+    }
+
+    closed = true;
+    tabItem.dataset.renaming = "false";
+    input.remove();
+
+    try {
+      await renameWorkbookSheet(view, currentName, candidate);
+    } catch (err) {
+      if (tabItem.isConnected) {
+        tabButton.hidden = false;
+        if (editButton) {
+          editButton.hidden = false;
+        }
+      }
+      setStatusError(err);
+    }
+  };
+
+  input.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      commit().catch((err) => {
+        setStatusError(err);
+      });
+      return;
+    }
+    if (event.key === "Escape") {
+      event.preventDefault();
+      restore();
+      tabButton.focus();
+    }
+  });
+  input.addEventListener("blur", () => {
+    commit().catch((err) => {
+      setStatusError(err);
+    });
+  });
+
+  window.requestAnimationFrame(() => {
+    input.focus();
+    input.select();
+  });
+}
+
 function rebuildMainTabs(preferredSheetName) {
+  hideSheetTabContextMenu();
   if (!state.mainSheetTabs.length) {
     state.selectedMainSheetName = null;
     el.mainTabSelect.innerHTML = "";
@@ -1148,19 +1712,33 @@ function rebuildMainTabs(preferredSheetName) {
   el.mainSheetTabs.innerHTML = "";
 
   for (const tab of state.mainSheetTabs) {
+    const tabItem = document.createElement("div");
+    tabItem.className = "sheet-tab-item";
+
     const button = document.createElement("button");
     button.type = "button";
     button.className = `sheet-tab-btn${tab.sheet_name === validSheet ? " active" : ""}`;
     button.textContent = tab.sheet_name;
     if (!tab.filterable) {
       button.title = "Rendered as full sheet (non-month layout)";
+    } else if (canEditWorkbookTabs()) {
+      button.title = "Right-click or long-press to rename this sheet";
     }
-    button.addEventListener("click", () => {
+    button.addEventListener("click", (event) => {
+      if (state.sheetTabLongPressTriggered) {
+        state.sheetTabLongPressTriggered = false;
+        event.preventDefault();
+        return;
+      }
+      hideSheetTabContextMenu();
       onMainTabChange(tab.sheet_name).catch((err) => {
         setStatusError(err);
       });
     });
-    el.mainSheetTabs.appendChild(button);
+    tabItem.appendChild(button);
+    bindSheetTabContextMenu(button, "main", tab.sheet_name, tabItem);
+
+    el.mainSheetTabs.appendChild(tabItem);
   }
 
   const activeBtn = el.mainSheetTabs.querySelector(".sheet-tab-btn.active");
@@ -1170,6 +1748,12 @@ function rebuildMainTabs(preferredSheetName) {
 }
 
 async function onReferenceTabChange(sheetName) {
+  setActiveViewScope("reference");
+  if (document.body.classList.contains("detail-drawer-mode")) {
+    setReferenceDrawerExpanded(true);
+  } else if (state.desktopDetailCollapsed) {
+    setDesktopDetailCollapsed(false);
+  }
   state.selectedReferenceSheetName = sheetName;
   const tabMeta = getReferenceTabMeta(sheetName);
   state.selectedRefCanonical = tabMeta ? tabMeta.canonical : null;
@@ -1182,6 +1766,7 @@ async function onReferenceTabChange(sheetName) {
 }
 
 function rebuildReferenceTabs(preferredSheetName) {
+  hideSheetTabContextMenu();
   if (!state.referenceSheetTabs.length) {
     state.selectedReferenceSheetName = null;
     state.selectedRefCanonical = null;
@@ -1210,19 +1795,33 @@ function rebuildReferenceTabs(preferredSheetName) {
 
   el.referenceSheetTabs.innerHTML = "";
   for (const tab of state.referenceSheetTabs) {
+    const tabItem = document.createElement("div");
+    tabItem.className = "sheet-tab-item";
+
     const button = document.createElement("button");
     button.type = "button";
     button.className = `sheet-tab-btn${tab.sheet_name === validSheet ? " active" : ""}`;
     button.textContent = tab.sheet_name;
     if (!tab.filterable) {
       button.title = "Detail parser not available for this sheet.";
+    } else if (canEditWorkbookTabs()) {
+      button.title = "Right-click or long-press to rename this sheet";
     }
-    button.addEventListener("click", () => {
+    button.addEventListener("click", (event) => {
+      if (state.sheetTabLongPressTriggered) {
+        state.sheetTabLongPressTriggered = false;
+        event.preventDefault();
+        return;
+      }
+      hideSheetTabContextMenu();
       onReferenceTabChange(tab.sheet_name).catch((err) => {
         setStatusError(err);
       });
     });
-    el.referenceSheetTabs.appendChild(button);
+    tabItem.appendChild(button);
+    bindSheetTabContextMenu(button, "reference", tab.sheet_name, tabItem);
+
+    el.referenceSheetTabs.appendChild(tabItem);
   }
 
   const activeBtn = el.referenceSheetTabs.querySelector(".sheet-tab-btn.active");
@@ -1267,7 +1866,9 @@ async function uploadSelectedWorkbooks() {
     return;
   }
 
-  const files = Array.from(el.uploadInput.files || []);
+  const primaryFiles = Array.from((el.uploadInput && el.uploadInput.files) || []);
+  const ribbonFiles = Array.from((el.ribbonUploadInput && el.ribbonUploadInput.files) || []);
+  const files = [...primaryFiles, ...ribbonFiles];
   if (!files.length) {
     setText(el.statusText, "Choose one or more Excel files first.");
     return;
@@ -1279,7 +1880,10 @@ async function uploadSelectedWorkbooks() {
   }
   formData.append("user", state.currentUser || "owner");
   formData.append("region", state.selectedRegion || "ALL");
-  const uploadRegionValue = (el.uploadRegionInput.value || "").trim();
+  const uploadRegionValue = (
+    (el.ribbonUploadRegionInput ? el.ribbonUploadRegionInput.value : "") ||
+    (el.uploadRegionInput ? el.uploadRegionInput.value : "")
+  ).trim();
   if (uploadRegionValue) {
     formData.append("upload_region", uploadRegionValue);
   } else if (state.selectedRegion && state.selectedRegion !== "ALL") {
@@ -1318,8 +1922,18 @@ async function uploadSelectedWorkbooks() {
     await loadSheets();
     await refreshAccessAndFiles();
 
-    el.uploadInput.value = "";
-    el.uploadRegionInput.value = "";
+    if (el.uploadInput) {
+      el.uploadInput.value = "";
+    }
+    if (el.ribbonUploadInput) {
+      el.ribbonUploadInput.value = "";
+    }
+    if (el.uploadRegionInput) {
+      el.uploadRegionInput.value = "";
+    }
+    if (el.ribbonUploadRegionInput) {
+      el.ribbonUploadRegionInput.value = "";
+    }
     const skippedCount = Array.isArray(payload.skipped_files) ? payload.skipped_files.length : 0;
     const skippedText = skippedCount ? ` · skipped ${skippedCount} unsupported file(s)` : "";
     const uploadedRegions = Array.isArray(payload.uploaded_regions)
@@ -1329,6 +1943,7 @@ async function uploadSelectedWorkbooks() {
       : "";
     const uploadRegionText = uploadedRegions || regionLabel(state.selectedRegion);
     setText(el.statusText, `Uploaded ${files.length} file(s) to ${uploadRegionText}${skippedText}`);
+    syncRibbonFromCore();
   } finally {
     endBusy();
   }
@@ -1415,18 +2030,6 @@ async function ensureSheetLoaded(canonical) {
   return payload;
 }
 
-function modeIsSameMonthYears(modeValue) {
-  return modeValue === "same_month_years";
-}
-
-function currentN(inputElement) {
-  const value = Number.parseInt(inputElement.value, 10);
-  if (!Number.isFinite(value) || value < 1) {
-    return 1;
-  }
-  return Math.min(value, 60);
-}
-
 function filterElementsForView(view) {
   if (view === "main") {
     return {
@@ -1451,6 +2054,7 @@ function updateMonthControl(sheetData, view) {
   if (!modeIsSameMonthYears(controls.modeSelect.value)) {
     controls.monthWrapper.classList.add("hidden");
     controls.monthSelect.innerHTML = "";
+    syncRibbonFromCore();
     return false;
   }
 
@@ -1471,6 +2075,7 @@ function updateMonthControl(sheetData, view) {
   if (!availableMonths.length) {
     controls.monthWrapper.classList.add("hidden");
     controls.monthSelect.innerHTML = "";
+    syncRibbonFromCore();
     return false;
   }
 
@@ -1489,32 +2094,8 @@ function updateMonthControl(sheetData, view) {
     ? current
     : availableMonths[availableMonths.length - 1];
   controls.monthSelect.value = String(preferred);
+  syncRibbonFromCore();
   return controls.monthSelect.value !== previousValue;
-}
-
-function hasAnyMetricValue(monthCell) {
-  if (!monthCell) {
-    return false;
-  }
-  return monthCell.pk !== null || monthCell.bottle !== null || monthCell.liter !== null;
-}
-
-function monthCoverageMap(sheetData) {
-  const coverage = new Map();
-  for (const month of sheetData.months) {
-    coverage.set(month.key, 0);
-  }
-
-  for (const row of sheetData.rows) {
-    for (const month of sheetData.months) {
-      const monthCell = row.values[month.key];
-      if (hasAnyMetricValue(monthCell)) {
-        coverage.set(month.key, (coverage.get(month.key) || 0) + 1);
-      }
-    }
-  }
-
-  return coverage;
 }
 
 function pickMonths(sheetData, view) {
@@ -1611,7 +2192,10 @@ function measureColumnWidths(table, totalCols) {
   return widths;
 }
 
-function shouldSplitFrozenViewport(table, frozenCount, widths, totalCols) {
+function shouldSplitFrozenViewport(table, frozenCount, widths, totalCols, frozenRows) {
+  if (Number.isFinite(frozenRows) && frozenRows > 0) {
+    return false;
+  }
   const hasMergedCells = Array.from(table.querySelectorAll("th, td")).some((cell) => {
     const rowSpan = Number.parseInt(cell.getAttribute("rowspan") || "1", 10);
     const colSpan = Number.parseInt(cell.getAttribute("colspan") || "1", 10);
@@ -1686,7 +2270,7 @@ function clearSplitRowHeights(table) {
     return;
   }
   for (const row of Array.from(table.rows || [])) {
-    row.style.removeProperty("height");
+    restoreExcelRowHeight(row);
     for (const cell of Array.from(row.cells || [])) {
       cell.style.removeProperty("height");
       cell.style.removeProperty("min-height");
@@ -1730,13 +2314,6 @@ function syncSplitRowHeights(leftTable, rightTable) {
       }
     }
   }
-}
-
-function isNumericCellText(text) {
-  const normalized = String(text || "")
-    .replace(/,/g, "")
-    .trim();
-  return /^-?\d+(?:\.\d+)?$/.test(normalized);
 }
 
 function detectSplitHeaderRowCount(table) {
@@ -1821,6 +2398,8 @@ function applySplitViewport(table, frozenCount, totalCols, widths) {
   const leftTable = table.cloneNode(true);
   clearStickyStyles(leftTable);
   clearStickyStyles(table);
+  leftTable.dataset.selectionColOffset = "0";
+  table.dataset.selectionColOffset = String(frozenCount);
 
   pruneTableColumns(leftTable, 0, frozenCount);
   pruneTableColumns(table, frozenCount, totalCols);
@@ -1956,37 +2535,44 @@ function applySplitViewport(table, frozenCount, totalCols, widths) {
   return true;
 }
 
-function enhanceFrozenViewport(table, frozenCount) {
+function enhanceFrozenViewport(table, frozenCount, frozenRows) {
   if (!table) {
     return;
   }
 
   const normalizedTable = unwrapSplitViewport(table);
+  normalizedTable.dataset.selectionColOffset = "0";
   const wrap = tableWrapFor(normalizedTable);
   if (wrap) {
     wrap.classList.remove("table-wrap-split");
   }
 
-  if (!Number.isFinite(frozenCount) || frozenCount < 1) {
+  const hasFrozenCols = Number.isFinite(frozenCount) && frozenCount > 0;
+  const hasFrozenRows = Number.isFinite(frozenRows) && frozenRows > 0;
+  if (!hasFrozenCols && !hasFrozenRows) {
     clearStickyStyles(normalizedTable);
     return;
   }
+  clearStickyStyles(normalizedTable);
 
   const totalCols = annotateCellGrid(normalizedTable);
-  if (!totalCols) {
+  const totalRows = Array.from(normalizedTable.rows || []).length;
+  if (!totalCols || !totalRows) {
     return;
   }
 
-  const clampedFrozen = Math.min(Math.max(1, frozenCount), totalCols);
+  const clampedFrozenCols = hasFrozenCols ? Math.min(Math.max(1, frozenCount), totalCols) : 0;
+  const clampedFrozenRows = hasFrozenRows ? Math.min(Math.max(1, frozenRows), totalRows) : 0;
   const widths = measureColumnWidths(normalizedTable, totalCols);
-  if (shouldSplitFrozenViewport(normalizedTable, clampedFrozen, widths, totalCols)) {
-    const applied = applySplitViewport(normalizedTable, clampedFrozen, totalCols, widths);
+  if (shouldSplitFrozenViewport(normalizedTable, clampedFrozenCols, widths, totalCols, clampedFrozenRows)) {
+    const applied = applySplitViewport(normalizedTable, clampedFrozenCols, totalCols, widths);
     if (applied) {
       return;
     }
   }
 
-  applyFrozenColumns(normalizedTable, clampedFrozen);
+  applyFrozenColumns(normalizedTable, clampedFrozenCols);
+  applyFrozenRows(normalizedTable, clampedFrozenRows);
 }
 
 function parseCssColor(text) {
@@ -2135,21 +2721,2935 @@ function applyFrozenColumns(table, frozenCount) {
   }
 }
 
-function formatValue(value) {
-  if (value === null || value === undefined) {
+function applyFrozenRows(table, frozenRows) {
+  if (!table) {
+    return;
+  }
+
+  const allCells = Array.from(table.querySelectorAll("th, td"));
+  for (const cell of allCells) {
+    cell.classList.remove("sticky-row", "sticky-row-boundary");
+    cell.style.removeProperty("top");
+    if (!cell.classList.contains("sticky-col")) {
+      cell.style.removeProperty("z-index");
+    }
+  }
+
+  if (!Number.isFinite(frozenRows) || frozenRows < 1) {
+    return;
+  }
+
+  const rows = Array.from(table.rows || []);
+  const clampedRows = Math.min(frozenRows, rows.length);
+  if (clampedRows < 1) {
+    return;
+  }
+
+  let runningTop = 0;
+  for (let idx = 0; idx < clampedRows; idx += 1) {
+    const row = rows[idx];
+    const rowHeight = effectiveRowHeightPx(row);
+    for (const cell of Array.from(row.cells || [])) {
+      cell.classList.add("sticky-row");
+      cell.style.top = `${runningTop}px`;
+      const baseZ = cell.classList.contains("sticky-col") ? 28 : 18;
+      cell.style.zIndex = String(baseZ - idx);
+      cell.style.backgroundColor = resolveOpaqueStickyBackground(cell, table);
+      if (idx === clampedRows - 1) {
+        cell.classList.add("sticky-row-boundary");
+      }
+    }
+    runningTop += rowHeight;
+  }
+}
+
+function workbookNameForScope(scope) {
+  const normalized = normalizeViewScope(scope);
+  if (normalized === "reference") {
+    return state.selectedReferenceWorkbook || "Detail file";
+  }
+  return state.selectedMainWorkbook || "Main file";
+}
+
+function hasGridSelection() {
+  return Boolean(state.selectionScope && Array.isArray(state.selectionRanges) && state.selectionRanges.length);
+}
+
+function statusScopeLabel(scope, hasSelection) {
+  const normalized = normalizeViewScope(scope);
+  const phase = hasSelection ? "Selection" : "View";
+  const view = normalized === "reference" ? "Detail" : "Main";
+  return `${view} ${phase} · ${workbookNameForScope(normalized)}`;
+}
+
+function refreshStatusSelectionScopeLabel() {
+  if (!el.statusSelectionScope) {
+    return;
+  }
+  const hasSelection = hasGridSelection();
+  const scope = hasSelection ? state.selectionScope : state.activeViewScope;
+  setText(el.statusSelectionScope, statusScopeLabel(scope, hasSelection));
+}
+
+function setActiveViewScope(scope, options = {}) {
+  state.activeViewScope = normalizeViewScope(scope);
+  if (options.refresh !== false && !hasGridSelection()) {
+    refreshStatusSelectionScopeLabel();
+  }
+  syncRibbonGridControlState();
+}
+
+function tableWrapForScope(scope) {
+  if (scope === "main") {
+    return el.mainTableWrap;
+  }
+  if (scope === "reference") {
+    return el.referenceTableWrap;
+  }
+  return null;
+}
+
+function tablesForScope(scope) {
+  const wrap = tableWrapForScope(scope);
+  if (!wrap) {
+    return [];
+  }
+  return Array.from(wrap.querySelectorAll("table"));
+}
+
+function viewLayoutForScope(scope) {
+  const normalized = normalizeViewScope(scope);
+  if (!state.viewLayoutOverrides || typeof state.viewLayoutOverrides !== "object") {
+    state.viewLayoutOverrides = {};
+  }
+  if (!state.viewLayoutOverrides[normalized]) {
+    state.viewLayoutOverrides[normalized] = {
+      frozenColsOverride: null,
+      frozenRowsOverride: null,
+      lastAppliedFrozenCols: 0,
+      lastAppliedFrozenRows: 0,
+      hiddenRows: new Set(),
+      hiddenCols: new Set(),
+    };
+  }
+  const viewLayout = state.viewLayoutOverrides[normalized];
+  if (!Number.isFinite(Number(viewLayout.lastAppliedFrozenCols))) {
+    viewLayout.lastAppliedFrozenCols = 0;
+  }
+  if (!Number.isFinite(Number(viewLayout.lastAppliedFrozenRows))) {
+    viewLayout.lastAppliedFrozenRows = 0;
+  }
+  if (!(viewLayout.hiddenRows instanceof Set)) {
+    viewLayout.hiddenRows = new Set();
+  }
+  if (!(viewLayout.hiddenCols instanceof Set)) {
+    viewLayout.hiddenCols = new Set();
+  }
+  return viewLayout;
+}
+
+function effectiveFreezeForScope(scope, defaultFrozenCols = 0, defaultFrozenRows = 0) {
+  const viewLayout = viewLayoutForScope(scope);
+  const rawCols = Number.isFinite(viewLayout.frozenColsOverride) ? viewLayout.frozenColsOverride : defaultFrozenCols;
+  const rawRows = Number.isFinite(viewLayout.frozenRowsOverride) ? viewLayout.frozenRowsOverride : defaultFrozenRows;
+  return {
+    cols: Math.max(0, Number.parseInt(String(rawCols || 0), 10) || 0),
+    rows: Math.max(0, Number.parseInt(String(rawRows || 0), 10) || 0),
+  };
+}
+
+function normalizedFreezeForTable(table, requestedCols, requestedRows, options = {}) {
+  const totalCols = annotateCellGrid(table);
+  const totalRows = Array.from(table.rows || []).length;
+
+  let cols = Math.max(0, Number.parseInt(String(requestedCols || 0), 10) || 0);
+  let rows = Math.max(0, Number.parseInt(String(requestedRows || 0), 10) || 0);
+
+  if (totalCols <= 1) {
+    cols = 0;
+  } else if (cols >= totalCols) {
+    cols = totalCols - 1;
+  }
+
+  if (totalRows <= 1) {
+    rows = 0;
+  } else if (rows >= totalRows) {
+    rows = totalRows - 1;
+  }
+
+  if (options.autoAdjustRows !== false && rows > 0 && totalRows >= 8) {
+    const detectedHeaderRows = Math.max(1, detectSplitHeaderRowCount(table));
+    const adaptiveRowCap = Math.max(1, Math.min(MAX_AUTO_FROZEN_ROWS, detectedHeaderRows));
+    if (rows > adaptiveRowCap && rows / totalRows >= AUTO_FROZEN_ROW_RATIO_THRESHOLD) {
+      rows = adaptiveRowCap;
+    }
+  }
+
+  if (options.autoAdjustCols !== false && cols > 0 && totalCols >= 5) {
+    // Keep a small non-frozen area so frozen panes remain usable after column pruning.
+    const softMaxCols = Math.max(1, totalCols - 2);
+    if (cols > softMaxCols) {
+      cols = softMaxCols;
+    }
+  }
+
+  return { cols, rows };
+}
+
+function primaryTableForScope(scope) {
+  const wrap = tableWrapForScope(scope);
+  if (!wrap) {
+    return null;
+  }
+  const splitRightTable = wrap.querySelector(".split-pane-right table");
+  if (splitRightTable) {
+    return splitRightTable;
+  }
+  return wrap.querySelector("table");
+}
+
+function isColumnRangeFullyHidden(hiddenCols, startCol, endCol) {
+  if (!(hiddenCols instanceof Set) || hiddenCols.size === 0) {
+    return false;
+  }
+  for (let col = startCol; col <= endCol; col += 1) {
+    if (!hiddenCols.has(col)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function applyScopeVisibilityOverrides(scope) {
+  const normalized = normalizeViewScope(scope);
+  const viewLayout = viewLayoutForScope(normalized);
+  const hiddenRows = viewLayout.hiddenRows;
+  const hiddenCols = viewLayout.hiddenCols;
+
+  for (const table of tablesForScope(normalized)) {
+    annotateSelectionGridForTable(table);
+
+    const rows = Array.from(table.rows || []);
+    for (let rowIndex = 0; rowIndex < rows.length; rowIndex += 1) {
+      const row = rows[rowIndex];
+      const shouldHideRow = hiddenRows.has(rowIndex);
+      if (shouldHideRow) {
+        row.dataset.contextHiddenRow = "true";
+        row.style.display = "none";
+      } else if (row.dataset.contextHiddenRow === "true") {
+        delete row.dataset.contextHiddenRow;
+        row.style.removeProperty("display");
+      }
+    }
+
+    for (const cell of table.querySelectorAll("th, td")) {
+      const colStart = Number.parseInt(cell.dataset.gridColStart || "", 10);
+      const colEnd = Number.parseInt(cell.dataset.gridColEnd || "", 10);
+      const hasColRange = Number.isFinite(colStart) && Number.isFinite(colEnd) && colStart >= 0 && colEnd >= colStart;
+      const shouldHideCol = hasColRange && isColumnRangeFullyHidden(hiddenCols, colStart, colEnd);
+      if (shouldHideCol) {
+        cell.dataset.contextHiddenCol = "true";
+        cell.style.display = "none";
+      } else if (cell.dataset.contextHiddenCol === "true") {
+        delete cell.dataset.contextHiddenCol;
+        cell.style.removeProperty("display");
+      }
+    }
+  }
+}
+
+function applyScopeLayoutOverrides(scope, defaultFrozenCols = 0, defaultFrozenRows = 0) {
+  const normalized = normalizeViewScope(scope);
+  const table = primaryTableForScope(normalized);
+  if (!table) {
+    return false;
+  }
+  const normalizedTable = unwrapSplitViewport(table);
+  const viewLayout = viewLayoutForScope(normalized);
+  const freeze = effectiveFreezeForScope(normalized, defaultFrozenCols, defaultFrozenRows);
+  const freezeNormalized = normalizedFreezeForTable(normalizedTable, freeze.cols, freeze.rows, {
+    autoAdjustCols: !Number.isFinite(viewLayout.frozenColsOverride),
+    autoAdjustRows: !Number.isFinite(viewLayout.frozenRowsOverride),
+  });
+  enhanceFrozenViewport(normalizedTable, freezeNormalized.cols, freezeNormalized.rows);
+  viewLayout.lastAppliedFrozenCols = freezeNormalized.cols;
+  viewLayout.lastAppliedFrozenRows = freezeNormalized.rows;
+  applyScopeVisibilityOverrides(normalized);
+  if (state.selectionScope === normalized && Array.isArray(state.selectionRanges) && state.selectionRanges.length) {
+    refreshGridSelectionVisuals();
+  } else {
+    annotateSelectionGridForScope(normalized);
+    syncRibbonGridControlState();
+  }
+  return true;
+}
+
+function annotateSelectionGridForTable(table) {
+  if (!table) {
+    return;
+  }
+  const colOffset = Number.parseInt(table.dataset.selectionColOffset || "0", 10) || 0;
+  const rows = Array.from(table.rows || []);
+  const spanMap = [];
+
+  let maxCols = colOffset;
+  for (let rowIndex = 0; rowIndex < rows.length; rowIndex += 1) {
+    for (let idx = 0; idx < spanMap.length; idx += 1) {
+      if (spanMap[idx] > 0) {
+        spanMap[idx] -= 1;
+      }
+    }
+
+    let col = 0;
+    for (const cell of Array.from(rows[rowIndex].cells || [])) {
+      while (spanMap[col] > 0) {
+        col += 1;
+      }
+
+      const colSpan = Math.max(1, Number.parseInt(cell.getAttribute("colspan") || "1", 10) || 1);
+      const rowSpan = Math.max(1, Number.parseInt(cell.getAttribute("rowspan") || "1", 10) || 1);
+      const colStart = colOffset + col;
+      const colEnd = colStart + colSpan - 1;
+      const rowEnd = rowIndex + rowSpan - 1;
+
+      cell.dataset.gridRow = String(rowIndex);
+      cell.dataset.gridRowEnd = String(rowEnd);
+      cell.dataset.gridRowSpan = String(rowSpan);
+      cell.dataset.gridColStart = String(colStart);
+      cell.dataset.gridColEnd = String(colEnd);
+      cell.dataset.gridColSpan = String(colSpan);
+      table.classList.add("grid-selection-enabled");
+
+      if (rowSpan > 1) {
+        for (let offset = 0; offset < colSpan; offset += 1) {
+          const target = col + offset;
+          spanMap[target] = Math.max(spanMap[target] || 0, rowSpan - 1);
+        }
+      }
+
+      col += colSpan;
+      maxCols = Math.max(maxCols, colOffset + col);
+    }
+  }
+
+  table.dataset.selectionRowCount = String(rows.length);
+  table.dataset.selectionColCount = String(maxCols);
+}
+
+function annotateSelectionGridForScope(scope) {
+  for (const table of tablesForScope(scope)) {
+    annotateSelectionGridForTable(table);
+  }
+}
+
+function normalizeSelectionRange(range) {
+  return {
+    rowStart: Math.min(range.rowStart, range.rowEnd),
+    rowEnd: Math.max(range.rowStart, range.rowEnd),
+    colStart: Math.min(range.colStart, range.colEnd),
+    colEnd: Math.max(range.colStart, range.colEnd),
+  };
+}
+
+function rangeFromPoints(a, b) {
+  return normalizeSelectionRange({
+    rowStart: a.row,
+    rowEnd: b.row,
+    colStart: a.col,
+    colEnd: b.col,
+  });
+}
+
+function selectionExtentForPoint(scope, point) {
+  if (!scope || !point) {
+    return null;
+  }
+  const row = Number.parseInt(String(point.row), 10);
+  const col = Number.parseInt(String(point.col), 10);
+  if (!Number.isFinite(row) || !Number.isFinite(col)) {
+    return null;
+  }
+
+  const normalizedScope = normalizeViewScope(scope);
+  for (const table of tablesForScope(normalizedScope)) {
+    annotateSelectionGridForTable(table);
+    const targetRow = table.rows && row >= 0 && row < table.rows.length ? table.rows[row] : null;
+    if (!targetRow) {
+      continue;
+    }
+    for (const cell of Array.from(targetRow.cells || [])) {
+      const colStart = Number.parseInt(cell.dataset.gridColStart || "", 10);
+      const colEnd = Number.parseInt(cell.dataset.gridColEnd || "", 10);
+      if (!Number.isFinite(colStart) || !Number.isFinite(colEnd) || col < colStart || col > colEnd) {
+        continue;
+      }
+      const rowStart = Number.parseInt(cell.dataset.gridRow || "", 10);
+      const rowEnd = Number.parseInt(cell.dataset.gridRowEnd || cell.dataset.gridRow || "", 10);
+      if (!Number.isFinite(rowStart) || !Number.isFinite(rowEnd)) {
+        break;
+      }
+      return {
+        rowStart,
+        rowEnd,
+        colStart,
+        colEnd,
+      };
+    }
+  }
+
+  return {
+    rowStart: row,
+    rowEnd: row,
+    colStart: col,
+    colEnd: col,
+  };
+}
+
+function rangeFromScopePoints(scope, anchorPoint, focusPoint) {
+  const anchorExtent = selectionExtentForPoint(scope, anchorPoint);
+  const focusExtent = selectionExtentForPoint(scope, focusPoint);
+  if (!anchorExtent || !focusExtent) {
+    return rangeFromPoints(anchorPoint, focusPoint);
+  }
+  return normalizeSelectionRange({
+    rowStart: Math.min(anchorExtent.rowStart, focusExtent.rowStart),
+    rowEnd: Math.max(anchorExtent.rowEnd, focusExtent.rowEnd),
+    colStart: Math.min(anchorExtent.colStart, focusExtent.colStart),
+    colEnd: Math.max(anchorExtent.colEnd, focusExtent.colEnd),
+  });
+}
+
+function selectionScopeForCell(cell) {
+  if (!cell) {
+    return null;
+  }
+  if (el.mainTableWrap && el.mainTableWrap.contains(cell)) {
+    return "main";
+  }
+  if (el.referenceTableWrap && el.referenceTableWrap.contains(cell)) {
+    return "reference";
+  }
+  return null;
+}
+
+function selectionPointForCell(cell) {
+  if (!cell) {
+    return null;
+  }
+  const table = cell.closest("table");
+  if (!table) {
+    return null;
+  }
+  if (!cell.dataset.gridRow || !cell.dataset.gridColStart) {
+    annotateSelectionGridForTable(table);
+  }
+
+  const row = Number.parseInt(cell.dataset.gridRow || "", 10);
+  const col = Number.parseInt(cell.dataset.gridColStart || "", 10);
+  if (!Number.isFinite(row) || !Number.isFinite(col)) {
+    return null;
+  }
+
+  return { row, col };
+}
+
+function clearContextMenuLongPressTimer() {
+  if (!state.contextMenuLongPressTimer) {
+    return;
+  }
+  window.clearTimeout(state.contextMenuLongPressTimer);
+  state.contextMenuLongPressTimer = null;
+}
+
+function hideGridContextMenu() {
+  clearContextMenuLongPressTimer();
+  if (!el.gridContextMenu) {
+    return;
+  }
+  el.gridContextMenu.hidden = true;
+  el.gridContextMenu.setAttribute("aria-hidden", "true");
+  state.contextMenuOpen = false;
+  state.contextMenuScope = null;
+  state.contextMenuPoint = null;
+}
+
+function clearSheetTabContextLongPressTimer() {
+  if (!state.sheetTabContextLongPressTimer) {
+    return;
+  }
+  window.clearTimeout(state.sheetTabContextLongPressTimer);
+  state.sheetTabContextLongPressTimer = null;
+}
+
+function hideSheetTabContextMenu() {
+  clearSheetTabContextLongPressTimer();
+  if (!el.sheetTabContextMenu) {
+    return;
+  }
+  el.sheetTabContextMenu.hidden = true;
+  el.sheetTabContextMenu.setAttribute("aria-hidden", "true");
+  state.sheetTabContextMenuOpen = false;
+  state.sheetTabContext = null;
+}
+
+function showSheetTabContextMenu(tabContext, clientX, clientY) {
+  if (!el.sheetTabContextMenu || !tabContext) {
+    return;
+  }
+
+  hideGridContextMenu();
+  state.sheetTabContextMenuOpen = true;
+  state.sheetTabContext = tabContext;
+
+  const viewLabel = tabContext.view === "reference" ? "Detail Sheet" : "Main Sheet";
+  if (el.sheetTabContextTitle) {
+    setText(el.sheetTabContextTitle, `${viewLabel} · ${tabContext.sheetName}`);
+  }
+  if (el.sheetTabCtxRenameBtn) {
+    el.sheetTabCtxRenameBtn.disabled = !canEditWorkbookTabs();
+  }
+
+  el.sheetTabContextMenu.hidden = false;
+  el.sheetTabContextMenu.setAttribute("aria-hidden", "false");
+  el.sheetTabContextMenu.style.left = "0px";
+  el.sheetTabContextMenu.style.top = "0px";
+
+  const menuRect = el.sheetTabContextMenu.getBoundingClientRect();
+  const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0;
+  const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+  const margin = 8;
+  const maxLeft = Math.max(margin, viewportWidth - menuRect.width - margin);
+  const maxTop = Math.max(margin, viewportHeight - menuRect.height - margin);
+  const left = Math.min(Math.max(margin, Number(clientX)), maxLeft);
+  const top = Math.min(Math.max(margin, Number(clientY)), maxTop);
+  el.sheetTabContextMenu.style.left = `${Math.round(left)}px`;
+  el.sheetTabContextMenu.style.top = `${Math.round(top)}px`;
+}
+
+function openSheetTabContextMenu(tabContext, clientX, clientY) {
+  if (!tabContext || !tabContext.tabButton) {
+    return;
+  }
+  const button = tabContext.tabButton;
+  if (!(button instanceof HTMLElement)) {
+    return;
+  }
+
+  const rect = button.getBoundingClientRect();
+  const fallbackX = rect.left + Math.min(rect.width * 0.5, 120);
+  const fallbackY = rect.bottom + 6;
+  const posX = Number.isFinite(Number(clientX)) ? Number(clientX) : fallbackX;
+  const posY = Number.isFinite(Number(clientY)) ? Number(clientY) : fallbackY;
+  setActiveViewScope(tabContext.view);
+  showSheetTabContextMenu(tabContext, posX, posY);
+}
+
+function renameSheetFromTabContextMenu() {
+  if (!canEditWorkbookTabs()) {
+    hideSheetTabContextMenu();
+    return;
+  }
+  const tabContext = state.sheetTabContext;
+  if (!tabContext) {
+    hideSheetTabContextMenu();
+    return;
+  }
+  const { view, sheetName, tabItem, tabButton } = tabContext;
+  if (!(tabItem instanceof HTMLElement) || !(tabButton instanceof HTMLElement) || !tabItem.isConnected || !tabButton.isConnected) {
+    hideSheetTabContextMenu();
+    return;
+  }
+  hideSheetTabContextMenu();
+  beginSheetTabRename(view, sheetName, tabItem, tabButton, null);
+}
+
+function bindSheetTabContextMenu(button, view, sheetName, tabItem) {
+  if (!button || !tabItem) {
+    return;
+  }
+  const tabContext = {
+    view: view === "reference" ? "reference" : "main",
+    sheetName: String(sheetName || ""),
+    tabItem,
+    tabButton: button,
+  };
+
+  button.addEventListener("contextmenu", (event) => {
+    event.preventDefault();
+    openSheetTabContextMenu(tabContext, event.clientX, event.clientY);
+  });
+
+  button.addEventListener(
+    "touchstart",
+    (event) => {
+      if (!event.touches || event.touches.length !== 1) {
+        clearSheetTabContextLongPressTimer();
+        return;
+      }
+      const touch = event.touches[0];
+      const touchX = Number(touch.clientX || 0);
+      const touchY = Number(touch.clientY || 0);
+      clearSheetTabContextLongPressTimer();
+      state.sheetTabContextLongPressTimer = window.setTimeout(() => {
+        state.sheetTabLongPressTriggered = true;
+        window.setTimeout(() => {
+          state.sheetTabLongPressTriggered = false;
+        }, 1200);
+        openSheetTabContextMenu(tabContext, touchX, touchY);
+        state.sheetTabContextLongPressTimer = null;
+      }, LONG_PRESS_OPEN_MS);
+    },
+    { passive: true },
+  );
+
+  const clearLongPress = () => {
+    clearSheetTabContextLongPressTimer();
+  };
+  button.addEventListener(
+    "touchmove",
+    () => {
+      clearLongPress();
+    },
+    { passive: true },
+  );
+  button.addEventListener(
+    "touchend",
+    () => {
+      clearLongPress();
+    },
+    { passive: true },
+  );
+  button.addEventListener(
+    "touchcancel",
+    () => {
+      clearLongPress();
+    },
+    { passive: true },
+  );
+}
+
+function detailsContextActionState(scope) {
+  const normalized = normalizeViewScope(scope);
+  const drawerMode = document.body.classList.contains("detail-drawer-mode");
+  if (drawerMode) {
+    if (!state.referenceDrawerExpanded) {
+      return { label: "Open details drawer", disabled: false };
+    }
+    if (normalized === "reference") {
+      return { label: "Details drawer open", disabled: true };
+    }
+    return { label: "Focus details drawer", disabled: false };
+  }
+  if (state.desktopDetailCollapsed) {
+    return { label: "Open details panel", disabled: false };
+  }
+  if (normalized === "reference") {
+    return { label: "Details panel open", disabled: true };
+  }
+  return { label: "Focus details panel", disabled: false };
+}
+
+function openDetailsPanelFromContext() {
+  const sourceScope = state.contextMenuScope || state.selectionScope || state.activeViewScope;
+  if (document.body.classList.contains("detail-drawer-mode")) {
+    setReferenceDrawerExpanded(true);
+  } else if (state.desktopDetailCollapsed) {
+    setDesktopDetailCollapsed(false);
+  }
+  setActiveViewScope("reference");
+  setText(el.statusText, `Detail view ready · ${workbookNameForScope("reference")}`);
+  if (sourceScope === "main" && !hasGridSelection()) {
+    resetSelectionStatusBar();
+  }
+}
+
+function showGridContextMenu(clientX, clientY, scope, point) {
+  if (!el.gridContextMenu) {
+    return;
+  }
+  if (!scope || !point) {
+    hideGridContextMenu();
+    return;
+  }
+  hideSheetTabContextMenu();
+
+  state.contextMenuOpen = true;
+  state.contextMenuScope = scope;
+  state.contextMenuPoint = { ...point };
+  if (el.gridContextTitle) {
+    setText(el.gridContextTitle, `${selectionScopeLabel(scope)} · ${pointToAddress(point)}`);
+  }
+
+  const hasSelection = Boolean(state.selectionRanges && state.selectionRanges.length);
+  const normalizedScope = normalizeViewScope(scope);
+  const viewLayout = viewLayoutForScope(normalizedScope);
+  const rowIndexes = collectContextRowIndices(normalizedScope);
+  const colIndexes = collectContextColumnIndices(normalizedScope);
+  const freeze = effectiveFreezeForScope(
+    normalizedScope,
+    Number(viewLayout.lastAppliedFrozenCols || 0),
+    Number(viewLayout.lastAppliedFrozenRows || 0),
+  );
+  if (el.ctxCopyBtn) {
+    el.ctxCopyBtn.disabled = !hasSelection;
+  }
+  if (el.ctxPasteBtn) {
+    el.ctxPasteBtn.disabled = !point;
+  }
+  if (el.ctxClearSelectionBtn) {
+    el.ctxClearSelectionBtn.disabled = !hasSelection;
+  }
+  if (el.ctxFreezePanesBtn) {
+    setText(el.ctxFreezePanesBtn, `Freeze panes at ${pointToAddress(point)}`);
+    el.ctxFreezePanesBtn.disabled = !point;
+  }
+  if (el.ctxUnfreezePanesBtn) {
+    el.ctxUnfreezePanesBtn.disabled = freeze.cols < 1 && freeze.rows < 1;
+  }
+  if (el.ctxHideRowsBtn) {
+    setText(el.ctxHideRowsBtn, rowIndexes.size > 0 ? `Hide rows (${rowIndexes.size})` : "Hide rows");
+    el.ctxHideRowsBtn.disabled = rowIndexes.size < 1;
+  }
+  if (el.ctxUnhideRowsBtn) {
+    const hiddenRowsCount = viewLayout.hiddenRows.size;
+    setText(el.ctxUnhideRowsBtn, hiddenRowsCount > 0 ? `Unhide rows (${hiddenRowsCount})` : "Unhide rows");
+    el.ctxUnhideRowsBtn.disabled = hiddenRowsCount < 1;
+  }
+  if (el.ctxHideColsBtn) {
+    setText(el.ctxHideColsBtn, colIndexes.size > 0 ? `Hide columns (${colIndexes.size})` : "Hide columns");
+    el.ctxHideColsBtn.disabled = colIndexes.size < 1;
+  }
+  if (el.ctxUnhideColsBtn) {
+    const hiddenColsCount = viewLayout.hiddenCols.size;
+    setText(el.ctxUnhideColsBtn, hiddenColsCount > 0 ? `Unhide columns (${hiddenColsCount})` : "Unhide columns");
+    el.ctxUnhideColsBtn.disabled = hiddenColsCount < 1;
+  }
+  if (el.ctxHideBothBtn) {
+    el.ctxHideBothBtn.disabled = rowIndexes.size < 1 && colIndexes.size < 1;
+  }
+  if (el.ctxUnhideBothBtn) {
+    el.ctxUnhideBothBtn.disabled = viewLayout.hiddenRows.size < 1 && viewLayout.hiddenCols.size < 1;
+  }
+  const structure = structuralContextState(normalizedScope);
+  if (el.ctxInsertRowAboveBtn) {
+    setText(el.ctxInsertRowAboveBtn, "Insert row above");
+    el.ctxInsertRowAboveBtn.disabled = !structure.canInsertRowAbove;
+  }
+  if (el.ctxInsertRowBelowBtn) {
+    setText(el.ctxInsertRowBelowBtn, "Insert row below");
+    el.ctxInsertRowBelowBtn.disabled = !structure.canInsertRowBelow;
+  }
+  if (el.ctxDeleteRowBtn) {
+    const deletableRows = structure.deletableRowIndices.length;
+    setText(el.ctxDeleteRowBtn, deletableRows > 0 ? `Delete row (${deletableRows})` : "Delete row");
+    el.ctxDeleteRowBtn.disabled = !structure.canDeleteRow;
+  }
+  if (el.ctxInsertColLeftBtn) {
+    setText(el.ctxInsertColLeftBtn, "Insert column left");
+    el.ctxInsertColLeftBtn.disabled = !structure.canInsertColLeft;
+  }
+  if (el.ctxInsertColRightBtn) {
+    setText(el.ctxInsertColRightBtn, "Insert column right");
+    el.ctxInsertColRightBtn.disabled = !structure.canInsertColRight;
+  }
+  if (el.ctxDeleteColBtn) {
+    const deletableCols = structure.selectedColumnIndices.length;
+    setText(el.ctxDeleteColBtn, deletableCols > 0 ? `Delete column (${deletableCols})` : "Delete column");
+    el.ctxDeleteColBtn.disabled = !structure.canDeleteCol;
+  }
+  if (el.ctxOpenDetailsBtn) {
+    const detailsAction = detailsContextActionState(scope);
+    setText(el.ctxOpenDetailsBtn, detailsAction.label);
+    el.ctxOpenDetailsBtn.disabled = detailsAction.disabled;
+  }
+
+  el.gridContextMenu.hidden = false;
+  el.gridContextMenu.setAttribute("aria-hidden", "false");
+  el.gridContextMenu.style.left = "0px";
+  el.gridContextMenu.style.top = "0px";
+
+  const menuRect = el.gridContextMenu.getBoundingClientRect();
+  const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0;
+  const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+  const margin = 8;
+  const maxLeft = Math.max(margin, viewportWidth - menuRect.width - margin);
+  const maxTop = Math.max(margin, viewportHeight - menuRect.height - margin);
+  const left = Math.min(Math.max(margin, clientX), maxLeft);
+  const top = Math.min(Math.max(margin, clientY), maxTop);
+  el.gridContextMenu.style.left = `${Math.round(left)}px`;
+  el.gridContextMenu.style.top = `${Math.round(top)}px`;
+}
+
+function rangeToAddress(range) {
+  if (!range) {
     return "";
   }
-  if (typeof value === "number") {
-    const rounded =
-      Math.abs(value) >= 1000
-        ? value.toLocaleString(undefined, { maximumFractionDigits: 2 })
-        : value.toFixed(2);
-    if (Number.isInteger(value)) {
-      return value.toLocaleString();
+  const normalized = normalizeSelectionRange(range);
+  const start = pointToAddress({ row: normalized.rowStart, col: normalized.colStart });
+  const end = pointToAddress({ row: normalized.rowEnd, col: normalized.colEnd });
+  return start === end ? start : `${start}:${end}`;
+}
+
+function rangeIncludesCell(range, rowStart, rowEnd, colStart, colEnd) {
+  const normalized = normalizeSelectionRange(range);
+  if (rowEnd < normalized.rowStart || rowStart > normalized.rowEnd) {
+    return false;
+  }
+  return colEnd >= normalized.colStart && colStart <= normalized.colEnd;
+}
+
+function pointInRange(range, point) {
+  const normalized = normalizeSelectionRange(range);
+  return (
+    point.row >= normalized.rowStart &&
+    point.row <= normalized.rowEnd &&
+    point.col >= normalized.colStart &&
+    point.col <= normalized.colEnd
+  );
+}
+
+function excelColumnLabelToIndex(label) {
+  const normalized = String(label || "")
+    .replace(/\$/g, "")
+    .trim()
+    .toUpperCase();
+  if (!/^[A-Z]+$/.test(normalized)) {
+    return null;
+  }
+  let value = 0;
+  for (const char of normalized) {
+    value = value * 26 + (char.charCodeAt(0) - 64);
+  }
+  const index = value - 1;
+  return index >= 0 ? index : null;
+}
+
+function parseExcelAddress(addressText) {
+  const raw = String(addressText || "").trim();
+  const match = /^\$?([A-Za-z]+)\$?(\d+)$/.exec(raw);
+  if (!match) {
+    return null;
+  }
+  const col = excelColumnLabelToIndex(match[1]);
+  const row = Number.parseInt(match[2], 10) - 1;
+  if (!Number.isFinite(col) || !Number.isFinite(row) || row < 0 || col < 0) {
+    return null;
+  }
+  return { row, col };
+}
+
+function formulaScalarFromCell(cell) {
+  if (!cell) {
+    return "";
+  }
+  const text = String(cell.textContent || "").replace(/\s+/g, " ").trim();
+  if (!text.length) {
+    return "";
+  }
+  const numeric = parseNumericCellValue(text);
+  if (Number.isFinite(numeric)) {
+    return numeric;
+  }
+  const upper = text.toUpperCase();
+  if (upper === "TRUE") {
+    return true;
+  }
+  if (upper === "FALSE") {
+    return false;
+  }
+  return text;
+}
+
+function flattenFormulaValues(value) {
+  if (Array.isArray(value)) {
+    return value.flatMap((item) => flattenFormulaValues(item));
+  }
+  return [value];
+}
+
+function formulaNumberValue(value, options = {}) {
+  const { blankAsZero = true } = options;
+  const scalar = Array.isArray(value) ? (value.length ? value[0] : "") : value;
+  if (scalar === null || scalar === undefined || scalar === "") {
+    return blankAsZero ? 0 : NaN;
+  }
+  if (typeof scalar === "number") {
+    return Number.isFinite(scalar) ? scalar : NaN;
+  }
+  if (typeof scalar === "boolean") {
+    return scalar ? 1 : 0;
+  }
+  const parsed = parseNumericCellValue(String(scalar));
+  return Number.isFinite(parsed) ? parsed : NaN;
+}
+
+function formulaBooleanValue(value) {
+  const scalar = Array.isArray(value) ? (value.length ? value[0] : "") : value;
+  if (typeof scalar === "boolean") {
+    return scalar;
+  }
+  if (typeof scalar === "number") {
+    return scalar !== 0;
+  }
+  if (scalar === null || scalar === undefined || scalar === "") {
+    return false;
+  }
+  const text = String(scalar).trim();
+  if (!text) {
+    return false;
+  }
+  if (/^(true|yes)$/i.test(text)) {
+    return true;
+  }
+  if (/^(false|no)$/i.test(text)) {
+    return false;
+  }
+  const numeric = parseNumericCellValue(text);
+  if (Number.isFinite(numeric)) {
+    return numeric !== 0;
+  }
+  return true;
+}
+
+function formulaCompareValues(left, right, op) {
+  const leftNum = formulaNumberValue(left, { blankAsZero: false });
+  const rightNum = formulaNumberValue(right, { blankAsZero: false });
+  const bothNumeric = Number.isFinite(leftNum) && Number.isFinite(rightNum);
+  const a = bothNumeric ? leftNum : String(Array.isArray(left) ? left[0] ?? "" : left ?? "");
+  const b = bothNumeric ? rightNum : String(Array.isArray(right) ? right[0] ?? "" : right ?? "");
+
+  if (op === "=") {
+    return a === b;
+  }
+  if (op === "<>") {
+    return a !== b;
+  }
+  if (op === "<") {
+    return a < b;
+  }
+  if (op === "<=") {
+    return a <= b;
+  }
+  if (op === ">") {
+    return a > b;
+  }
+  if (op === ">=") {
+    return a >= b;
+  }
+  throw new Error(`Unsupported comparison operator "${op}".`);
+}
+
+function formulaValuesFromRange(scope, pointCellMap, startAddress, endAddress) {
+  const start = parseExcelAddress(startAddress);
+  const end = parseExcelAddress(endAddress);
+  if (!start || !end) {
+    throw new Error(`Invalid range "${startAddress}:${endAddress}".`);
+  }
+  const rowStart = Math.min(start.row, end.row);
+  const rowEnd = Math.max(start.row, end.row);
+  const colStart = Math.min(start.col, end.col);
+  const colEnd = Math.max(start.col, end.col);
+  const values = [];
+  const pointMap = pointCellMap || buildPointCellMap(scope);
+  for (let row = rowStart; row <= rowEnd; row += 1) {
+    for (let col = colStart; col <= colEnd; col += 1) {
+      values.push(formulaScalarFromCell(pointMap.get(`${row}:${col}`) || null));
     }
-    return rounded.replace(/\.00$/, "");
+  }
+  return values;
+}
+
+function formulaValueFromReference(scope, pointCellMap, address) {
+  const point = parseExcelAddress(address);
+  if (!point) {
+    throw new Error(`Invalid reference "${address}".`);
+  }
+  const pointMap = pointCellMap || buildPointCellMap(scope);
+  return formulaScalarFromCell(pointMap.get(`${point.row}:${point.col}`) || null);
+}
+
+function numericFormulaArgs(args) {
+  const numeric = [];
+  for (const arg of args) {
+    for (const scalar of flattenFormulaValues(arg)) {
+      const parsed = formulaNumberValue(scalar, { blankAsZero: false });
+      if (Number.isFinite(parsed)) {
+        numeric.push(parsed);
+      }
+    }
+  }
+  return numeric;
+}
+
+function countAFormulaArgs(args) {
+  let count = 0;
+  for (const arg of args) {
+    for (const scalar of flattenFormulaValues(arg)) {
+      if (scalar === null || scalar === undefined) {
+        continue;
+      }
+      if (typeof scalar === "string" && scalar.trim() === "") {
+        continue;
+      }
+      count += 1;
+    }
+  }
+  return count;
+}
+
+function runFormulaFunction(name, args) {
+  const fn = String(name || "").trim().toUpperCase();
+  if (!FORMULA_FUNCTION_NAMES.has(fn)) {
+    throw new Error(`Unsupported function "${name}".`);
+  }
+
+  if (fn === "SUM") {
+    return numericFormulaArgs(args).reduce((sum, value) => sum + value, 0);
+  }
+  if (fn === "AVERAGE" || fn === "AVG") {
+    const values = numericFormulaArgs(args);
+    if (!values.length) {
+      throw new Error("AVERAGE requires at least one numeric value.");
+    }
+    return values.reduce((sum, value) => sum + value, 0) / values.length;
+  }
+  if (fn === "MIN") {
+    const values = numericFormulaArgs(args);
+    if (!values.length) {
+      throw new Error("MIN requires at least one numeric value.");
+    }
+    return Math.min(...values);
+  }
+  if (fn === "MAX") {
+    const values = numericFormulaArgs(args);
+    if (!values.length) {
+      throw new Error("MAX requires at least one numeric value.");
+    }
+    return Math.max(...values);
+  }
+  if (fn === "COUNT") {
+    return numericFormulaArgs(args).length;
+  }
+  if (fn === "COUNTA") {
+    return countAFormulaArgs(args);
+  }
+  if (fn === "IF") {
+    if (args.length < 2) {
+      throw new Error("IF requires at least 2 arguments.");
+    }
+    return formulaBooleanValue(args[0]) ? args[1] : args.length > 2 ? args[2] : false;
+  }
+  if (fn === "ABS") {
+    const value = formulaNumberValue(args[0], { blankAsZero: false });
+    if (!Number.isFinite(value)) {
+      throw new Error("ABS requires a numeric value.");
+    }
+    return Math.abs(value);
+  }
+  if (fn === "ROUND") {
+    const value = formulaNumberValue(args[0], { blankAsZero: false });
+    if (!Number.isFinite(value)) {
+      throw new Error("ROUND requires a numeric value.");
+    }
+    const digits = Math.trunc(formulaNumberValue(args[1] ?? 0));
+    const factor = 10 ** digits;
+    return Math.round(value * factor) / factor;
+  }
+  if (fn === "ROUNDUP") {
+    const value = formulaNumberValue(args[0], { blankAsZero: false });
+    if (!Number.isFinite(value)) {
+      throw new Error("ROUNDUP requires a numeric value.");
+    }
+    const digits = Math.trunc(formulaNumberValue(args[1] ?? 0));
+    const factor = 10 ** digits;
+    if (value >= 0) {
+      return Math.ceil(value * factor) / factor;
+    }
+    return Math.floor(value * factor) / factor;
+  }
+  if (fn === "ROUNDDOWN") {
+    const value = formulaNumberValue(args[0], { blankAsZero: false });
+    if (!Number.isFinite(value)) {
+      throw new Error("ROUNDDOWN requires a numeric value.");
+    }
+    const digits = Math.trunc(formulaNumberValue(args[1] ?? 0));
+    const factor = 10 ** digits;
+    if (value >= 0) {
+      return Math.floor(value * factor) / factor;
+    }
+    return Math.ceil(value * factor) / factor;
+  }
+  if (fn === "LEN") {
+    const scalar = Array.isArray(args[0]) ? args[0][0] ?? "" : args[0];
+    return String(scalar ?? "").length;
+  }
+
+  throw new Error(`Unsupported function "${name}".`);
+}
+
+function tokenizeFormulaExpression(expression) {
+  const source = String(expression || "").trim();
+  const tokens = [];
+  let index = 0;
+
+  const push = (type, value = null) => {
+    tokens.push({ type, value });
+  };
+
+  while (index < source.length) {
+    const char = source[index];
+
+    if (/\s/.test(char)) {
+      index += 1;
+      continue;
+    }
+
+    if (char === "(") {
+      push("lparen");
+      index += 1;
+      continue;
+    }
+    if (char === ")") {
+      push("rparen");
+      index += 1;
+      continue;
+    }
+    if (char === ",") {
+      push("comma");
+      index += 1;
+      continue;
+    }
+    if (char === ";") {
+      push("comma");
+      index += 1;
+      continue;
+    }
+    if (char === ":") {
+      push("colon");
+      index += 1;
+      continue;
+    }
+    if (char === "+" || char === "-" || char === "*" || char === "/" || char === "^" || char === "&") {
+      push("operator", char);
+      index += 1;
+      continue;
+    }
+    if (char === "<" || char === ">" || char === "=") {
+      const next = source[index + 1] || "";
+      if ((char === "<" || char === ">") && next === "=") {
+        push("operator", `${char}=`);
+        index += 2;
+        continue;
+      }
+      if (char === "<" && next === ">") {
+        push("operator", "<>");
+        index += 2;
+        continue;
+      }
+      push("operator", char);
+      index += 1;
+      continue;
+    }
+    if (char === '"') {
+      let value = "";
+      index += 1;
+      while (index < source.length) {
+        const current = source[index];
+        if (current === '"') {
+          if (source[index + 1] === '"') {
+            value += '"';
+            index += 2;
+            continue;
+          }
+          index += 1;
+          break;
+        }
+        value += current;
+        index += 1;
+      }
+      push("string", value);
+      continue;
+    }
+    if (/\d|\./.test(char)) {
+      const start = index;
+      let dotCount = 0;
+      while (index < source.length && /[\d.]/.test(source[index])) {
+        if (source[index] === ".") {
+          dotCount += 1;
+        }
+        index += 1;
+      }
+      const raw = source.slice(start, index);
+      if (dotCount > 1 || raw === ".") {
+        throw new Error(`Invalid number "${raw}".`);
+      }
+      const value = Number.parseFloat(raw);
+      if (!Number.isFinite(value)) {
+        throw new Error(`Invalid number "${raw}".`);
+      }
+      push("number", value);
+      continue;
+    }
+    if (/[A-Za-z_$]/.test(char)) {
+      const start = index;
+      while (index < source.length && /[A-Za-z0-9_$]/.test(source[index])) {
+        index += 1;
+      }
+      const raw = source.slice(start, index);
+      const normalized = raw.replace(/\$/g, "");
+      if (/^[A-Za-z]+\d+$/.test(normalized)) {
+        push("ref", normalized.toUpperCase());
+        continue;
+      }
+      if (/^(true|false)$/i.test(normalized)) {
+        push("boolean", /^true$/i.test(normalized));
+        continue;
+      }
+      push("ident", normalized.toUpperCase());
+      continue;
+    }
+
+    throw new Error(`Unexpected character "${char}" in formula.`);
+  }
+
+  push("eof");
+  return tokens;
+}
+
+function evaluateFormulaExpression(rawFormula, scope, pointCellMap = null) {
+  const source = String(rawFormula || "").trim().replace(/^=/, "");
+  if (!source) {
+    return "";
+  }
+  const tokens = tokenizeFormulaExpression(source);
+  let current = 0;
+  const pointMap = pointCellMap || buildPointCellMap(scope);
+
+  const peek = () => tokens[current] || { type: "eof", value: null };
+  const previous = () => tokens[Math.max(0, current - 1)] || { type: "eof", value: null };
+  const advance = () => {
+    if (current < tokens.length) {
+      current += 1;
+    }
+    return previous();
+  };
+  const check = (type, value = null) => {
+    const token = peek();
+    if (token.type !== type) {
+      return false;
+    }
+    if (value === null) {
+      return true;
+    }
+    return token.value === value;
+  };
+  const match = (type, value = null) => {
+    if (!check(type, value)) {
+      return false;
+    }
+    advance();
+    return true;
+  };
+  const consume = (type, message, value = null) => {
+    if (match(type, value)) {
+      return previous();
+    }
+    throw new Error(message);
+  };
+
+  const parsePrimary = () => {
+    if (match("number")) {
+      return previous().value;
+    }
+    if (match("string")) {
+      return previous().value;
+    }
+    if (match("boolean")) {
+      return previous().value;
+    }
+    if (match("ref")) {
+      const startRef = previous().value;
+      if (match("colon")) {
+        const endRef = consume("ref", "Expected cell reference after ':' in range.").value;
+        return formulaValuesFromRange(scope, pointMap, startRef, endRef);
+      }
+      return formulaValueFromReference(scope, pointMap, startRef);
+    }
+    if (match("ident")) {
+      const identifier = previous().value;
+      if (!match("lparen")) {
+        throw new Error(`Unknown identifier "${identifier}".`);
+      }
+      const args = [];
+      if (!check("rparen")) {
+        do {
+          args.push(parseComparison());
+        } while (match("comma"));
+      }
+      consume("rparen", `Expected ')' after ${identifier} arguments.`);
+      return runFormulaFunction(identifier, args);
+    }
+    if (match("lparen")) {
+      const nested = parseComparison();
+      consume("rparen", "Expected ')' to close formula expression.");
+      return nested;
+    }
+    throw new Error("Unexpected token in formula.");
+  };
+
+  const parseUnary = () => {
+    if (match("operator", "+")) {
+      return formulaNumberValue(parseUnary());
+    }
+    if (match("operator", "-")) {
+      const value = formulaNumberValue(parseUnary());
+      if (!Number.isFinite(value)) {
+        throw new Error("Unary minus requires a numeric value.");
+      }
+      return -value;
+    }
+    return parsePrimary();
+  };
+
+  const parsePower = () => {
+    let value = parseUnary();
+    while (match("operator", "^")) {
+      const right = parseUnary();
+      const leftNum = formulaNumberValue(value, { blankAsZero: false });
+      const rightNum = formulaNumberValue(right, { blankAsZero: false });
+      if (!Number.isFinite(leftNum) || !Number.isFinite(rightNum)) {
+        throw new Error("Power operator requires numeric values.");
+      }
+      value = leftNum ** rightNum;
+    }
+    return value;
+  };
+
+  const parseProduct = () => {
+    let value = parsePower();
+    while (check("operator", "*") || check("operator", "/")) {
+      const op = advance().value;
+      const right = parsePower();
+      const leftNum = formulaNumberValue(value, { blankAsZero: false });
+      const rightNum = formulaNumberValue(right, { blankAsZero: false });
+      if (!Number.isFinite(leftNum) || !Number.isFinite(rightNum)) {
+        throw new Error(`${op} requires numeric values.`);
+      }
+      if (op === "/" && rightNum === 0) {
+        throw new Error("Division by zero.");
+      }
+      value = op === "*" ? leftNum * rightNum : leftNum / rightNum;
+    }
+    return value;
+  };
+
+  const parseSum = () => {
+    let value = parseProduct();
+    while (check("operator", "+") || check("operator", "-") || check("operator", "&")) {
+      const op = advance().value;
+      const right = parseProduct();
+      if (op === "&") {
+        const leftText = Array.isArray(value) ? value[0] ?? "" : value ?? "";
+        const rightText = Array.isArray(right) ? right[0] ?? "" : right ?? "";
+        value = `${leftText}${rightText}`;
+        continue;
+      }
+      const leftNum = formulaNumberValue(value);
+      const rightNum = formulaNumberValue(right);
+      if (!Number.isFinite(leftNum) || !Number.isFinite(rightNum)) {
+        throw new Error(`${op} requires numeric values.`);
+      }
+      value = op === "+" ? leftNum + rightNum : leftNum - rightNum;
+    }
+    return value;
+  };
+
+  const parseComparison = () => {
+    let value = parseSum();
+    while (
+      check("operator", "=") ||
+      check("operator", "<>") ||
+      check("operator", "<") ||
+      check("operator", "<=") ||
+      check("operator", ">") ||
+      check("operator", ">=")
+    ) {
+      const op = advance().value;
+      const right = parseSum();
+      value = formulaCompareValues(value, right, op);
+    }
+    return value;
+  };
+
+  const result = parseComparison();
+  consume("eof", "Unexpected trailing formula content.");
+  return result;
+}
+
+function selectionEdgeClassesForCell(rowStart, rowEnd, colStart, colEnd, ranges) {
+  let top = false;
+  let right = false;
+  let bottom = false;
+  let left = false;
+
+  for (const range of ranges) {
+    const normalized = normalizeSelectionRange(range);
+    if (
+      rowEnd < normalized.rowStart ||
+      rowStart > normalized.rowEnd ||
+      colEnd < normalized.colStart ||
+      colStart > normalized.colEnd
+    ) {
+      continue;
+    }
+
+    if (normalized.rowStart >= rowStart && normalized.rowStart <= rowEnd) {
+      top = true;
+    }
+    if (normalized.colEnd >= colStart && normalized.colEnd <= colEnd) {
+      right = true;
+    }
+    if (normalized.rowEnd >= rowStart && normalized.rowEnd <= rowEnd) {
+      bottom = true;
+    }
+    if (normalized.colStart >= colStart && normalized.colStart <= colEnd) {
+      left = true;
+    }
+
+    if (top && right && bottom && left) {
+      break;
+    }
+  }
+
+  const classes = [];
+  if (top) {
+    classes.push("grid-cell-edge-top");
+  }
+  if (right) {
+    classes.push("grid-cell-edge-right");
+  }
+  if (bottom) {
+    classes.push("grid-cell-edge-bottom");
+  }
+  if (left) {
+    classes.push("grid-cell-edge-left");
+  }
+  return classes;
+}
+
+function isPointInSelection(scope, point) {
+  if (!scope || !point || state.selectionScope !== scope) {
+    return false;
+  }
+  const ranges = Array.isArray(state.selectionRanges) ? state.selectionRanges : [];
+  return ranges.some((range) => pointInRange(range, point));
+}
+
+function selectSingleGridPoint(scope, point) {
+  if (!scope || !point) {
+    return;
+  }
+  setActiveViewScope(scope, { refresh: false });
+  annotateSelectionGridForScope(scope);
+  state.selectionScope = scope;
+  state.selectionAnchor = { ...point };
+  state.selectionFocus = { ...point };
+  state.selectionRanges = [rangeFromScopePoints(scope, point, point)];
+  refreshGridSelectionVisuals();
+}
+
+function openContextMenuForCell(cell, clientX, clientY) {
+  if (!cell) {
+    hideGridContextMenu();
+    return false;
+  }
+  const scope = selectionScopeForCell(cell);
+  if (!scope) {
+    hideGridContextMenu();
+    return false;
+  }
+  setActiveViewScope(scope, { refresh: false });
+  annotateSelectionGridForScope(scope);
+  const point = selectionPointForCell(cell);
+  if (!point) {
+    hideGridContextMenu();
+    return false;
+  }
+  if (!isPointInSelection(scope, point)) {
+    selectSingleGridPoint(scope, point);
+  }
+  showGridContextMenu(clientX, clientY, scope, point);
+  return true;
+}
+
+function boundsForScope(scope) {
+  let maxRow = -1;
+  let maxCol = -1;
+  for (const table of tablesForScope(scope)) {
+    annotateSelectionGridForTable(table);
+    const rows = Number.parseInt(table.dataset.selectionRowCount || "0", 10) || 0;
+    const cols = Number.parseInt(table.dataset.selectionColCount || "0", 10) || 0;
+    if (rows > 0) {
+      maxRow = Math.max(maxRow, rows - 1);
+    }
+    if (cols > 0) {
+      maxCol = Math.max(maxCol, cols - 1);
+    }
+  }
+  return { maxRow, maxCol };
+}
+
+function selectContextRow() {
+  const scope = state.contextMenuScope;
+  const point = state.contextMenuPoint;
+  if (!scope || !point) {
+    return;
+  }
+  const bounds = boundsForScope(scope);
+  if (bounds.maxCol < 0) {
+    return;
+  }
+  const range = normalizeSelectionRange({
+    rowStart: point.row,
+    rowEnd: point.row,
+    colStart: 0,
+    colEnd: bounds.maxCol,
+  });
+  setActiveViewScope(scope, { refresh: false });
+  state.selectionScope = scope;
+  state.selectionAnchor = { row: point.row, col: 0 };
+  state.selectionFocus = { row: point.row, col: bounds.maxCol };
+  state.selectionRanges = [range];
+  refreshGridSelectionVisuals();
+}
+
+function selectContextColumn() {
+  const scope = state.contextMenuScope;
+  const point = state.contextMenuPoint;
+  if (!scope || !point) {
+    return;
+  }
+  const bounds = boundsForScope(scope);
+  if (bounds.maxRow < 0) {
+    return;
+  }
+  const range = normalizeSelectionRange({
+    rowStart: 0,
+    rowEnd: bounds.maxRow,
+    colStart: point.col,
+    colEnd: point.col,
+  });
+  setActiveViewScope(scope, { refresh: false });
+  state.selectionScope = scope;
+  state.selectionAnchor = { row: 0, col: point.col };
+  state.selectionFocus = { row: bounds.maxRow, col: point.col };
+  state.selectionRanges = [range];
+  refreshGridSelectionVisuals();
+}
+
+function selectAllForContextScope() {
+  const scope = state.contextMenuScope;
+  if (!scope) {
+    return;
+  }
+  const bounds = boundsForScope(scope);
+  if (bounds.maxRow < 0 || bounds.maxCol < 0) {
+    return;
+  }
+  const range = normalizeSelectionRange({
+    rowStart: 0,
+    rowEnd: bounds.maxRow,
+    colStart: 0,
+    colEnd: bounds.maxCol,
+  });
+  setActiveViewScope(scope, { refresh: false });
+  state.selectionScope = scope;
+  state.selectionAnchor = { row: 0, col: 0 };
+  state.selectionFocus = { row: bounds.maxRow, col: bounds.maxCol };
+  state.selectionRanges = [range];
+  refreshGridSelectionVisuals();
+}
+
+function contextSelectionRangesForScope(scope) {
+  const normalized = normalizeViewScope(scope);
+  if (state.selectionScope === normalized && Array.isArray(state.selectionRanges) && state.selectionRanges.length) {
+    return state.selectionRanges.map((range) => normalizeSelectionRange(range));
+  }
+  if (state.contextMenuScope === normalized && state.contextMenuPoint) {
+    annotateSelectionGridForScope(normalized);
+    return [normalizeSelectionRange(rangeFromScopePoints(normalized, state.contextMenuPoint, state.contextMenuPoint))];
+  }
+  return [];
+}
+
+function collectContextRowIndices(scope) {
+  const indices = new Set();
+  for (const range of contextSelectionRangesForScope(scope)) {
+    for (let row = range.rowStart; row <= range.rowEnd; row += 1) {
+      indices.add(row);
+    }
+  }
+  return indices;
+}
+
+function collectContextColumnIndices(scope) {
+  const indices = new Set();
+  for (const range of contextSelectionRangesForScope(scope)) {
+    for (let col = range.colStart; col <= range.colEnd; col += 1) {
+      indices.add(col);
+    }
+  }
+  return indices;
+}
+
+function freezeDefaultsForScope(scope) {
+  const viewLayout = viewLayoutForScope(scope);
+  return {
+    cols: Math.max(0, Number.parseInt(String(viewLayout.lastAppliedFrozenCols || 0), 10) || 0),
+    rows: Math.max(0, Number.parseInt(String(viewLayout.lastAppliedFrozenRows || 0), 10) || 0),
+  };
+}
+
+function contextPointForScope(scope) {
+  const normalized = normalizeViewScope(scope);
+  if (state.contextMenuScope === normalized && state.contextMenuPoint) {
+    return state.contextMenuPoint;
+  }
+  if (state.selectionScope === normalized && state.selectionFocus) {
+    return state.selectionFocus;
+  }
+  return null;
+}
+
+function sortedContextRowIndices(scope) {
+  const rows = Array.from(collectContextRowIndices(scope));
+  if (rows.length) {
+    return rows.sort((a, b) => a - b);
+  }
+  const point = contextPointForScope(scope);
+  return point ? [point.row] : [];
+}
+
+function sortedContextColumnIndices(scope) {
+  const cols = Array.from(collectContextColumnIndices(scope));
+  if (cols.length) {
+    return cols.sort((a, b) => a - b);
+  }
+  const point = contextPointForScope(scope);
+  return point ? [point.col] : [];
+}
+
+function rowByGridIndex(table, gridRow) {
+  if (!table || !Number.isFinite(Number(gridRow))) {
+    return null;
+  }
+  for (const row of Array.from(table.rows || [])) {
+    const firstCell = row.cells && row.cells.length ? row.cells[0] : null;
+    if (!firstCell) {
+      continue;
+    }
+    const rowIndex = Number.parseInt(firstCell.dataset.gridRow || "", 10);
+    if (Number.isFinite(rowIndex) && rowIndex === gridRow) {
+      return row;
+    }
+  }
+  return null;
+}
+
+function rowIsDataRow(table, row) {
+  if (!table || !row) {
+    return false;
+  }
+  const parentTag = row.parentElement ? row.parentElement.tagName : "";
+  if (table.tBodies && table.tBodies.length > 0) {
+    return parentTag === "TBODY";
+  }
+  return parentTag !== "THEAD";
+}
+
+function tableIsSimpleRectGrid(table) {
+  if (!table) {
+    return false;
+  }
+  annotateSelectionGridForTable(table);
+  const expectedCols = Number.parseInt(table.dataset.selectionColCount || "0", 10) || 0;
+  if (expectedCols < 1) {
+    return false;
+  }
+  for (const row of Array.from(table.rows || [])) {
+    let rowCols = 0;
+    for (const cell of Array.from(row.cells || [])) {
+      const colSpan = Math.max(1, Number.parseInt(cell.getAttribute("colspan") || "1", 10) || 1);
+      const rowSpan = Math.max(1, Number.parseInt(cell.getAttribute("rowspan") || "1", 10) || 1);
+      if (colSpan !== 1 || rowSpan !== 1) {
+        return false;
+      }
+      rowCols += 1;
+    }
+    if (rowCols !== expectedCols) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function shiftIndexSetForInsert(indexSet, insertAt, count = 1) {
+  if (!(indexSet instanceof Set) || !Number.isFinite(insertAt) || !Number.isFinite(count) || count < 1) {
+    return;
+  }
+  const next = new Set();
+  for (const rawIndex of indexSet) {
+    const index = Number.parseInt(String(rawIndex), 10);
+    if (!Number.isFinite(index) || index < 0) {
+      continue;
+    }
+    next.add(index >= insertAt ? index + count : index);
+  }
+  indexSet.clear();
+  for (const index of next) {
+    indexSet.add(index);
+  }
+}
+
+function shiftIndexSetForDelete(indexSet, removedIndices) {
+  if (!(indexSet instanceof Set)) {
+    return;
+  }
+  const sortedRemoved = Array.from(new Set(Array.isArray(removedIndices) ? removedIndices : []))
+    .map((value) => Number.parseInt(String(value), 10))
+    .filter((value) => Number.isFinite(value) && value >= 0)
+    .sort((a, b) => a - b);
+  if (!sortedRemoved.length) {
+    return;
+  }
+  const removedSet = new Set(sortedRemoved);
+  const next = new Set();
+  for (const rawIndex of indexSet) {
+    const index = Number.parseInt(String(rawIndex), 10);
+    if (!Number.isFinite(index) || index < 0 || removedSet.has(index)) {
+      continue;
+    }
+    let shift = 0;
+    for (const removed of sortedRemoved) {
+      if (removed < index) {
+        shift += 1;
+      } else {
+        break;
+      }
+    }
+    next.add(Math.max(0, index - shift));
+  }
+  indexSet.clear();
+  for (const index of next) {
+    indexSet.add(index);
+  }
+}
+
+function structuralContextState(scope) {
+  const normalized = normalizeViewScope(scope);
+  const point = contextPointForScope(normalized);
+  const table = primaryTableForScope(normalized);
+  const stateDefault = {
+    table,
+    point,
+    canInsertRowAbove: false,
+    canInsertRowBelow: false,
+    canDeleteRow: false,
+    canInsertColLeft: false,
+    canInsertColRight: false,
+    canDeleteCol: false,
+    deletableRowIndices: [],
+    selectedColumnIndices: [],
+  };
+  if (!table || !point) {
+    return stateDefault;
+  }
+
+  annotateSelectionGridForTable(table);
+  const selectedRowIndices = sortedContextRowIndices(normalized);
+  const selectedColumnIndices = sortedContextColumnIndices(normalized);
+  const selectedColumnSet = new Set(selectedColumnIndices);
+  const totalCols = Number.parseInt(table.dataset.selectionColCount || "0", 10) || 0;
+
+  const pointRow = rowByGridIndex(table, point.row);
+  const pointIsDataRow = rowIsDataRow(table, pointRow);
+  const deletableRowIndices = selectedRowIndices.filter((rowIndex) => {
+    const row = rowByGridIndex(table, rowIndex);
+    return rowIsDataRow(table, row);
+  });
+  const dataRowCount = Array.from(table.rows || []).filter((row) => rowIsDataRow(table, row)).length;
+
+  const simpleRectGrid = tableIsSimpleRectGrid(table);
+  const canDeleteCol = simpleRectGrid && selectedColumnSet.size > 0 && totalCols > selectedColumnSet.size;
+
+  return {
+    table,
+    point,
+    canInsertRowAbove: Boolean(pointIsDataRow),
+    canInsertRowBelow: Boolean(pointIsDataRow),
+    canDeleteRow: deletableRowIndices.length > 0 && dataRowCount > deletableRowIndices.length,
+    canInsertColLeft: simpleRectGrid && totalCols > 0,
+    canInsertColRight: simpleRectGrid && totalCols > 0,
+    canDeleteCol,
+    deletableRowIndices,
+    selectedColumnIndices,
+  };
+}
+
+function activeGridScopeForCommands() {
+  return normalizeViewScope(state.selectionScope || state.activeViewScope || "main");
+}
+
+function withTemporaryGridContext(scope, point, callback) {
+  const normalized = normalizeViewScope(scope);
+  const previousScope = state.contextMenuScope;
+  const previousPoint = state.contextMenuPoint;
+  state.contextMenuScope = normalized;
+  state.contextMenuPoint = point ? { ...point } : null;
+  try {
+    callback();
+  } finally {
+    state.contextMenuScope = previousScope;
+    state.contextMenuPoint = previousPoint;
+  }
+}
+
+function runRibbonGridAction(action, options = {}) {
+  const scope = activeGridScopeForCommands();
+  const point = contextPointForScope(scope);
+  if (options.requirePoint && !point) {
+    setText(el.statusText, options.emptyPointMessage || "Select a cell first.");
+    syncRibbonGridControlState();
+    return;
+  }
+  withTemporaryGridContext(scope, point, action);
+  syncRibbonGridControlState();
+}
+
+function syncRibbonGridControlState() {
+  const scope = activeGridScopeForCommands();
+  const point = contextPointForScope(scope);
+  const hasPoint = Boolean(point);
+  const bounds = boundsForScope(scope);
+  const hasGrid = bounds.maxRow >= 0 && bounds.maxCol >= 0;
+  const viewLayout = viewLayoutForScope(scope);
+  const freeze = effectiveFreezeForScope(
+    scope,
+    Number(viewLayout.lastAppliedFrozenCols || 0),
+    Number(viewLayout.lastAppliedFrozenRows || 0),
+  );
+  const structure = structuralContextState(scope);
+  const rowIndexes = collectContextRowIndices(scope);
+  const colIndexes = collectContextColumnIndices(scope);
+
+  if (el.ribbonGridScopeLabel) {
+    const scopeName = scope === "reference" ? "Detail view" : "Main view";
+    const pointLabel = hasPoint ? ` · Active: ${pointToAddress(point)}` : " · Select a cell to enable commands";
+    setText(el.ribbonGridScopeLabel, `${scopeName}${pointLabel}`);
+  }
+
+  if (el.ribbonFreezePanesBtn) {
+    setText(el.ribbonFreezePanesBtn, hasPoint ? `Freeze panes at ${pointToAddress(point)}` : "Freeze panes");
+    el.ribbonFreezePanesBtn.disabled = !hasPoint;
+  }
+  if (el.ribbonFreezeTopRowBtn) {
+    el.ribbonFreezeTopRowBtn.disabled = !hasGrid;
+  }
+  if (el.ribbonFreezeFirstColBtn) {
+    el.ribbonFreezeFirstColBtn.disabled = !hasGrid;
+  }
+  if (el.ribbonUnfreezePanesBtn) {
+    el.ribbonUnfreezePanesBtn.disabled = freeze.cols < 1 && freeze.rows < 1;
+  }
+
+  if (el.ribbonSelectRowBtn) {
+    el.ribbonSelectRowBtn.disabled = !hasPoint;
+  }
+  if (el.ribbonSelectColumnBtn) {
+    el.ribbonSelectColumnBtn.disabled = !hasPoint;
+  }
+  if (el.ribbonSelectAllBtn) {
+    el.ribbonSelectAllBtn.disabled = !hasGrid;
+  }
+
+  if (el.ribbonInsertRowAboveBtn) {
+    el.ribbonInsertRowAboveBtn.disabled = !structure.canInsertRowAbove;
+  }
+  if (el.ribbonInsertRowBelowBtn) {
+    el.ribbonInsertRowBelowBtn.disabled = !structure.canInsertRowBelow;
+  }
+  if (el.ribbonDeleteRowBtn) {
+    const deletableRows = structure.deletableRowIndices.length;
+    setText(el.ribbonDeleteRowBtn, deletableRows > 0 ? `Delete row (${deletableRows})` : "Delete row");
+    el.ribbonDeleteRowBtn.disabled = !structure.canDeleteRow;
+  }
+  if (el.ribbonHideRowsBtn) {
+    setText(el.ribbonHideRowsBtn, rowIndexes.size > 0 ? `Hide rows (${rowIndexes.size})` : "Hide rows");
+    el.ribbonHideRowsBtn.disabled = rowIndexes.size < 1;
+  }
+  if (el.ribbonUnhideRowsBtn) {
+    const hiddenRowsCount = viewLayout.hiddenRows.size;
+    setText(el.ribbonUnhideRowsBtn, hiddenRowsCount > 0 ? `Unhide rows (${hiddenRowsCount})` : "Unhide rows");
+    el.ribbonUnhideRowsBtn.disabled = hiddenRowsCount < 1;
+  }
+
+  if (el.ribbonInsertColLeftBtn) {
+    el.ribbonInsertColLeftBtn.disabled = !structure.canInsertColLeft;
+  }
+  if (el.ribbonInsertColRightBtn) {
+    el.ribbonInsertColRightBtn.disabled = !structure.canInsertColRight;
+  }
+  if (el.ribbonDeleteColBtn) {
+    const deletableCols = structure.selectedColumnIndices.length;
+    setText(el.ribbonDeleteColBtn, deletableCols > 0 ? `Delete column (${deletableCols})` : "Delete column");
+    el.ribbonDeleteColBtn.disabled = !structure.canDeleteCol;
+  }
+  if (el.ribbonHideColsBtn) {
+    setText(el.ribbonHideColsBtn, colIndexes.size > 0 ? `Hide columns (${colIndexes.size})` : "Hide columns");
+    el.ribbonHideColsBtn.disabled = colIndexes.size < 1;
+  }
+  if (el.ribbonUnhideColsBtn) {
+    const hiddenColsCount = viewLayout.hiddenCols.size;
+    setText(el.ribbonUnhideColsBtn, hiddenColsCount > 0 ? `Unhide columns (${hiddenColsCount})` : "Unhide columns");
+    el.ribbonUnhideColsBtn.disabled = hiddenColsCount < 1;
+  }
+}
+
+function createEmptyInsertedCell(row, sampleCell) {
+  const parentTag = row && row.parentElement ? row.parentElement.tagName : "";
+  const baseTag = sampleCell && sampleCell.tagName ? sampleCell.tagName : parentTag === "THEAD" ? "TH" : "TD";
+  const newCell = document.createElement(baseTag.toLowerCase());
+  if (sampleCell) {
+    newCell.className = sampleCell.className;
+  }
+  if (baseTag === "TH" && sampleCell && sampleCell.hasAttribute("scope")) {
+    newCell.setAttribute("scope", sampleCell.getAttribute("scope"));
+  }
+  newCell.textContent = "";
+  return newCell;
+}
+
+function clearRowRuntimeStyles(row) {
+  if (!row) {
+    return;
+  }
+  delete row.dataset.contextHiddenRow;
+  row.style.removeProperty("display");
+  restoreExcelRowHeight(row);
+  for (const cell of Array.from(row.cells || [])) {
+    cell.classList.remove(
+      ...GRID_SELECTION_CLASSNAMES,
+      "sticky-col",
+      "sticky-col-boundary",
+      "sticky-col-head",
+      "sticky-row",
+      "sticky-row-boundary",
+      "split-head-cell",
+    );
+    delete cell.dataset.contextHiddenCol;
+    delete cell.dataset.gridRow;
+    delete cell.dataset.gridRowEnd;
+    delete cell.dataset.gridRowSpan;
+    delete cell.dataset.gridColStart;
+    delete cell.dataset.gridColEnd;
+    delete cell.dataset.gridColSpan;
+    delete cell.dataset.colStart;
+    delete cell.dataset.colSpan;
+    delete cell.dataset.formula;
+    cell.style.removeProperty("display");
+    cell.style.removeProperty("left");
+    cell.style.removeProperty("top");
+    cell.style.removeProperty("z-index");
+    cell.style.removeProperty("background-color");
+    cell.style.removeProperty("height");
+    cell.style.removeProperty("min-height");
+    cell.style.removeProperty("box-sizing");
+    cell.textContent = "";
+  }
+}
+
+function applyStructuralEditForScope(scope, statusMessage) {
+  const normalized = normalizeViewScope(scope);
+  const freezeDefaults = freezeDefaultsForScope(normalized);
+  applyScopeLayoutOverrides(normalized, freezeDefaults.cols, freezeDefaults.rows);
+  clearGridSelectionModel();
+  setActiveViewScope(normalized);
+  setText(el.statusText, statusMessage);
+}
+
+function insertRowFromContext(position) {
+  const scope = normalizeViewScope(state.contextMenuScope || state.selectionScope || state.activeViewScope);
+  const structure = structuralContextState(scope);
+  if (!structure.table || !structure.point) {
+    setText(el.statusText, "Select a data row first.");
+    return;
+  }
+  if (position === "above" && !structure.canInsertRowAbove) {
+    setText(el.statusText, "Insert row is available on data rows only.");
+    return;
+  }
+  if (position === "below" && !structure.canInsertRowBelow) {
+    setText(el.statusText, "Insert row is available on data rows only.");
+    return;
+  }
+
+  const targetRow = rowByGridIndex(structure.table, structure.point.row);
+  if (!targetRow || !rowIsDataRow(structure.table, targetRow)) {
+    setText(el.statusText, "Insert row is available on data rows only.");
+    return;
+  }
+
+  const section = targetRow.parentElement;
+  if (!section) {
+    return;
+  }
+
+  const insertedRow = targetRow.cloneNode(true);
+  clearRowRuntimeStyles(insertedRow);
+  if (position === "below") {
+    section.insertBefore(insertedRow, targetRow.nextSibling);
+  } else {
+    section.insertBefore(insertedRow, targetRow);
+  }
+
+  const viewLayout = viewLayoutForScope(scope);
+  const insertAt = position === "below" ? structure.point.row + 1 : structure.point.row;
+  shiftIndexSetForInsert(viewLayout.hiddenRows, insertAt, 1);
+  applyStructuralEditForScope(scope, `Inserted 1 row (${position}) · ${selectionScopeLabel(scope)}`);
+}
+
+function deleteRowsFromContext() {
+  const scope = normalizeViewScope(state.contextMenuScope || state.selectionScope || state.activeViewScope);
+  const structure = structuralContextState(scope);
+  if (!structure.table) {
+    setText(el.statusText, "No table available for row delete.");
+    return;
+  }
+  if (!structure.canDeleteRow) {
+    setText(el.statusText, "Delete row requires selecting data rows (and keeping at least one row).");
+    return;
+  }
+
+  const sortedRowsDesc = [...structure.deletableRowIndices].sort((a, b) => b - a);
+  for (const rowIndex of sortedRowsDesc) {
+    const row = rowByGridIndex(structure.table, rowIndex);
+    if (row && row.parentElement) {
+      row.parentElement.removeChild(row);
+    }
+  }
+
+  const viewLayout = viewLayoutForScope(scope);
+  shiftIndexSetForDelete(viewLayout.hiddenRows, structure.deletableRowIndices);
+  applyStructuralEditForScope(scope, `Deleted ${structure.deletableRowIndices.length} row(s) · ${selectionScopeLabel(scope)}`);
+}
+
+function insertColumnFromContext(side) {
+  const scope = normalizeViewScope(state.contextMenuScope || state.selectionScope || state.activeViewScope);
+  const structure = structuralContextState(scope);
+  if (!structure.table || !structure.point) {
+    setText(el.statusText, "Select a column first.");
+    return;
+  }
+
+  const canInsert = side === "right" ? structure.canInsertColRight : structure.canInsertColLeft;
+  if (!canInsert) {
+    setText(el.statusText, "Insert column is available only for non-merged grid sections.");
+    return;
+  }
+
+  const selectedColumns = structure.selectedColumnIndices.length ? structure.selectedColumnIndices : [structure.point.col];
+  const anchorCol =
+    side === "right"
+      ? Math.max(...selectedColumns.map((value) => Number.parseInt(String(value), 10) || 0))
+      : Math.min(...selectedColumns.map((value) => Number.parseInt(String(value), 10) || 0));
+  const insertAt = side === "right" ? anchorCol + 1 : anchorCol;
+
+  for (const row of Array.from(structure.table.rows || [])) {
+    const cells = Array.from(row.cells || []);
+    const sampleIndex = side === "right" ? insertAt - 1 : insertAt;
+    const safeSampleIndex = Math.max(0, Math.min(cells.length - 1, sampleIndex));
+    const sampleCell = cells.length ? cells[safeSampleIndex] : null;
+    const newCell = createEmptyInsertedCell(row, sampleCell);
+    const refCell = cells[insertAt] || null;
+    row.insertBefore(newCell, refCell);
+  }
+
+  const viewLayout = viewLayoutForScope(scope);
+  shiftIndexSetForInsert(viewLayout.hiddenCols, insertAt, 1);
+  applyStructuralEditForScope(scope, `Inserted 1 column (${side}) · ${selectionScopeLabel(scope)}`);
+}
+
+function deleteColumnsFromContext() {
+  const scope = normalizeViewScope(state.contextMenuScope || state.selectionScope || state.activeViewScope);
+  const structure = structuralContextState(scope);
+  if (!structure.table) {
+    setText(el.statusText, "No table available for column delete.");
+    return;
+  }
+  if (!structure.canDeleteCol) {
+    setText(el.statusText, "Delete column is available only for non-merged grid sections.");
+    return;
+  }
+
+  const sortedColsDesc = [...structure.selectedColumnIndices].sort((a, b) => b - a);
+  for (const row of Array.from(structure.table.rows || [])) {
+    const cells = Array.from(row.cells || []);
+    for (const colIndex of sortedColsDesc) {
+      if (colIndex >= 0 && colIndex < cells.length) {
+        const targetCell = cells[colIndex];
+        if (targetCell && targetCell.parentElement === row) {
+          row.removeChild(targetCell);
+        }
+      }
+    }
+  }
+
+  const viewLayout = viewLayoutForScope(scope);
+  shiftIndexSetForDelete(viewLayout.hiddenCols, structure.selectedColumnIndices);
+  applyStructuralEditForScope(scope, `Deleted ${structure.selectedColumnIndices.length} column(s) · ${selectionScopeLabel(scope)}`);
+}
+
+function applyFreezeOverride(scope, freezeCols, freezeRows, statusLabel) {
+  const normalized = normalizeViewScope(scope);
+  const viewLayout = viewLayoutForScope(normalized);
+  viewLayout.frozenRowsOverride = Math.max(0, Number.parseInt(String(freezeRows || 0), 10) || 0);
+  viewLayout.frozenColsOverride = Math.max(0, Number.parseInt(String(freezeCols || 0), 10) || 0);
+
+  const applied = applyScopeLayoutOverrides(normalized, viewLayout.frozenColsOverride, viewLayout.frozenRowsOverride);
+  if (!applied) {
+    setText(el.statusText, "No table available to apply freeze.");
+    return false;
+  }
+
+  if (statusLabel === "unfreeze") {
+    setText(el.statusText, `Panes unfrozen · ${selectionScopeLabel(normalized)}`);
+  } else {
+    setText(
+      el.statusText,
+      `${statusLabel} · ${selectionScopeLabel(normalized)} · rows ${viewLayout.frozenRowsOverride}, columns ${viewLayout.frozenColsOverride}`,
+    );
+  }
+  return true;
+}
+
+function freezePanesFromContext() {
+  const scope = normalizeViewScope(state.contextMenuScope || state.selectionScope || state.activeViewScope);
+  const point = state.contextMenuPoint || state.selectionFocus;
+  if (!point) {
+    setText(el.statusText, "Select a cell first.");
+    return;
+  }
+
+  const freezeRows = Math.max(0, Number.parseInt(String(point.row || 0), 10) || 0);
+  const freezeCols = Math.max(0, Number.parseInt(String(point.col || 0), 10) || 0);
+  applyFreezeOverride(scope, freezeCols, freezeRows, "Freeze panes applied");
+}
+
+function freezeTopRowFromContext() {
+  const scope = normalizeViewScope(state.contextMenuScope || state.selectionScope || state.activeViewScope);
+  const bounds = boundsForScope(scope);
+  if (bounds.maxRow < 0) {
+    setText(el.statusText, "No rows available to freeze.");
+    return;
+  }
+  applyFreezeOverride(scope, 0, 1, "Freeze top row applied");
+}
+
+function freezeFirstColumnFromContext() {
+  const scope = normalizeViewScope(state.contextMenuScope || state.selectionScope || state.activeViewScope);
+  const bounds = boundsForScope(scope);
+  if (bounds.maxCol < 0) {
+    setText(el.statusText, "No columns available to freeze.");
+    return;
+  }
+  applyFreezeOverride(scope, 1, 0, "Freeze first column applied");
+}
+
+function unfreezePanesFromContext() {
+  const scope = normalizeViewScope(state.contextMenuScope || state.selectionScope || state.activeViewScope);
+  applyFreezeOverride(scope, 0, 0, "unfreeze");
+}
+
+function updateHiddenRowsFromContext(hide) {
+  const scope = normalizeViewScope(state.contextMenuScope || state.selectionScope || state.activeViewScope);
+  const viewLayout = viewLayoutForScope(scope);
+  const rowIndexes = collectContextRowIndices(scope);
+
+  if (hide) {
+    if (!rowIndexes.size) {
+      setText(el.statusText, "Select row cells first.");
+      return;
+    }
+    for (const rowIndex of rowIndexes) {
+      viewLayout.hiddenRows.add(rowIndex);
+    }
+    applyScopeVisibilityOverrides(scope);
+    if (state.selectionScope === scope) {
+      refreshGridSelectionVisuals();
+    }
+    setText(el.statusText, `Hidden ${rowIndexes.size} row(s) · ${selectionScopeLabel(scope)}`);
+    return;
+  }
+
+  if (rowIndexes.size) {
+    let removed = 0;
+    for (const rowIndex of rowIndexes) {
+      if (viewLayout.hiddenRows.delete(rowIndex)) {
+        removed += 1;
+      }
+    }
+    if (removed > 0) {
+      setText(el.statusText, `Unhidden selected row(s) · ${selectionScopeLabel(scope)}`);
+    } else {
+      viewLayout.hiddenRows.clear();
+      setText(el.statusText, `Unhidden all rows · ${selectionScopeLabel(scope)}`);
+    }
+  } else {
+    viewLayout.hiddenRows.clear();
+    setText(el.statusText, `Unhidden all rows · ${selectionScopeLabel(scope)}`);
+  }
+  applyScopeVisibilityOverrides(scope);
+  if (state.selectionScope === scope) {
+    refreshGridSelectionVisuals();
+  }
+}
+
+function updateHiddenColumnsFromContext(hide) {
+  const scope = normalizeViewScope(state.contextMenuScope || state.selectionScope || state.activeViewScope);
+  const viewLayout = viewLayoutForScope(scope);
+  const colIndexes = collectContextColumnIndices(scope);
+
+  if (hide) {
+    if (!colIndexes.size) {
+      setText(el.statusText, "Select column cells first.");
+      return;
+    }
+    for (const colIndex of colIndexes) {
+      viewLayout.hiddenCols.add(colIndex);
+    }
+    applyScopeVisibilityOverrides(scope);
+    if (state.selectionScope === scope) {
+      refreshGridSelectionVisuals();
+    }
+    setText(el.statusText, `Hidden ${colIndexes.size} column(s) · ${selectionScopeLabel(scope)}`);
+    return;
+  }
+
+  if (colIndexes.size) {
+    let removed = 0;
+    for (const colIndex of colIndexes) {
+      if (viewLayout.hiddenCols.delete(colIndex)) {
+        removed += 1;
+      }
+    }
+    if (removed > 0) {
+      setText(el.statusText, `Unhidden selected column(s) · ${selectionScopeLabel(scope)}`);
+    } else {
+      viewLayout.hiddenCols.clear();
+      setText(el.statusText, `Unhidden all columns · ${selectionScopeLabel(scope)}`);
+    }
+  } else {
+    viewLayout.hiddenCols.clear();
+    setText(el.statusText, `Unhidden all columns · ${selectionScopeLabel(scope)}`);
+  }
+  applyScopeVisibilityOverrides(scope);
+  if (state.selectionScope === scope) {
+    refreshGridSelectionVisuals();
+  }
+}
+
+function updateHiddenRowsAndColumnsFromContext(hide) {
+  const scope = normalizeViewScope(state.contextMenuScope || state.selectionScope || state.activeViewScope);
+  const viewLayout = viewLayoutForScope(scope);
+  const rowIndexes = collectContextRowIndices(scope);
+  const colIndexes = collectContextColumnIndices(scope);
+
+  if (hide) {
+    if (!rowIndexes.size && !colIndexes.size) {
+      setText(el.statusText, "Select cells first.");
+      return;
+    }
+    for (const rowIndex of rowIndexes) {
+      viewLayout.hiddenRows.add(rowIndex);
+    }
+    for (const colIndex of colIndexes) {
+      viewLayout.hiddenCols.add(colIndex);
+    }
+    applyScopeVisibilityOverrides(scope);
+    if (state.selectionScope === scope) {
+      refreshGridSelectionVisuals();
+    }
+    setText(
+      el.statusText,
+      `Hidden rows ${rowIndexes.size}, columns ${colIndexes.size} · ${selectionScopeLabel(scope)}`,
+    );
+    return;
+  }
+
+  if (rowIndexes.size || colIndexes.size) {
+    let removedRows = 0;
+    let removedCols = 0;
+    for (const rowIndex of rowIndexes) {
+      if (viewLayout.hiddenRows.delete(rowIndex)) {
+        removedRows += 1;
+      }
+    }
+    for (const colIndex of colIndexes) {
+      if (viewLayout.hiddenCols.delete(colIndex)) {
+        removedCols += 1;
+      }
+    }
+    if (removedRows > 0 || removedCols > 0) {
+      setText(
+        el.statusText,
+        `Unhidden selected rows ${removedRows}, columns ${removedCols} · ${selectionScopeLabel(scope)}`,
+      );
+    } else {
+      viewLayout.hiddenRows.clear();
+      viewLayout.hiddenCols.clear();
+      setText(el.statusText, `Unhidden all rows + columns · ${selectionScopeLabel(scope)}`);
+    }
+  } else {
+    viewLayout.hiddenRows.clear();
+    viewLayout.hiddenCols.clear();
+    setText(el.statusText, `Unhidden all rows + columns · ${selectionScopeLabel(scope)}`);
+  }
+  applyScopeVisibilityOverrides(scope);
+  if (state.selectionScope === scope) {
+    refreshGridSelectionVisuals();
+  }
+}
+
+function buildSelectionValueMap(scope) {
+  const valueMap = new Map();
+  for (const table of tablesForScope(scope)) {
+    for (const cell of table.querySelectorAll("th, td")) {
+      const row = Number.parseInt(cell.dataset.gridRow || "", 10);
+      const colStart = Number.parseInt(cell.dataset.gridColStart || "", 10);
+      const colEnd = Number.parseInt(cell.dataset.gridColEnd || "", 10);
+      if (!Number.isFinite(row) || !Number.isFinite(colStart) || !Number.isFinite(colEnd)) {
+        continue;
+      }
+      const textValue = String(cell.textContent || "").replace(/\s+/g, " ").trim();
+      for (let col = colStart; col <= colEnd; col += 1) {
+        const key = `${row}:${col}`;
+        if (!valueMap.has(key)) {
+          valueMap.set(key, textValue);
+        }
+      }
+    }
+  }
+  return valueMap;
+}
+
+async function writeTextToClipboard(text) {
+  const normalizedText = String(text || "");
+  inMemoryClipboardText = normalizedText;
+  if (navigator.clipboard && typeof navigator.clipboard.writeText === "function" && window.isSecureContext) {
+    await navigator.clipboard.writeText(normalizedText);
+    return;
+  }
+  const textarea = document.createElement("textarea");
+  textarea.value = normalizedText;
+  textarea.setAttribute("readonly", "true");
+  textarea.style.position = "fixed";
+  textarea.style.left = "-9999px";
+  document.body.appendChild(textarea);
+  textarea.select();
+  const copied = document.execCommand("copy");
+  textarea.remove();
+  if (!copied) {
+    throw new Error("Clipboard copy is not available in this browser context.");
+  }
+}
+
+async function readTextFromClipboard() {
+  if (navigator.clipboard && typeof navigator.clipboard.readText === "function" && window.isSecureContext) {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (typeof text === "string" && text.length > 0) {
+        inMemoryClipboardText = text;
+      }
+      return String(text || "");
+    } catch {
+      // Fall back to in-memory clipboard when read permission is blocked.
+    }
+  }
+
+  if (inMemoryClipboardText.length > 0) {
+    return inMemoryClipboardText;
+  }
+  throw new Error("Clipboard paste is not available in this browser context.");
+}
+
+async function copyCurrentSelection() {
+  const scope = state.selectionScope;
+  const ranges = Array.isArray(state.selectionRanges) ? state.selectionRanges : [];
+  if (!scope || !ranges.length) {
+    setText(el.statusText, "Select cells first.");
+    return;
+  }
+
+  annotateSelectionGridForScope(scope);
+  const valueMap = buildSelectionValueMap(scope);
+  const blocks = [];
+  for (const rawRange of ranges) {
+    const range = normalizeSelectionRange(rawRange);
+    const rowLines = [];
+    for (let row = range.rowStart; row <= range.rowEnd; row += 1) {
+      const cells = [];
+      for (let col = range.colStart; col <= range.colEnd; col += 1) {
+        cells.push(valueMap.get(`${row}:${col}`) || "");
+      }
+      rowLines.push(cells.join("\t"));
+    }
+    blocks.push(rowLines.join("\n"));
+  }
+
+  await writeTextToClipboard(blocks.join("\n\n"));
+  setText(el.statusText, `Copied ${ranges.length} selection area(s).`);
+}
+
+function parseClipboardMatrix(text) {
+  const normalizedText = String(text || "").replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  if (!normalizedText.length) {
+    return [];
+  }
+  const primaryBlock = normalizedText.split(/\n{2,}/)[0] || "";
+  if (!primaryBlock.length) {
+    return [];
+  }
+  const lines = primaryBlock.split("\n");
+  if (lines.length > 1 && lines[lines.length - 1] === "") {
+    lines.pop();
+  }
+  if (!lines.length) {
+    return [];
+  }
+  return lines.map((line) => line.split("\t"));
+}
+
+function buildPointCellMap(scope) {
+  const pointCellMap = new Map();
+  for (const table of tablesForScope(scope)) {
+    annotateSelectionGridForTable(table);
+    for (const cell of table.querySelectorAll("th, td")) {
+      const rowStart = Number.parseInt(cell.dataset.gridRow || "", 10);
+      const rowEnd = Number.parseInt(cell.dataset.gridRowEnd || cell.dataset.gridRow || "", 10);
+      const colStart = Number.parseInt(cell.dataset.gridColStart || "", 10);
+      const colEnd = Number.parseInt(cell.dataset.gridColEnd || "", 10);
+      if (
+        !Number.isFinite(rowStart) ||
+        !Number.isFinite(rowEnd) ||
+        !Number.isFinite(colStart) ||
+        !Number.isFinite(colEnd)
+      ) {
+        continue;
+      }
+      for (let row = rowStart; row <= rowEnd; row += 1) {
+        for (let col = colStart; col <= colEnd; col += 1) {
+          const key = `${row}:${col}`;
+          if (!pointCellMap.has(key)) {
+            pointCellMap.set(key, cell);
+          }
+        }
+      }
+    }
+  }
+  return pointCellMap;
+}
+
+function pastePointForScope(scope) {
+  const normalized = normalizeViewScope(scope);
+  if (state.contextMenuScope === normalized && state.contextMenuPoint) {
+    return { ...state.contextMenuPoint };
+  }
+  if (state.selectionScope === normalized && state.selectionFocus) {
+    return { ...state.selectionFocus };
+  }
+  if (state.selectionScope === normalized && state.selectionAnchor) {
+    return { ...state.selectionAnchor };
+  }
+  if (state.selectionScope === normalized && Array.isArray(state.selectionRanges) && state.selectionRanges.length) {
+    const firstRange = normalizeSelectionRange(state.selectionRanges[0]);
+    return { row: firstRange.rowStart, col: firstRange.colStart };
+  }
+  return null;
+}
+
+function formulaDisplayForCell(cell) {
+  if (!cell) {
+    return "";
+  }
+  const formula = String(cell.dataset.formula || "").trim();
+  if (formula.length) {
+    return formula;
+  }
+  return String(cell.textContent || "").replace(/\s+/g, " ").trim();
+}
+
+function formatFormulaResult(value) {
+  if (Array.isArray(value)) {
+    return formatFormulaResult(value.length ? value[0] : "");
+  }
+  if (value === null || value === undefined || value === "") {
+    return "";
+  }
+  if (typeof value === "boolean") {
+    return value ? "TRUE" : "FALSE";
+  }
+  if (typeof value === "number") {
+    if (!Number.isFinite(value)) {
+      return "#NUM!";
+    }
+    if (Number.isInteger(value)) {
+      return String(value);
+    }
+    return String(Number.parseFloat(value.toFixed(12)));
   }
   return String(value);
+}
+
+function focusCellForScope(scope, pointCellMap = null) {
+  const point = pastePointForScope(scope);
+  if (!point) {
+    return null;
+  }
+  const map = pointCellMap || buildPointCellMap(scope);
+  return map.get(`${point.row}:${point.col}`) || null;
+}
+
+function collectFormulaTargetCells(scope, pointCellMap) {
+  const targets = [];
+  const seen = new Set();
+  const map = pointCellMap || buildPointCellMap(scope);
+  const ranges =
+    state.selectionScope === scope && Array.isArray(state.selectionRanges) ? state.selectionRanges : [];
+
+  if (ranges.length) {
+    for (const rawRange of ranges) {
+      const range = normalizeSelectionRange(rawRange);
+      for (let row = range.rowStart; row <= range.rowEnd; row += 1) {
+        for (let col = range.colStart; col <= range.colEnd; col += 1) {
+          const cell = map.get(`${row}:${col}`);
+          if (!cell || seen.has(cell)) {
+            continue;
+          }
+          seen.add(cell);
+          targets.push(cell);
+        }
+      }
+    }
+  }
+
+  if (!targets.length) {
+    const focus = focusCellForScope(scope, map);
+    if (focus) {
+      targets.push(focus);
+    }
+  }
+
+  return targets;
+}
+
+function jumpToAddressFromNameBox() {
+  if (!el.formulaNameBox) {
+    return;
+  }
+  const requested = String(el.formulaNameBox.value || "").trim();
+  const point = parseExcelAddress(requested);
+  if (!point) {
+    setText(el.statusText, `Invalid address "${requested}". Use format like A1.`);
+    return;
+  }
+
+  const scope = normalizeViewScope(state.selectionScope || state.activeViewScope || "main");
+  const bounds = boundsForScope(scope);
+  if (
+    !Number.isFinite(bounds.maxRow) ||
+    !Number.isFinite(bounds.maxCol) ||
+    point.row < 0 ||
+    point.col < 0 ||
+    point.row > bounds.maxRow ||
+    point.col > bounds.maxCol
+  ) {
+    setText(el.statusText, `Address ${requested.toUpperCase()} is outside the visible ${selectionScopeLabel(scope)}.`);
+    return;
+  }
+
+  selectSingleGridPoint(scope, point);
+  const pointMap = buildPointCellMap(scope);
+  const cell = pointMap.get(`${point.row}:${point.col}`) || null;
+  if (cell && typeof cell.scrollIntoView === "function") {
+    cell.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }
+  setText(el.statusText, `Selected ${pointToAddress(point)} · ${selectionScopeLabel(scope)}.`);
+}
+
+function cancelFormulaEdit() {
+  const scope = normalizeViewScope(state.selectionScope || state.activeViewScope || "main");
+  const pointMap = buildPointCellMap(scope);
+  const focusCell = focusCellForScope(scope, pointMap);
+  if (el.formulaInput) {
+    el.formulaInput.value = formulaDisplayForCell(focusCell);
+  }
+  if (el.formulaNameBox && state.selectionFocus) {
+    el.formulaNameBox.value = pointToAddress(state.selectionFocus);
+  }
+}
+
+function applyFormulaInput() {
+  if (!el.formulaInput) {
+    return;
+  }
+  const rawInput = String(el.formulaInput.value || "");
+  const trimmedInput = rawInput.trim();
+  const scope = normalizeViewScope(state.selectionScope || state.activeViewScope || "main");
+  const pointMap = buildPointCellMap(scope);
+  const targetCells = collectFormulaTargetCells(scope, pointMap);
+
+  if (!targetCells.length) {
+    setText(el.statusText, "Select a destination cell first.");
+    return;
+  }
+
+  let renderedValue = "";
+  let storedFormula = "";
+  if (!trimmedInput.length) {
+    renderedValue = "";
+    storedFormula = "";
+  } else if (trimmedInput.startsWith("=")) {
+    const computedValue = evaluateFormulaExpression(trimmedInput, scope, pointMap);
+    renderedValue = formatFormulaResult(computedValue);
+    storedFormula = trimmedInput;
+  } else {
+    renderedValue = rawInput;
+    storedFormula = "";
+  }
+
+  for (const cell of targetCells) {
+    cell.textContent = renderedValue;
+    if (storedFormula) {
+      cell.dataset.formula = storedFormula;
+    } else {
+      delete cell.dataset.formula;
+    }
+  }
+
+  const focusPoint = pastePointForScope(scope);
+  if (focusPoint) {
+    selectSingleGridPoint(scope, focusPoint);
+  } else {
+    refreshGridSelectionVisuals();
+  }
+
+  if (el.formulaInput) {
+    el.formulaInput.value = storedFormula || renderedValue;
+  }
+
+  const targetCount = targetCells.length;
+  if (storedFormula) {
+    setText(el.statusText, `Formula applied to ${targetCount} cell${targetCount === 1 ? "" : "s"} (${selectionScopeLabel(scope)}).`);
+    return;
+  }
+  if (!trimmedInput.length) {
+    setText(el.statusText, `Cleared ${targetCount} cell${targetCount === 1 ? "" : "s"} (${selectionScopeLabel(scope)}).`);
+    return;
+  }
+  setText(el.statusText, `Updated ${targetCount} cell${targetCount === 1 ? "" : "s"} (${selectionScopeLabel(scope)}).`);
+}
+
+async function pasteClipboardIntoGrid() {
+  const scope = normalizeViewScope(state.contextMenuScope || state.selectionScope || state.activeViewScope || "main");
+  const startPoint = pastePointForScope(scope);
+  if (!startPoint) {
+    setText(el.statusText, "Select a destination cell first.");
+    return;
+  }
+
+  const clipboardText = await readTextFromClipboard();
+  const matrix = parseClipboardMatrix(clipboardText);
+  if (!matrix.length) {
+    setText(el.statusText, "Clipboard is empty.");
+    return;
+  }
+
+  annotateSelectionGridForScope(scope);
+  const pointCellMap = buildPointCellMap(scope);
+  if (!pointCellMap.size) {
+    setText(el.statusText, "No destination cells available for paste.");
+    return;
+  }
+
+  const assignmentMap = new Map();
+  const bounds = boundsForScope(scope);
+  const selectionRanges =
+    state.selectionScope === scope && Array.isArray(state.selectionRanges) ? state.selectionRanges : [];
+
+  if (matrix.length === 1 && matrix[0].length === 1 && selectionRanges.length) {
+    const value = String(matrix[0][0] ?? "");
+    for (const rawRange of selectionRanges) {
+      const range = normalizeSelectionRange(rawRange);
+      for (let row = range.rowStart; row <= range.rowEnd; row += 1) {
+        for (let col = range.colStart; col <= range.colEnd; col += 1) {
+          const cell = pointCellMap.get(`${row}:${col}`);
+          if (cell && !assignmentMap.has(cell)) {
+            assignmentMap.set(cell, value);
+          }
+        }
+      }
+    }
+  } else {
+    for (let rowOffset = 0; rowOffset < matrix.length; rowOffset += 1) {
+      const sourceRow = matrix[rowOffset] || [];
+      for (let colOffset = 0; colOffset < sourceRow.length; colOffset += 1) {
+        const targetRow = startPoint.row + rowOffset;
+        const targetCol = startPoint.col + colOffset;
+        if (targetRow < 0 || targetCol < 0 || targetRow > bounds.maxRow || targetCol > bounds.maxCol) {
+          continue;
+        }
+        const cell = pointCellMap.get(`${targetRow}:${targetCol}`);
+        if (cell && !assignmentMap.has(cell)) {
+          assignmentMap.set(cell, String(sourceRow[colOffset] ?? ""));
+        }
+      }
+    }
+  }
+
+  if (!assignmentMap.size) {
+    setText(el.statusText, "Paste target is outside the visible grid.");
+    return;
+  }
+
+  for (const [cell, value] of assignmentMap) {
+    cell.textContent = value;
+    delete cell.dataset.formula;
+  }
+
+  state.selectionScope = scope;
+  if (!Array.isArray(state.selectionRanges) || !state.selectionRanges.length) {
+    state.selectionAnchor = { ...startPoint };
+    state.selectionFocus = { ...startPoint };
+    state.selectionRanges = [rangeFromScopePoints(scope, startPoint, startPoint)];
+  }
+  refreshGridSelectionVisuals();
+
+  const pastedRows = matrix.length;
+  const pastedCols = matrix.reduce((max, row) => Math.max(max, row.length), 0);
+  setText(
+    el.statusText,
+    `Pasted ${pastedRows}x${pastedCols} into ${selectionScopeLabel(scope)} (${assignmentMap.size} cell${
+      assignmentMap.size === 1 ? "" : "s"
+    }).`,
+  );
+}
+
+function clearGridSelectionClasses(scope = null) {
+  const scopes = scope ? [scope] : ["main", "reference"];
+  for (const scopeName of scopes) {
+    for (const table of tablesForScope(scopeName)) {
+      for (const cell of table.querySelectorAll("th, td")) {
+        cell.classList.remove(...GRID_SELECTION_CLASSNAMES);
+      }
+    }
+  }
+}
+
+function updateSelectionStatusBar(scope, selectedCells, focusCellText = "", focusCell = null) {
+  const ranges = Array.isArray(state.selectionRanges) ? state.selectionRanges : [];
+  const focus = state.selectionFocus;
+
+  if (!scope || !ranges.length || !selectedCells.length) {
+    resetSelectionStatusBar();
+    return;
+  }
+
+  const numericValues = [];
+  let nonEmptyCount = 0;
+  for (const cell of selectedCells) {
+    const compactText = String(cell.textContent || "").replace(/\s+/g, " ").trim();
+    if (compactText.length > 0) {
+      nonEmptyCount += 1;
+    }
+    const numeric = parseNumericCellValue(cell.textContent || "");
+    if (Number.isFinite(numeric)) {
+      numericValues.push(numeric);
+    }
+  }
+
+  const sum = numericValues.reduce((acc, value) => acc + value, 0);
+  const avg = numericValues.length ? sum / numericValues.length : NaN;
+  const min = numericValues.length
+    ? numericValues.reduce((current, value) => (value < current ? value : current), numericValues[0])
+    : NaN;
+  const max = numericValues.length
+    ? numericValues.reduce((current, value) => (value > current ? value : current), numericValues[0])
+    : NaN;
+
+  setActiveViewScope(scope, { refresh: false });
+  setText(el.statusSelectionScope, statusScopeLabel(scope, true));
+  setText(el.statusSelectionAddress, focus ? pointToAddress(focus) : "-");
+  const lastRange = ranges[ranges.length - 1] || null;
+  const rangeAddress = rangeToAddress(lastRange);
+  const extraAreas = ranges.length > 1 ? ` (+${ranges.length - 1} area)` : "";
+  setText(el.statusSelectionRange, `${rangeAddress}${extraAreas}`);
+  setText(el.statusSelectionCellCount, `Cells: ${selectedCells.length}`);
+  setText(el.statusSelectionCount, `CountA: ${nonEmptyCount}`);
+  setText(el.statusSelectionNumericCount, `Numbers: ${numericValues.length}`);
+  setText(el.statusSelectionSum, `Sum: ${numericValues.length ? formatMetricNumber(sum) : "-"}`);
+  setText(el.statusSelectionAvg, `Avg: ${numericValues.length ? formatMetricNumber(avg) : "-"}`);
+  setText(el.statusSelectionMin, `Min: ${numericValues.length ? formatMetricNumber(min) : "-"}`);
+  setText(el.statusSelectionMax, `Max: ${numericValues.length ? formatMetricNumber(max) : "-"}`);
+  if (el.formulaNameBox && document.activeElement !== el.formulaNameBox) {
+    el.formulaNameBox.value = focus ? pointToAddress(focus) : "A1";
+  }
+  if (el.formulaInput && document.activeElement !== el.formulaInput) {
+    const formulaValue = focusCell ? String(focusCell.dataset.formula || "").trim() : "";
+    el.formulaInput.value = formulaValue || String(focusCellText || "");
+  }
+  scheduleFloatingLayoutMetricsSync();
+}
+
+function refreshGridSelectionVisuals() {
+  const scope = state.selectionScope;
+  const ranges = Array.isArray(state.selectionRanges) ? state.selectionRanges : [];
+  const normalizedRanges = ranges.map((range) => normalizeSelectionRange(range));
+  clearGridSelectionClasses();
+
+  if (!scope || !normalizedRanges.length) {
+    resetSelectionStatusBar();
+    syncRibbonGridControlState();
+    return;
+  }
+
+  annotateSelectionGridForScope(scope);
+  const selectedCells = [];
+  const focus = state.selectionFocus;
+  let focusCell = null;
+  let focusCellText = "";
+
+  for (const table of tablesForScope(scope)) {
+    for (const cell of table.querySelectorAll("th, td")) {
+      const rowStart = Number.parseInt(cell.dataset.gridRow || "", 10);
+      const rowEnd = Number.parseInt(cell.dataset.gridRowEnd || cell.dataset.gridRow || "", 10);
+      const colStart = Number.parseInt(cell.dataset.gridColStart || "", 10);
+      const colEnd = Number.parseInt(cell.dataset.gridColEnd || "", 10);
+      if (
+        !Number.isFinite(rowStart) ||
+        !Number.isFinite(rowEnd) ||
+        !Number.isFinite(colStart) ||
+        !Number.isFinite(colEnd)
+      ) {
+        continue;
+      }
+
+      const selected = normalizedRanges.some((range) => rangeIncludesCell(range, rowStart, rowEnd, colStart, colEnd));
+      if (!selected) {
+        continue;
+      }
+      cell.classList.add("grid-cell-selected");
+      const edgeClasses = selectionEdgeClassesForCell(rowStart, rowEnd, colStart, colEnd, normalizedRanges);
+      if (edgeClasses.length) {
+        cell.classList.add(...edgeClasses);
+      }
+      selectedCells.push(cell);
+
+      if (focus && focus.row >= rowStart && focus.row <= rowEnd && focus.col >= colStart && focus.col <= colEnd) {
+        cell.classList.add("grid-cell-active");
+        if (!focusCell) {
+          focusCell = cell;
+        }
+        if (!focusCellText) {
+          focusCellText = String(cell.textContent || "").replace(/\s+/g, " ").trim();
+        }
+      }
+    }
+  }
+
+  updateSelectionStatusBar(scope, selectedCells, focusCellText, focusCell);
+  syncRibbonGridControlState();
+}
+
+function clearGridSelectionModel() {
+  state.selectionScope = null;
+  state.selectionRanges = [];
+  state.selectionAnchor = null;
+  state.selectionFocus = null;
+  state.selectionDrag = null;
+  clearGridSelectionClasses();
+  resetSelectionStatusBar();
+  hideGridContextMenu();
+  syncRibbonGridControlState();
+}
+
+function applySelectionDragPoint(point) {
+  if (!state.selectionDrag || !point) {
+    return;
+  }
+  const drag = state.selectionDrag;
+  state.selectionScope = drag.scope;
+  state.selectionFocus = point;
+  state.selectionRanges = [...drag.baseRanges, rangeFromScopePoints(drag.scope, drag.anchor, point)];
+  refreshGridSelectionVisuals();
+}
+
+function startGridSelection(event) {
+  if (event.button !== 0) {
+    return;
+  }
+  const cell = event.target instanceof HTMLElement ? event.target.closest("th, td") : null;
+  if (!cell) {
+    return;
+  }
+  const scope = selectionScopeForCell(cell);
+  if (!scope) {
+    return;
+  }
+  setActiveViewScope(scope, { refresh: false });
+  annotateSelectionGridForScope(scope);
+  const point = selectionPointForCell(cell);
+  if (!point) {
+    return;
+  }
+
+  const sameScope = state.selectionScope === scope;
+  const additive = Boolean(event.ctrlKey || event.metaKey);
+  const extend = Boolean(event.shiftKey && sameScope && state.selectionAnchor);
+  const anchor = extend ? state.selectionAnchor : point;
+  const baseRanges = additive && sameScope ? [...(state.selectionRanges || [])] : [];
+
+  state.selectionScope = scope;
+  state.selectionAnchor = anchor;
+  state.selectionFocus = point;
+  state.selectionRanges = [...baseRanges, rangeFromScopePoints(scope, anchor, point)];
+  state.selectionDrag = {
+    scope,
+    anchor,
+    baseRanges,
+  };
+
+  event.preventDefault();
+  refreshGridSelectionVisuals();
+}
+
+function moveGridSelection(event) {
+  if (!state.selectionDrag || !(event.buttons & 1)) {
+    return;
+  }
+  const cell = event.target instanceof HTMLElement ? event.target.closest("th, td") : null;
+  if (!cell) {
+    return;
+  }
+  const scope = selectionScopeForCell(cell);
+  if (!scope || scope !== state.selectionDrag.scope) {
+    return;
+  }
+  const point = selectionPointForCell(cell);
+  applySelectionDragPoint(point);
+}
+
+function endGridSelection() {
+  state.selectionDrag = null;
 }
 
 function filteredRows(rows) {
@@ -2290,17 +5790,50 @@ async function renderMainStyled(selectedMonths) {
   }
 
   el.mainTable.innerHTML = payload.html;
-  const mainSourceTable = el.mainTable.querySelector("table.main-source-table");
-  const frozenCount = Number.parseInt(String(payload.frozen_count ?? 0), 10) || 0;
-  enhanceFrozenViewport(mainSourceTable, frozenCount);
+  const payloadFrozenCols = Number.parseInt(String(payload.frozen_columns ?? payload.frozen_count ?? 0), 10) || 0;
+  const payloadFrozenRows = Number.parseInt(String(payload.frozen_rows ?? 0), 10) || 0;
+  applyScopeLayoutOverrides("main", payloadFrozenCols, payloadFrozenRows);
+
+  const hiddenRowsSkipped = Number.parseInt(String(payload.hidden_rows_skipped ?? 0), 10) || 0;
+  const hiddenColsSkipped = Number.parseInt(String(payload.hidden_columns_skipped ?? 0), 10) || 0;
+  const mainLayout = viewLayoutForScope("main");
+  const effectiveMainFreeze = {
+    rows: Math.max(0, Number.parseInt(String(mainLayout.lastAppliedFrozenRows || 0), 10) || 0),
+    cols: Math.max(0, Number.parseInt(String(mainLayout.lastAppliedFrozenCols || 0), 10) || 0),
+  };
+  const metaExtras = [];
+  if (effectiveMainFreeze.rows !== payloadFrozenRows || effectiveMainFreeze.cols !== payloadFrozenCols) {
+    metaExtras.push(
+      `normalized freeze from ${payloadFrozenRows} row(s), ${payloadFrozenCols} column(s)`,
+    );
+  }
+  if (effectiveMainFreeze.rows > 0 || effectiveMainFreeze.cols > 0) {
+    metaExtras.push(`freeze ${effectiveMainFreeze.rows} row(s), ${effectiveMainFreeze.cols} column(s)`);
+  }
+  if (hiddenRowsSkipped > 0 || hiddenColsSkipped > 0) {
+    metaExtras.push(`hidden skipped ${hiddenRowsSkipped} row(s), ${hiddenColsSkipped} column(s)`);
+  }
+  if (mainLayout.hiddenRows.size > 0 || mainLayout.hiddenCols.size > 0) {
+    metaExtras.push(`local hidden ${mainLayout.hiddenRows.size} row(s), ${mainLayout.hiddenCols.size} column(s)`);
+  }
+  const extrasText = metaExtras.length ? ` · ${metaExtras.join(" · ")}` : "";
 
   const monthCount = (payload.selected_month_labels || []).length;
   if (monthCount > 0) {
-    setText(el.mainMeta, `${payload.sheet_name} · rows ${payload.row_count} · ${payload.col_count} columns · ${monthCount} month group(s)`);
+    setText(
+      el.mainMeta,
+      `${payload.sheet_name} · rows ${payload.row_count} · ${payload.col_count} columns · ${monthCount} month group(s)${extrasText}`,
+    );
   } else if (payload.filterable) {
-    setText(el.mainMeta, `${payload.sheet_name} · rows ${payload.row_count} · ${payload.col_count} columns · fixed-layout mode`);
+    setText(
+      el.mainMeta,
+      `${payload.sheet_name} · rows ${payload.row_count} · ${payload.col_count} columns · fixed-layout mode${extrasText}`,
+    );
   } else {
-    setText(el.mainMeta, `${payload.sheet_name} · rows ${payload.row_count} · ${payload.col_count} columns · full-sheet mode`);
+    setText(
+      el.mainMeta,
+      `${payload.sheet_name} · rows ${payload.row_count} · ${payload.col_count} columns · full-sheet mode${extrasText}`,
+    );
   }
 }
 
@@ -2319,8 +5852,27 @@ function renderReferencePanel(referenceSheet, selectedMonthsRef, referenceTab) {
   }
 
   renderTable(el.refTable, referenceSheet, selectedMonthsRef);
-  enhanceFrozenViewport(el.refTable, 4);
+  const defaultRefFrozenCols = 4;
+  const defaultRefFrozenRows = 0;
+  applyScopeLayoutOverrides("reference", defaultRefFrozenCols, defaultRefFrozenRows);
+  const refLayout = viewLayoutForScope("reference");
+  const effectiveRefFreeze = {
+    rows: Math.max(0, Number.parseInt(String(refLayout.lastAppliedFrozenRows || 0), 10) || 0),
+    cols: Math.max(0, Number.parseInt(String(refLayout.lastAppliedFrozenCols || 0), 10) || 0),
+  };
   renderMeta(el.refMeta, referenceSheet, selectedMonthsRef);
+  if (effectiveRefFreeze.rows !== defaultRefFrozenRows || effectiveRefFreeze.cols !== defaultRefFrozenCols) {
+    appendText(
+      el.refMeta,
+      ` · normalized freeze from ${defaultRefFrozenRows} row(s), ${defaultRefFrozenCols} column(s)`,
+    );
+  }
+  if (effectiveRefFreeze.rows > 0 || effectiveRefFreeze.cols > 0) {
+    appendText(el.refMeta, ` · freeze ${effectiveRefFreeze.rows} row(s), ${effectiveRefFreeze.cols} column(s)`);
+  }
+  if (refLayout.hiddenRows.size > 0 || refLayout.hiddenCols.size > 0) {
+    appendText(el.refMeta, ` · local hidden ${refLayout.hiddenRows.size} row(s), ${refLayout.hiddenCols.size} column(s)`);
+  }
 
   if (!selectedMonthsRef.length) {
     appendText(el.refMeta, " · no months matched this mode");
@@ -2349,6 +5901,7 @@ async function render() {
 
   const selectedMonthsRef = refSheetData ? pickMonths(refSheetData, "ref") : [];
   renderReferencePanel(refSheetData, selectedMonthsRef, referenceTab);
+  clearGridSelectionModel();
 
   const mainModeText = modeIsSameMonthYears(el.mainModeSelect.value)
     ? `Main: same month over past ${currentN(el.mainNInput)} year(s)`
@@ -2439,6 +5992,721 @@ async function onWorkbookChange() {
 }
 
 function bindEvents() {
+  if (el.themeSelect) {
+    el.themeSelect.addEventListener("change", () => {
+      applyThemePreference(el.themeSelect.value);
+    });
+  }
+
+  const handleSystemThemeChange = () => {
+    if (state.themePreference !== "system") {
+      return;
+    }
+    applyThemePreference("system", { persist: false });
+  };
+  if (themeMediaQuery && typeof themeMediaQuery.addEventListener === "function") {
+    themeMediaQuery.addEventListener("change", handleSystemThemeChange);
+  } else if (themeMediaQuery && typeof themeMediaQuery.addListener === "function") {
+    themeMediaQuery.addListener(handleSystemThemeChange);
+  }
+  window.addEventListener(
+    "load",
+    () => {
+      scheduleFloatingLayoutMetricsSync();
+    },
+    { once: true },
+  );
+  if (document.fonts && document.fonts.ready && typeof document.fonts.ready.then === "function") {
+    document.fonts.ready
+      .then(() => {
+        scheduleFloatingLayoutMetricsSync();
+      })
+      .catch(() => {
+        // Ignore font loading errors and continue with existing measurements.
+      });
+  }
+
+  if (typeof ribbonApi.bindRibbonTabEvents === "function") {
+    ribbonApi.bindRibbonTabEvents({
+      el,
+      state,
+      setRibbonTab,
+      setRibbonCollapsed,
+    });
+  }
+  if (typeof ribbonApi.bindMirrorControls === "function") {
+    ribbonApi.bindMirrorControls({
+      el,
+      triggerChange,
+      triggerInput,
+      syncUploadRegionInputs,
+    });
+  }
+
+  if (el.ribbonRefreshAllBtn) {
+    el.ribbonRefreshAllBtn.addEventListener("click", () => {
+      refreshAllCommandData().catch((err) => {
+        setStatusError(err);
+      });
+    });
+  }
+  if (el.ribbonRefreshFilesBtn) {
+    el.ribbonRefreshFilesBtn.addEventListener("click", () => {
+      (async () => {
+        beginBusy("Refreshing files...");
+        try {
+          await loadFiles();
+        } finally {
+          endBusy();
+        }
+      })().catch((err) => {
+        setStatusError(err);
+      });
+    });
+  }
+  if (el.ribbonRoleGuideBtn) {
+    el.ribbonRoleGuideBtn.addEventListener("click", (event) => {
+      setModalOpen(true, event.currentTarget);
+    });
+  }
+  if (el.ribbonOpenRoleGuideBtn) {
+    el.ribbonOpenRoleGuideBtn.addEventListener("click", (event) => {
+      setModalOpen(true, event.currentTarget);
+    });
+  }
+  if (el.ribbonOnboardingBtn) {
+    el.ribbonOnboardingBtn.addEventListener("click", () => {
+      setRibbonTab("onboarding");
+      const currentlyHidden = el.onboardingSteps ? el.onboardingSteps.classList.contains("hidden") : true;
+      setOnboardingExpanded(currentlyHidden);
+      const onboardingPanel =
+        (el.onboardingSteps && el.onboardingSteps.closest('[data-ribbon-panel="onboarding"]')) ||
+        (el.roleOnboardingText && el.roleOnboardingText.closest('[data-ribbon-panel="onboarding"]'));
+      scrollToNode(onboardingPanel);
+    });
+  }
+
+  const accessPanel =
+    (el.accessHint && el.accessHint.closest('[data-ribbon-panel="roles"]')) ||
+    (el.accessHint && el.accessHint.closest(".panel"));
+  const mainPanel = el.mainTable ? el.mainTable.closest(".panel") : null;
+  const refPanel = el.refTable ? el.refTable.closest(".panel") : null;
+  const filesPanel =
+    (el.filesTableBody && el.filesTableBody.closest('[data-ribbon-panel="files"]')) ||
+    (el.filesTableBody && el.filesTableBody.closest(".panel"));
+
+  if (el.ribbonGoMainBtn) {
+    el.ribbonGoMainBtn.addEventListener("click", () => {
+      setActiveViewScope("main");
+      scrollToNode(mainPanel);
+    });
+  }
+  if (el.ribbonGoRefBtn) {
+    el.ribbonGoRefBtn.addEventListener("click", () => {
+      if (document.body.classList.contains("detail-drawer-mode")) {
+        setReferenceDrawerExpanded(true);
+      } else if (state.desktopDetailCollapsed) {
+        setDesktopDetailCollapsed(false);
+      }
+      setActiveViewScope("reference");
+      scrollToNode(refPanel);
+    });
+  }
+  if (el.ribbonGoAccessBtn) {
+    el.ribbonGoAccessBtn.addEventListener("click", () => {
+      setRibbonTab("roles");
+      scrollToNode(accessPanel);
+    });
+  }
+  if (el.ribbonGoFilesBtn) {
+    el.ribbonGoFilesBtn.addEventListener("click", () => {
+      setRibbonTab("files");
+      scrollToNode(filesPanel);
+    });
+  }
+
+  if (el.ribbonFreezePanesBtn) {
+    el.ribbonFreezePanesBtn.addEventListener("click", () => {
+      runRibbonGridAction(
+        () => {
+          freezePanesFromContext();
+        },
+        { requirePoint: true, emptyPointMessage: "Select a cell first." },
+      );
+    });
+  }
+  if (el.ribbonFreezeTopRowBtn) {
+    el.ribbonFreezeTopRowBtn.addEventListener("click", () => {
+      runRibbonGridAction(() => {
+        freezeTopRowFromContext();
+      });
+    });
+  }
+  if (el.ribbonFreezeFirstColBtn) {
+    el.ribbonFreezeFirstColBtn.addEventListener("click", () => {
+      runRibbonGridAction(() => {
+        freezeFirstColumnFromContext();
+      });
+    });
+  }
+  if (el.ribbonUnfreezePanesBtn) {
+    el.ribbonUnfreezePanesBtn.addEventListener("click", () => {
+      runRibbonGridAction(() => {
+        unfreezePanesFromContext();
+      });
+    });
+  }
+
+  if (el.ribbonSelectRowBtn) {
+    el.ribbonSelectRowBtn.addEventListener("click", () => {
+      runRibbonGridAction(
+        () => {
+          selectContextRow();
+        },
+        { requirePoint: true, emptyPointMessage: "Select a cell in the target row first." },
+      );
+    });
+  }
+  if (el.ribbonSelectColumnBtn) {
+    el.ribbonSelectColumnBtn.addEventListener("click", () => {
+      runRibbonGridAction(
+        () => {
+          selectContextColumn();
+        },
+        { requirePoint: true, emptyPointMessage: "Select a cell in the target column first." },
+      );
+    });
+  }
+  if (el.ribbonSelectAllBtn) {
+    el.ribbonSelectAllBtn.addEventListener("click", () => {
+      runRibbonGridAction(() => {
+        selectAllForContextScope();
+      });
+    });
+  }
+  if (el.ribbonInsertRowAboveBtn) {
+    el.ribbonInsertRowAboveBtn.addEventListener("click", () => {
+      runRibbonGridAction(() => {
+        insertRowFromContext("above");
+      });
+    });
+  }
+  if (el.ribbonInsertRowBelowBtn) {
+    el.ribbonInsertRowBelowBtn.addEventListener("click", () => {
+      runRibbonGridAction(() => {
+        insertRowFromContext("below");
+      });
+    });
+  }
+  if (el.ribbonDeleteRowBtn) {
+    el.ribbonDeleteRowBtn.addEventListener("click", () => {
+      runRibbonGridAction(() => {
+        deleteRowsFromContext();
+      });
+    });
+  }
+  if (el.ribbonHideRowsBtn) {
+    el.ribbonHideRowsBtn.addEventListener("click", () => {
+      runRibbonGridAction(() => {
+        updateHiddenRowsFromContext(true);
+      });
+    });
+  }
+  if (el.ribbonUnhideRowsBtn) {
+    el.ribbonUnhideRowsBtn.addEventListener("click", () => {
+      runRibbonGridAction(() => {
+        updateHiddenRowsFromContext(false);
+      });
+    });
+  }
+  if (el.ribbonInsertColLeftBtn) {
+    el.ribbonInsertColLeftBtn.addEventListener("click", () => {
+      runRibbonGridAction(() => {
+        insertColumnFromContext("left");
+      });
+    });
+  }
+  if (el.ribbonInsertColRightBtn) {
+    el.ribbonInsertColRightBtn.addEventListener("click", () => {
+      runRibbonGridAction(() => {
+        insertColumnFromContext("right");
+      });
+    });
+  }
+  if (el.ribbonDeleteColBtn) {
+    el.ribbonDeleteColBtn.addEventListener("click", () => {
+      runRibbonGridAction(() => {
+        deleteColumnsFromContext();
+      });
+    });
+  }
+  if (el.ribbonHideColsBtn) {
+    el.ribbonHideColsBtn.addEventListener("click", () => {
+      runRibbonGridAction(() => {
+        updateHiddenColumnsFromContext(true);
+      });
+    });
+  }
+  if (el.ribbonUnhideColsBtn) {
+    el.ribbonUnhideColsBtn.addEventListener("click", () => {
+      runRibbonGridAction(() => {
+        updateHiddenColumnsFromContext(false);
+      });
+    });
+  }
+
+  if (el.ribbonJumpAssignRsmBtn) {
+    el.ribbonJumpAssignRsmBtn.addEventListener("click", () => {
+      setRibbonTab("roles");
+      scrollToNode(el.assignRsmForm && !el.assignRsmForm.classList.contains("hidden") ? el.assignRsmForm : accessPanel);
+    });
+  }
+  if (el.ribbonJumpMapUserBtn) {
+    el.ribbonJumpMapUserBtn.addEventListener("click", () => {
+      setRibbonTab("roles");
+      scrollToNode(el.mapUserRsmForm && !el.mapUserRsmForm.classList.contains("hidden") ? el.mapUserRsmForm : accessPanel);
+    });
+  }
+  if (el.ribbonJumpAssignAsmBtn) {
+    el.ribbonJumpAssignAsmBtn.addEventListener("click", () => {
+      setRibbonTab("roles");
+      scrollToNode(el.assignAsmForm && !el.assignAsmForm.classList.contains("hidden") ? el.assignAsmForm : accessPanel);
+    });
+  }
+  if (el.ribbonJumpTownshipBtn) {
+    el.ribbonJumpTownshipBtn.addEventListener("click", () => {
+      setRibbonTab("roles");
+      scrollToNode(el.asmTownshipForm && !el.asmTownshipForm.classList.contains("hidden") ? el.asmTownshipForm : accessPanel);
+    });
+  }
+
+  if (el.referenceDrawerToggleBtn) {
+    el.referenceDrawerToggleBtn.addEventListener("click", () => {
+      setReferenceDrawerExpanded(!state.referenceDrawerExpanded);
+    });
+  }
+  if (el.referencePanelToggleBtn) {
+    el.referencePanelToggleBtn.addEventListener("click", () => {
+      if (document.body.classList.contains("detail-drawer-mode")) {
+        setReferenceDrawerExpanded(!state.referenceDrawerExpanded);
+        return;
+      }
+      setDesktopDetailCollapsed(!state.desktopDetailCollapsed);
+    });
+  }
+  if (el.referencePanelTitle) {
+    el.referencePanelTitle.addEventListener("dblclick", () => {
+      if (document.body.classList.contains("detail-drawer-mode")) {
+        setReferenceDrawerExpanded(!state.referenceDrawerExpanded);
+        return;
+      }
+      setDesktopDetailCollapsed(!state.desktopDetailCollapsed);
+    });
+  }
+  if (el.viewsSplitHandle) {
+    el.viewsSplitHandle.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      beginViewsSplitDrag(event);
+    });
+    el.viewsSplitHandle.addEventListener("keydown", (event) => {
+      if (document.body.classList.contains("detail-drawer-mode")) {
+        return;
+      }
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        setDesktopDetailCollapsed(false);
+        setViewsSplitRatio(state.viewsSplitRatio - VIEWS_SPLIT_KEY_STEP);
+        return;
+      }
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        setDesktopDetailCollapsed(false);
+        setViewsSplitRatio(state.viewsSplitRatio + VIEWS_SPLIT_KEY_STEP);
+        return;
+      }
+      if (event.key === "Home") {
+        event.preventDefault();
+        setDesktopDetailCollapsed(false);
+        setViewsSplitRatio(MIN_VIEWS_MAIN_RATIO);
+        return;
+      }
+      if (event.key === "End") {
+        event.preventDefault();
+        setDesktopDetailCollapsed(false);
+        setViewsSplitRatio(MAX_VIEWS_MAIN_RATIO);
+      }
+    });
+  }
+  window.addEventListener(
+    "resize",
+    () => {
+      syncReferenceDrawerMode();
+    },
+    { passive: true },
+  );
+  document.addEventListener("mouseup", () => {
+    endGridSelection();
+  });
+  document.addEventListener("pointerdown", (event) => {
+    const target = event.target;
+    if (state.contextMenuOpen && el.gridContextMenu) {
+      if (!(target instanceof Node && el.gridContextMenu.contains(target))) {
+        hideGridContextMenu();
+      }
+    }
+    if (state.sheetTabContextMenuOpen && el.sheetTabContextMenu) {
+      if (!(target instanceof Node && el.sheetTabContextMenu.contains(target))) {
+        hideSheetTabContextMenu();
+      }
+    }
+  });
+  document.addEventListener(
+    "scroll",
+    () => {
+      if (state.contextMenuOpen) {
+        hideGridContextMenu();
+      }
+      if (state.sheetTabContextMenuOpen) {
+        hideSheetTabContextMenu();
+      }
+    },
+    { passive: true, capture: true },
+  );
+  window.addEventListener(
+    "resize",
+    () => {
+      if (state.contextMenuOpen) {
+        hideGridContextMenu();
+      }
+      if (state.sheetTabContextMenuOpen) {
+        hideSheetTabContextMenu();
+      }
+    },
+    { passive: true },
+  );
+
+  const bindSelectionArea = (wrap) => {
+    if (!wrap) {
+      return;
+    }
+    const inferredScope = wrap === el.referenceTableWrap ? "reference" : "main";
+    wrap.addEventListener("pointerenter", () => {
+      setActiveViewScope(inferredScope);
+    });
+    wrap.addEventListener("mousedown", (event) => {
+      startGridSelection(event);
+    });
+    wrap.addEventListener("mouseover", (event) => {
+      moveGridSelection(event);
+    });
+    wrap.addEventListener("contextmenu", (event) => {
+      const cell = event.target instanceof HTMLElement ? event.target.closest("th, td") : null;
+      if (!cell) {
+        return;
+      }
+      event.preventDefault();
+      openContextMenuForCell(cell, event.clientX, event.clientY);
+    });
+    wrap.addEventListener(
+      "touchstart",
+      (event) => {
+        if (!event.touches || event.touches.length !== 1) {
+          clearContextMenuLongPressTimer();
+          return;
+        }
+        const touch = event.touches[0];
+        const touchX = Number(touch.clientX || 0);
+        const touchY = Number(touch.clientY || 0);
+        const cell = event.target instanceof HTMLElement ? event.target.closest("th, td") : null;
+        if (!cell) {
+          clearContextMenuLongPressTimer();
+          return;
+        }
+        clearContextMenuLongPressTimer();
+        state.contextMenuLongPressTimer = window.setTimeout(() => {
+          const anchor = document.elementFromPoint(touchX, touchY);
+          const targetCell = anchor instanceof HTMLElement ? anchor.closest("th, td") : cell;
+          openContextMenuForCell(targetCell, touchX, touchY);
+          state.contextMenuLongPressTimer = null;
+        }, LONG_PRESS_OPEN_MS);
+      },
+      { passive: true },
+    );
+    wrap.addEventListener(
+      "touchmove",
+      () => {
+        clearContextMenuLongPressTimer();
+      },
+      { passive: true },
+    );
+    wrap.addEventListener(
+      "touchend",
+      () => {
+        clearContextMenuLongPressTimer();
+      },
+      { passive: true },
+    );
+    wrap.addEventListener(
+      "touchcancel",
+      () => {
+        clearContextMenuLongPressTimer();
+      },
+      { passive: true },
+    );
+    wrap.addEventListener(
+      "wheel",
+      (event) => {
+        if (!event.ctrlKey) {
+          return;
+        }
+        event.preventDefault();
+        adjustSheetZoom(event.deltaY < 0 ? ZOOM_STEP : -ZOOM_STEP);
+      },
+      { passive: false },
+    );
+  };
+
+  bindSelectionArea(el.mainTableWrap);
+  bindSelectionArea(el.referenceTableWrap);
+
+  if (el.ctxCopyBtn) {
+    el.ctxCopyBtn.addEventListener("click", () => {
+      copyCurrentSelection()
+        .then(() => {
+          hideGridContextMenu();
+        })
+        .catch((err) => {
+          setStatusError(err);
+          hideGridContextMenu();
+        });
+    });
+  }
+  if (el.ctxPasteBtn) {
+    el.ctxPasteBtn.addEventListener("click", () => {
+      pasteClipboardIntoGrid()
+        .then(() => {
+          hideGridContextMenu();
+        })
+        .catch((err) => {
+          setStatusError(err);
+          hideGridContextMenu();
+        });
+    });
+  }
+  if (el.ctxClearSelectionBtn) {
+    el.ctxClearSelectionBtn.addEventListener("click", () => {
+      clearGridSelectionModel();
+    });
+  }
+  if (el.ctxFreezePanesBtn) {
+    el.ctxFreezePanesBtn.addEventListener("click", () => {
+      freezePanesFromContext();
+      hideGridContextMenu();
+    });
+  }
+  if (el.ctxUnfreezePanesBtn) {
+    el.ctxUnfreezePanesBtn.addEventListener("click", () => {
+      unfreezePanesFromContext();
+      hideGridContextMenu();
+    });
+  }
+  if (el.ctxHideRowsBtn) {
+    el.ctxHideRowsBtn.addEventListener("click", () => {
+      updateHiddenRowsFromContext(true);
+      hideGridContextMenu();
+    });
+  }
+  if (el.ctxUnhideRowsBtn) {
+    el.ctxUnhideRowsBtn.addEventListener("click", () => {
+      updateHiddenRowsFromContext(false);
+      hideGridContextMenu();
+    });
+  }
+  if (el.ctxHideColsBtn) {
+    el.ctxHideColsBtn.addEventListener("click", () => {
+      updateHiddenColumnsFromContext(true);
+      hideGridContextMenu();
+    });
+  }
+  if (el.ctxUnhideColsBtn) {
+    el.ctxUnhideColsBtn.addEventListener("click", () => {
+      updateHiddenColumnsFromContext(false);
+      hideGridContextMenu();
+    });
+  }
+  if (el.ctxHideBothBtn) {
+    el.ctxHideBothBtn.addEventListener("click", () => {
+      updateHiddenRowsAndColumnsFromContext(true);
+      hideGridContextMenu();
+    });
+  }
+  if (el.ctxUnhideBothBtn) {
+    el.ctxUnhideBothBtn.addEventListener("click", () => {
+      updateHiddenRowsAndColumnsFromContext(false);
+      hideGridContextMenu();
+    });
+  }
+  if (el.ctxInsertRowAboveBtn) {
+    el.ctxInsertRowAboveBtn.addEventListener("click", () => {
+      insertRowFromContext("above");
+      hideGridContextMenu();
+    });
+  }
+  if (el.ctxInsertRowBelowBtn) {
+    el.ctxInsertRowBelowBtn.addEventListener("click", () => {
+      insertRowFromContext("below");
+      hideGridContextMenu();
+    });
+  }
+  if (el.ctxDeleteRowBtn) {
+    el.ctxDeleteRowBtn.addEventListener("click", () => {
+      deleteRowsFromContext();
+      hideGridContextMenu();
+    });
+  }
+  if (el.ctxInsertColLeftBtn) {
+    el.ctxInsertColLeftBtn.addEventListener("click", () => {
+      insertColumnFromContext("left");
+      hideGridContextMenu();
+    });
+  }
+  if (el.ctxInsertColRightBtn) {
+    el.ctxInsertColRightBtn.addEventListener("click", () => {
+      insertColumnFromContext("right");
+      hideGridContextMenu();
+    });
+  }
+  if (el.ctxDeleteColBtn) {
+    el.ctxDeleteColBtn.addEventListener("click", () => {
+      deleteColumnsFromContext();
+      hideGridContextMenu();
+    });
+  }
+  if (el.ctxSelectRowBtn) {
+    el.ctxSelectRowBtn.addEventListener("click", () => {
+      selectContextRow();
+      hideGridContextMenu();
+    });
+  }
+  if (el.ctxSelectColumnBtn) {
+    el.ctxSelectColumnBtn.addEventListener("click", () => {
+      selectContextColumn();
+      hideGridContextMenu();
+    });
+  }
+  if (el.ctxSelectAllBtn) {
+    el.ctxSelectAllBtn.addEventListener("click", () => {
+      selectAllForContextScope();
+      hideGridContextMenu();
+    });
+  }
+  if (el.ctxOpenDetailsBtn) {
+    el.ctxOpenDetailsBtn.addEventListener("click", () => {
+      openDetailsPanelFromContext();
+      hideGridContextMenu();
+    });
+  }
+  if (el.sheetTabCtxRenameBtn) {
+    el.sheetTabCtxRenameBtn.addEventListener("click", () => {
+      renameSheetFromTabContextMenu();
+    });
+  }
+  if (el.ctxZoomInBtn) {
+    el.ctxZoomInBtn.addEventListener("click", () => {
+      adjustSheetZoom(ZOOM_STEP);
+      hideGridContextMenu();
+    });
+  }
+  if (el.ctxZoomOutBtn) {
+    el.ctxZoomOutBtn.addEventListener("click", () => {
+      adjustSheetZoom(-ZOOM_STEP);
+      hideGridContextMenu();
+    });
+  }
+
+  if (el.zoomRangeInput) {
+    el.zoomRangeInput.addEventListener("input", () => {
+      setSheetZoom(el.zoomRangeInput.value);
+    });
+  }
+  if (el.zoomOutBtn) {
+    el.zoomOutBtn.addEventListener("click", () => {
+      adjustSheetZoom(-ZOOM_STEP);
+    });
+  }
+  if (el.zoomInBtn) {
+    el.zoomInBtn.addEventListener("click", () => {
+      adjustSheetZoom(ZOOM_STEP);
+    });
+  }
+  if (el.zoomResetBtn) {
+    el.zoomResetBtn.addEventListener("click", () => {
+      setSheetZoom(100);
+    });
+  }
+
+  if (el.formulaApplyBtn) {
+    el.formulaApplyBtn.addEventListener("click", () => {
+      try {
+        applyFormulaInput();
+      } catch (err) {
+        setStatusError(err);
+      }
+    });
+  }
+  if (el.formulaCancelBtn) {
+    el.formulaCancelBtn.addEventListener("click", () => {
+      cancelFormulaEdit();
+    });
+  }
+  if (el.formulaFxBtn && el.formulaInput) {
+    el.formulaFxBtn.addEventListener("click", () => {
+      if (!el.formulaInput.value.trim()) {
+        el.formulaInput.value = "=";
+      } else if (!el.formulaInput.value.trim().startsWith("=")) {
+        el.formulaInput.value = `=${el.formulaInput.value.trim()}`;
+      }
+      el.formulaInput.focus();
+      el.formulaInput.setSelectionRange(el.formulaInput.value.length, el.formulaInput.value.length);
+    });
+  }
+  if (el.formulaInput) {
+    el.formulaInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        event.stopPropagation();
+        try {
+          applyFormulaInput();
+        } catch (err) {
+          setStatusError(err);
+        }
+        return;
+      }
+      if (event.key === "Escape") {
+        event.preventDefault();
+        event.stopPropagation();
+        cancelFormulaEdit();
+      }
+    });
+  }
+  if (el.formulaNameBox) {
+    el.formulaNameBox.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter") {
+        return;
+      }
+      event.preventDefault();
+      jumpToAddressFromNameBox();
+    });
+  }
+
+  if (el.ribbonUploadBtn) {
+    el.ribbonUploadBtn.addEventListener("click", () => {
+      uploadSelectedWorkbooks().catch((err) => {
+        setStatusError(err);
+      });
+    });
+  }
+
   if (el.onboardingToggleBtn) {
     el.onboardingToggleBtn.addEventListener("click", () => {
       const currentlyHidden = el.onboardingSteps ? el.onboardingSteps.classList.contains("hidden") : true;
@@ -2498,8 +6766,48 @@ function bindEvents() {
     });
   }
   document.addEventListener("keydown", (event) => {
+    const shortcutKey = String(event.key || "").toLowerCase();
+    const hasShortcutModifier = event.ctrlKey || event.metaKey;
+    if (hasShortcutModifier && !event.altKey && !isEditableEventTarget(event.target)) {
+      if (shortcutKey === "c" && hasGridSelection()) {
+        event.preventDefault();
+        copyCurrentSelection().catch((err) => {
+          setStatusError(err);
+        });
+        return;
+      }
+      if (shortcutKey === "v") {
+        event.preventDefault();
+        pasteClipboardIntoGrid().catch((err) => {
+          setStatusError(err);
+        });
+        return;
+      }
+    }
+
+    if (event.ctrlKey && event.key === "F1") {
+      event.preventDefault();
+      setRibbonCollapsed(!state.ribbonCollapsed);
+      return;
+    }
+
     if (event.key === "Escape" && el.roleInfoModal && !el.roleInfoModal.hidden) {
       setModalOpen(false);
+      return;
+    }
+
+    if (event.key === "Escape" && state.contextMenuOpen) {
+      hideGridContextMenu();
+      return;
+    }
+
+    if (event.key === "Escape" && state.sheetTabContextMenuOpen) {
+      hideSheetTabContextMenu();
+      return;
+    }
+
+    if (event.key === "Escape" && state.selectionRanges && state.selectionRanges.length) {
+      clearGridSelectionModel();
     }
   });
 
@@ -2819,14 +7127,25 @@ function bindEvents() {
 
 (async function init() {
   try {
+    applyThemePreference(readStoredThemePreference(), { persist: false });
     setOnboardingExpanded(false);
     setModalOpen(false);
+    setRibbonCollapsed(false);
+    setSheetZoom(state.sheetZoomPercent || 100);
+    resetSelectionStatusBar();
+    setRibbonTab("home");
+    setViewsSplitRatio(state.viewsSplitRatio);
+    syncReferenceDrawerMode();
     updateLoadHealth();
     bindEvents();
+    syncFloatingLayoutMetrics();
+    syncRibbonFromCore();
+    syncRibbonGridControlState();
     await refreshAccessContext();
     await loadWorkbookOptions();
     await loadSheets();
     await loadFiles();
+    syncRibbonGridControlState();
     startRealtimePolling();
   } catch (err) {
     setStatusError(err);

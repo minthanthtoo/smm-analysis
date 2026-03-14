@@ -1,0 +1,48 @@
+      <header id="excelChrome" class="excel-chrome" aria-label="Workbook window chrome">
+        <div class="excel-titlebar">
+          <div class="excel-title-left">
+            <span class="excel-app-icon" aria-hidden="true">X</span>
+            <span class="excel-autosave">
+              AutoSave
+              <span class="excel-autosave-chip">Off</span>
+            </span>
+            <span class="excel-title-name">
+              <strong id="mainWorkbookName">-</strong> · <strong id="referenceWorkbookName">-</strong> · Excel
+            </span>
+          </div>
+          <div class="excel-title-right">
+            <div class="excel-title-context">
+              <button
+                id="referencePanelToggleBtn"
+                type="button"
+                class="action-btn action-btn-ghost action-btn-sm workbook-bar-toggle excel-title-detail-toggle"
+                aria-expanded="false"
+                aria-controls="referenceViewPanel"
+              >
+                Expand detail pane
+              </button>
+              <span class="excel-window-context">
+                Role: <strong id="viewerRoleName">Owner</strong> · Region: <strong id="regionName">All regions</strong>
+              </span>
+              <button
+                id="roleInfoInlineBtn"
+                type="button"
+                class="inline-help-btn"
+                aria-haspopup="dialog"
+                aria-controls="roleInfoModal"
+                aria-expanded="false"
+              >
+                Access Guide
+              </button>
+              <label class="theme-select-wrap" for="themeSelect">
+                Theme
+                <select id="themeSelect" class="theme-select" aria-label="Application theme">
+                  <option value="system">System</option>
+                  <option value="dark">Dark</option>
+                  <option value="light">Light</option>
+                </select>
+              </label>
+            </div>
+          </div>
+        </div>
+      </header>

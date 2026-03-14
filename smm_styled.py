@@ -9,6 +9,7 @@ from functools import lru_cache
 from typing import Any
 
 from openpyxl.utils import get_column_letter
+from openpyxl.utils.cell import column_index_from_string, coordinate_from_string
 
 from smm_services import (
     find_header_layout,
@@ -238,6 +239,50 @@ def parse_clamped_int(raw_value: str | None, default: int, min_value: int, max_v
     return max(min_value, min(max_value, parsed))
 
 
+def points_to_css_px(points_value: Any, fallback_px: int | None = None) -> int | None:
+    try:
+        points = float(points_value)
+    except (TypeError, ValueError):
+        points = None
+    if points is None or points <= 0:
+        return fallback_px
+    pixels = int(round(points * 96.0 / 72.0))
+    return max(1, pixels)
+
+
+def freeze_counts_from_worksheet(worksheet) -> tuple[int, int]:
+    freeze_marker = getattr(worksheet, "freeze_panes", None)
+    if not freeze_marker:
+        return 0, 0
+
+    coordinate = getattr(freeze_marker, "coordinate", None) or str(freeze_marker)
+    if not coordinate:
+        return 0, 0
+
+    coordinate = str(coordinate).upper()
+    if coordinate == "A1":
+        return 0, 0
+
+    try:
+        column_letters, row_idx = coordinate_from_string(coordinate)
+        col_idx = column_index_from_string(column_letters)
+        row_idx = int(row_idx)
+    except Exception:
+        return 0, 0
+
+    return max(0, row_idx - 1), max(0, col_idx - 1)
+
+
+def is_column_hidden(worksheet, col_idx: int) -> bool:
+    col_dim = worksheet.column_dimensions.get(get_column_letter(col_idx))
+    return bool(getattr(col_dim, "hidden", False))
+
+
+def is_row_hidden(worksheet, row_idx: int) -> bool:
+    row_dim = worksheet.row_dimensions.get(row_idx)
+    return bool(getattr(row_dim, "hidden", False))
+
+
 def detect_month_column_groups(worksheet) -> list[dict[str, Any]]:
     header_scan_rows = min(4, worksheet.max_row)
     if header_scan_rows < 1:
@@ -365,8 +410,12 @@ def build_main_sheet_html_cached(
     layout = find_header_layout(worksheet)
     detected_month_groups = detect_month_column_groups(worksheet)
     selected_month_labels: list[str] = []
+    selected_month_keys: list[str] = []
     available_months = sorted({int(group["month"]) for group in detected_month_groups})
-    frozen_count = 0
+    worksheet_frozen_rows, worksheet_frozen_cols = freeze_counts_from_worksheet(worksheet)
+    has_explicit_freeze = worksheet_frozen_rows > 0 or worksheet_frozen_cols > 0
+    frozen_row_boundary = worksheet_frozen_rows
+    frozen_col_boundary = worksheet_frozen_cols
 
     if detected_month_groups:
         month_by_key = {item["key"]: item for item in detected_month_groups}
@@ -388,7 +437,8 @@ def build_main_sheet_html_cached(
             for group in detected_month_groups
             if group.get("cols")
         )
-        frozen_count = max(0, first_month_col - 1)
+        if not has_explicit_freeze:
+            frozen_col_boundary = max(0, first_month_col - 1)
         selected_columns: list[int] = list(range(1, first_month_col))
 
         for key in selected_month_keys:
@@ -396,7 +446,6 @@ def build_main_sheet_html_cached(
             if not group:
                 continue
             selected_columns.extend(group["cols"])
-            selected_month_labels.append(group["label"])
 
         selected_columns = join_unique(
             [col for col in selected_columns if 1 <= col <= worksheet.max_column]
@@ -405,7 +454,8 @@ def build_main_sheet_html_cached(
     elif layout:
         # Sheet matches fixed format layout but no month groups were detected.
         selected_columns = list(range(1, layout["packing"] + 1))
-        frozen_count = len(selected_columns)
+        if not has_explicit_freeze:
+            frozen_col_boundary = len(selected_columns)
         min_required_row = layout["metrics_row"] + 1
     else:
         used_columns: list[int] = []
@@ -445,10 +495,63 @@ def build_main_sheet_html_cached(
 
         min_required_row = 1
 
+    hidden_columns_skipped = sum(
+        1
+        for col_idx in selected_columns
+        if 1 <= col_idx <= worksheet.max_column and is_column_hidden(worksheet, col_idx)
+    )
+    selected_columns = join_unique(
+        [
+            col_idx
+            for col_idx in selected_columns
+            if 1 <= col_idx <= worksheet.max_column and not is_column_hidden(worksheet, col_idx)
+        ]
+    )
+    if detected_month_groups and selected_month_keys:
+        visible_column_set = set(selected_columns)
+        month_by_key = {item["key"]: item for item in detected_month_groups}
+        selected_month_labels = [
+            month_by_key[key]["label"]
+            for key in selected_month_keys
+            if key in month_by_key and any(col_idx in visible_column_set for col_idx in month_by_key[key]["cols"])
+        ]
+    if not selected_columns:
+        return {
+            "sheet_name": sheet_name,
+            "row_count": 0,
+            "col_count": 0,
+            "frozen_count": 0,
+            "frozen_rows": 0,
+            "frozen_columns": 0,
+            "selected_month_labels": selected_month_labels,
+            "available_months": available_months,
+            "hidden_rows_skipped": 0,
+            "hidden_columns_skipped": hidden_columns_skipped,
+            "html": '<div class="empty">All selected columns are hidden in this sheet.</div>',
+        }
+
     selected_col_set = set(selected_columns)
 
-    last_row = 1
-    for row_idx in range(1, worksheet.max_row + 1):
+    visible_row_candidates = [
+        row_idx for row_idx in range(1, worksheet.max_row + 1) if not is_row_hidden(worksheet, row_idx)
+    ]
+    if not visible_row_candidates:
+        return {
+            "sheet_name": sheet_name,
+            "row_count": 0,
+            "col_count": len(selected_columns),
+            "frozen_count": 0,
+            "frozen_rows": 0,
+            "frozen_columns": 0,
+            "selected_month_labels": selected_month_labels,
+            "available_months": available_months,
+            "hidden_rows_skipped": worksheet.max_row,
+            "hidden_columns_skipped": hidden_columns_skipped,
+            "html": '<div class="empty">All rows in this sheet are hidden.</div>',
+        }
+
+    last_row = 0
+    for row_idx in visible_row_candidates:
         row_has_value = False
         for col_idx in selected_columns:
             value = worksheet.cell(row=row_idx, column=col_idx).value
@@ -457,12 +560,24 @@ def build_main_sheet_html_cached(
                 break
         if row_has_value:
             last_row = row_idx
-    last_row = max(last_row, min_required_row)
+
+    if last_row < min_required_row:
+        last_row = next((row_idx for row_idx in visible_row_candidates if row_idx >= min_required_row), visible_row_candidates[-1])
+
+    visible_rows = [row_idx for row_idx in visible_row_candidates if row_idx <= last_row]
+    visible_row_set = set(visible_rows)
+    hidden_rows_skipped = max(0, last_row - len(visible_rows))
 
     merge_top_left: dict[tuple[int, int], tuple[int, int]] = {}
     merge_skip: set[tuple[int, int]] = set()
     for merged_range in worksheet.merged_cells.ranges:
         if merged_range.max_row > last_row:
+            continue
+        fully_visible = all(
+            row_idx in visible_row_set
+            for row_idx in range(merged_range.min_row, merged_range.max_row + 1)
+        )
+        if not fully_visible:
             continue
         fully_selected = all(
             col in selected_col_set
@@ -506,10 +621,34 @@ def build_main_sheet_html_cached(
         else:
             colgroup_html.append("<col>")
 
+    sheet_format = getattr(worksheet, "sheet_format", None)
+    default_row_height_points = getattr(sheet_format, "defaultRowHeight", None)
+    default_row_height_px = points_to_css_px(default_row_height_points, fallback_px=20) or 20
+
     rows_html: list[str] = []
-    for row_idx in range(1, last_row + 1):
-        height = worksheet.row_dimensions[row_idx].height
-        row_style = f' style="height:{int(height)}px"' if height else ""
+    for row_idx in visible_rows:
+        row_dim = worksheet.row_dimensions.get(row_idx)
+        custom_height_points = getattr(row_dim, "height", None)
+        custom_height_enabled = bool(getattr(row_dim, "customHeight", False))
+        if (
+            not custom_height_enabled
+            and custom_height_points is not None
+            and default_row_height_points is not None
+        ):
+            try:
+                custom_height_enabled = abs(float(custom_height_points) - float(default_row_height_points)) > 1e-6
+            except (TypeError, ValueError):
+                custom_height_enabled = False
+
+        row_height_px = (
+            points_to_css_px(custom_height_points, fallback_px=default_row_height_px)
+            if custom_height_enabled
+            else default_row_height_px
+        )
+        row_height_px = row_height_px or default_row_height_px
+        row_height_source = "custom" if custom_height_enabled else "default"
+        row_attrs = f' data-excel-row-height="{row_height_px}" data-excel-row-height-source="{row_height_source}"'
+        row_style = f' style="height:{row_height_px}px;min-height:{row_height_px}px"'
         cell_html_parts: list[str] = []
         for col_idx in selected_columns:
             if (row_idx, col_idx) in merge_skip:
@@ -527,7 +666,7 @@ def build_main_sheet_html_cached(
             text = html.escape(display_value(cell.value)).replace("\n", "<br>")
             cell_html_parts.append(f"<td {' '.join(attrs)}>{text}</td>")
 
-        rows_html.append(f"<tr{row_style}>{''.join(cell_html_parts)}</tr>")
+        rows_html.append(f"<tr{row_attrs}{row_style}>{''.join(cell_html_parts)}</tr>")
 
     inline_styles = "".join(style_rules)
     base_style = (
@@ -544,13 +683,26 @@ def build_main_sheet_html_cached(
         "</table>"
     )
 
+    frozen_columns = min(
+        len(selected_columns),
+        sum(1 for col_idx in selected_columns if col_idx <= frozen_col_boundary),
+    )
+    frozen_rows = min(
+        len(visible_rows),
+        sum(1 for row_idx in visible_rows if row_idx <= frozen_row_boundary),
+    )
+
     return {
         "sheet_name": sheet_name,
-        "row_count": last_row,
+        "row_count": len(visible_rows),
         "col_count": len(selected_columns),
-        "frozen_count": min(frozen_count, len(selected_columns)),
+        "frozen_count": frozen_columns,
+        "frozen_rows": frozen_rows,
+        "frozen_columns": frozen_columns,
         "selected_month_labels": selected_month_labels,
         "available_months": available_months,
+        "hidden_rows_skipped": hidden_rows_skipped,
+        "hidden_columns_skipped": hidden_columns_skipped,
         "html": table_html,
     }
 

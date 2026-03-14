@@ -1,0 +1,28 @@
+      <section id="formulaBar" class="excel-formula-bar" aria-label="Formula bar">
+        <div class="excel-formula-name-wrap">
+          <input
+            id="formulaNameBox"
+            type="text"
+            class="excel-formula-name"
+            value="A1"
+            spellcheck="false"
+            aria-label="Name box (jump to cell address)"
+            title="Type a cell address like A1 and press Enter"
+          />
+          <span class="excel-formula-arrow" aria-hidden="true">▾</span>
+        </div>
+        <div class="excel-formula-actions">
+          <button id="formulaCancelBtn" type="button" class="excel-formula-action" title="Cancel formula edit (Esc)">✕</button>
+          <button id="formulaApplyBtn" type="button" class="excel-formula-action" title="Apply formula (Enter)">✓</button>
+          <button id="formulaFxBtn" type="button" class="excel-formula-fx" title="Insert formula">fx</button>
+        </div>
+        <input
+          id="formulaInput"
+          type="text"
+          class="excel-formula-input"
+          value=""
+          placeholder="Select a cell and type formula (example: =SUM(A1:A10))"
+          spellcheck="false"
+          aria-label="Formula input"
+        />
+      </section>
