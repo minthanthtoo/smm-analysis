@@ -1,0 +1,16 @@
+{
+  "generated_at": "2026-03-16T21:09:24",
+  "sources": [
+    "/Users/min/codex/SMM-SKU/9-MLM Table and DailySales-2026_Feb.xlsx",
+    "/Users/min/codex/SMM-SKU/7-MTL for Table and DailySales(2026 Jan to Mar).xlsx"
+  ],
+  "outputs": {
+    "table_csv": "/Users/min/codex/SMM-SKU/outputs/unified/stg_sales_table_unified.csv",
+    "daily_csv": "/Users/min/codex/SMM-SKU/outputs/unified/stg_daily_sales_unified.csv",
+    "sql_load_file": "/Users/min/codex/SMM-SKU/outputs/unified/load_unified_sales.sql"
+  },
+  "row_counts": {
+    "stg_sales_table_unified": 1161,
+    "stg_daily_sales_unified": 6918
+  }
+}

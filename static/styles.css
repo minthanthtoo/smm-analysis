@@ -10,8 +10,8 @@
   --accent-soft: rgba(255, 180, 84, 0.16);
   --good: #7ad6a2;
   --sheet-zoom: 1;
-  --statusbar-height: 52px;
-  --sheet-tabs-dock-height: 82px;
+  --statusbar-height: 34px;
+  --sheet-tabs-dock-height: 70px;
   --floating-top-chrome-offset: 0px;
   --floating-top-workbook-offset: 82px;
   --floating-top-tabs-offset: 134px;
@@ -840,6 +840,10 @@ body.is-loading .controls {
   border-bottom: none;
 }
 
+body.detail-tabs-hidden .sheet-tabs-dock-lane {
+  border-bottom: none;
+}
+
 .sheet-tabs-dock-label {
   flex: 0 0 auto;
   min-width: 78px;
@@ -1490,10 +1494,12 @@ th.right {
   bottom: 0;
   z-index: 40;
   min-height: var(--statusbar-height);
-  padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+  padding: 2px 10px calc(2px + env(safe-area-inset-bottom));
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+  flex-wrap: nowrap;
+  overflow: hidden;
   background:
     linear-gradient(180deg, rgba(9, 27, 38, 0.92) 0%, rgba(4, 14, 20, 0.98) 100%);
   border-top: 1px solid rgba(129, 187, 216, 0.28);
@@ -1509,24 +1515,37 @@ th.right {
 
 .excel-status-primary {
   flex: 1 1 320px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .excel-status-metrics {
-  flex: 2 1 auto;
-  justify-content: center;
-  flex-wrap: wrap;
-  row-gap: 6px;
+  flex: 1 1 auto;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .excel-status-zoom {
   flex: 0 0 auto;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.excel-status-metrics::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 
 .status-pill {
   border: 1px solid rgba(129, 187, 216, 0.45);
   border-radius: 999px;
-  padding: 4px 10px;
-  font-size: 0.72rem;
+  padding: 2px 8px;
+  font-size: 0.7rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: #def0fa;
@@ -1535,9 +1554,17 @@ th.right {
 
 .status-mono {
   font-family: "IBM Plex Mono", monospace;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
+  line-height: 1.1;
   color: #d2e8f5;
   white-space: nowrap;
+}
+
+.excel-status-primary #statusSelectionRange {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .status-muted {
@@ -1550,9 +1577,9 @@ th.right {
   background: rgba(8, 26, 38, 0.72);
   color: #e7f4fb;
   font-family: "IBM Plex Mono", monospace;
-  font-size: 0.74rem;
+  font-size: 0.7rem;
   line-height: 1;
-  padding: 6px 9px;
+  padding: 2px 7px;
   cursor: pointer;
 }
 
@@ -1561,22 +1588,22 @@ th.right {
 }
 
 .status-zoom-reset {
-  min-width: 52px;
+  min-width: 42px;
 }
 
 .status-zoom-slider {
-  width: 112px;
+  width: 78px;
 }
 
 .status-zoom-value {
-  min-width: 42px;
+  min-width: 34px;
   text-align: right;
 }
 
 @media (max-width: 760px) {
   :root {
-    --statusbar-height: 110px;
-    --sheet-tabs-dock-height: 126px;
+    --statusbar-height: 34px;
+    --sheet-tabs-dock-height: 74px;
   }
 
   .app-shell {
@@ -1679,9 +1706,9 @@ th.right {
   }
 
   .excel-statusbar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
   }
 
   .excel-status-primary,
@@ -1693,19 +1720,19 @@ th.right {
   .excel-status-metrics {
     overflow-x: auto;
     flex-wrap: nowrap;
-    padding-bottom: 2px;
+    padding-bottom: 0;
   }
 
   .status-zoom-slider {
-    width: 100%;
-    max-width: 160px;
+    width: 72px;
+    max-width: 86px;
   }
 }
 
 @media (max-width: 480px) {
   :root {
-    --statusbar-height: 124px;
-    --sheet-tabs-dock-height: 136px;
+    --statusbar-height: 34px;
+    --sheet-tabs-dock-height: 78px;
   }
 
   .ribbon-buttons .action-btn {
@@ -2350,12 +2377,12 @@ body.excel-window .sheet-tabs-dock {
 
 body.excel-window .sheet-tabs-dock-lane {
   border-bottom-color: #223851;
-  padding: 3px 8px;
+  padding: 2px 8px;
 }
 
 body.excel-window .sheet-tabs-dock-label {
   font-family: "Segoe UI", "Calibri", sans-serif;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   color: #b9cee2;
 }
 
@@ -2364,27 +2391,58 @@ body.excel-window .sheet-tabs-dock .sheet-tabs-bottom {
   background: transparent;
 }
 
+body.excel-window .sheet-tabs-dock .sheet-tabs {
+  gap: 6px;
+}
+
+body.excel-window .sheet-tabs-dock .sheet-tab-btn {
+  padding: 4px 9px;
+  font-size: 0.73rem;
+}
+
 body.excel-window .excel-statusbar {
   z-index: 44;
-  min-height: 32px;
-  gap: 14px;
-  padding: 4px 10px calc(4px + env(safe-area-inset-bottom));
+  min-height: var(--statusbar-height);
+  gap: 8px;
+  padding: 2px 8px calc(2px + env(safe-area-inset-bottom));
+  align-items: center;
+  flex-wrap: nowrap;
+  overflow: hidden;
   border-top: 1px solid #2f2f2f;
   background: #111;
   backdrop-filter: none;
 }
 
 body.excel-window .excel-status-section {
-  gap: 8px;
+  gap: 6px;
+  min-width: 0;
 }
 
 body.excel-window .excel-status-primary {
-  flex: 1 1 auto;
+  flex: 1 1 34%;
+  min-width: 0;
+  overflow: hidden;
 }
 
 body.excel-window .excel-status-metrics {
   flex: 1 1 auto;
-  justify-content: center;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+body.excel-window .excel-status-metrics::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+body.excel-window .excel-status-zoom {
+  margin-left: auto;
+  white-space: nowrap;
 }
 
 body.excel-window .status-pill {
@@ -2394,19 +2452,27 @@ body.excel-window .status-pill {
   background: transparent;
   color: #f0f0f0;
   font-family: "Segoe UI", "Calibri", sans-serif;
-  font-size: 0.79rem;
+  font-size: 0.75rem;
   letter-spacing: normal;
   text-transform: none;
 }
 
 body.excel-window .status-mono {
   font-family: "Segoe UI", "Calibri", sans-serif;
-  font-size: 0.79rem;
+  font-size: 0.75rem;
+  line-height: 1.1;
   color: #e5e5e5;
 }
 
 body.excel-window .status-muted {
   color: #bdbdbd;
+}
+
+body.excel-window #statusSelectionRange {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 body.excel-window .status-zoom-btn {
@@ -2415,11 +2481,19 @@ body.excel-window .status-zoom-btn {
   background: #1f1f1f;
   color: #f3f3f3;
   font-family: "Segoe UI", "Calibri", sans-serif;
-  padding: 3px 8px;
+  padding: 2px 7px;
 }
 
 body.excel-window .status-zoom-slider {
-  width: 100px;
+  width: 76px;
+}
+
+body.excel-window .status-zoom-reset {
+  min-width: 42px;
+}
+
+body.excel-window .status-zoom-value {
+  min-width: 34px;
 }
 
 body.excel-window .grid-context-menu {
@@ -3013,6 +3087,15 @@ body.excel-window .ribbon-tabs-bar .ribbon-tabs {
   scrollbar-width: thin;
 }
 
+body.excel-window .ribbon-tabs-bar .ribbon-tab-group-separator {
+  flex: 0 0 1px;
+  align-self: stretch;
+  margin: 7px 6px 5px;
+  background: var(--theme-ribbon-group-separator);
+  opacity: 0.72;
+  pointer-events: none;
+}
+
 body.excel-window .ribbon-tabs-bar .ribbon-tab {
   position: relative;
   min-height: 36px;
@@ -3348,4 +3431,629 @@ body.excel-window .sheet-tabs-dock .sheet-tabs::-webkit-scrollbar-thumb:hover,
 body.excel-window #ribbonRoot .ribbon-panel::-webkit-scrollbar-thumb:hover,
 body.excel-window .ribbon-tabs-bar .ribbon-tabs::-webkit-scrollbar-thumb:hover {
   background: var(--theme-scrollbar-thumb-hover);
+}
+
+/* Light theme polish pass */
+body.excel-window[data-theme="light"] {
+  --theme-body-bg: #eef3f9;
+  --theme-body-text: #182639;
+  --theme-shell-bg: #f4f7fc;
+  --theme-chrome-bg: #ffffff;
+  --theme-chrome-border: #c4cfde;
+  --theme-menubar-bg: #f5f8fd;
+  --theme-menubar-border: #d4dce8;
+  --theme-window-context: #24364d;
+  --theme-control-bg: #ffffff;
+  --theme-control-border: #a8b8cc;
+  --theme-control-text: #142438;
+  --theme-ribbon-bg: #f8fbff;
+  --theme-ribbon-head-bg: #eaf0f8;
+  --theme-ribbon-head-border: #c6d1e1;
+  --theme-ribbon-tab-text: #273b53;
+  --theme-ribbon-tab-active-text: #0f243b;
+  --theme-ribbon-tab-active-border: #1f7a45;
+  --theme-ribbon-tab-hover-bg: rgba(23, 40, 68, 0.08);
+  --theme-ribbon-tab-hover-text: #152a42;
+  --theme-ribbon-group-separator: #d0dae8;
+  --theme-ribbon-group-label: #556a83;
+  --theme-ribbon-button-bg: #ffffff;
+  --theme-ribbon-button-border: #a8b8cc;
+  --theme-ribbon-button-text: #16293f;
+  --theme-ribbon-button-hover-bg: #edf3fb;
+  --theme-ribbon-button-active-bg: #e4ecf7;
+  --theme-ribbon-toggle-bg: #ffffff;
+  --theme-ribbon-toggle-border: #a8b8cc;
+  --theme-ribbon-toggle-text: #172b43;
+  --theme-ribbon-toggle-hover-bg: #edf3fb;
+  --theme-ribbon-focus-ring: rgba(24, 122, 70, 0.48);
+  --theme-workbook-bars-bg: #edf3fb;
+  --theme-workbook-bar-bg: #ffffff;
+  --theme-workbook-bar-border: #c0cede;
+  --theme-workbook-label: #4a5f78;
+  --theme-workbook-value: #17293f;
+  --theme-formula-bg: #edf3fb;
+  --theme-formula-border: #c0cede;
+  --theme-formula-action-bg: #ffffff;
+  --theme-formula-action-border: #acbbcf;
+  --theme-formula-action-text: #22364e;
+  --theme-divider: #c8d3e2;
+  --theme-panel-head-bg: #f1f5fb;
+  --theme-panel-head-border: #c8d3e2;
+  --theme-panel-head-text: #16293f;
+  --theme-panel-meta: #3d536b;
+  --theme-split-handle-bg: #dde6f2;
+  --theme-split-handle-border: #becbdb;
+  --theme-table-wrap-bg: #ffffff;
+  --theme-table-bg: #ffffff;
+  --theme-table-text: #182738;
+  --theme-table-border: #c7d2e0;
+  --theme-table-head-bg: #edf3fb;
+  --theme-table-head-text: #1d324a;
+  --theme-table-head-border: #b8c7da;
+  --theme-tabs-dock-bg: #e9eff9;
+  --theme-tabs-dock-border: #c4d0df;
+  --theme-tabs-lane-border: #d1dbe8;
+  --theme-tabs-label: #2f4761;
+  --theme-tab-bg: #dfe8f4;
+  --theme-tab-border: #b6c6da;
+  --theme-tab-text: #1f344a;
+  --theme-tab-active-bg: #ffffff;
+  --theme-tab-active-border: #aebfd3;
+  --theme-tab-active-text: #10253c;
+  --theme-status-bg: #edf3fb;
+  --theme-status-border: #c4d1e1;
+  --theme-status-text: #1d334a;
+  --theme-status-muted: #4f667f;
+  --theme-zoom-btn-bg: #ffffff;
+  --theme-zoom-btn-border: #acbcd0;
+  --theme-zoom-btn-text: #183049;
+  --theme-context-bg: #ffffff;
+  --theme-context-border: #b4c3d6;
+  --theme-context-title: #1a2e45;
+  --theme-context-hover: #e8eff9;
+  --theme-context-separator: #c9d5e3;
+  --theme-scrollbar-track: #e3ebf6;
+  --theme-scrollbar-thumb: #9cadc2;
+  --theme-scrollbar-thumb-hover: #8398b1;
+}
+
+body.excel-window[data-theme="light"] .excel-title-name {
+  color: #314960;
+}
+
+body.excel-window[data-theme="light"] .excel-title-name strong {
+  color: #182b41;
+}
+
+body.excel-window[data-theme="light"] .excel-autosave {
+  color: #5a718a;
+}
+
+body.excel-window[data-theme="light"] .excel-autosave-chip {
+  border-color: #566273;
+  background: #1f2630;
+  color: #f8fbff;
+}
+
+body.excel-window[data-theme="light"] .excel-title-context .excel-window-context {
+  color: #1f324a;
+  font-weight: 500;
+}
+
+body.excel-window[data-theme="light"] .action-btn,
+body.excel-window[data-theme="light"] .action-btn-ghost {
+  border-color: #a8b8cc;
+  background: #f8fbff;
+  color: #173048;
+}
+
+body.excel-window[data-theme="light"] .action-btn:hover,
+body.excel-window[data-theme="light"] .action-btn-ghost:hover {
+  border-color: #8da2bd;
+  background: #edf3fb;
+}
+
+body.excel-window[data-theme="light"] .ribbon-tabs-bar .ribbon-tab {
+  color: #253952;
+}
+
+body.excel-window[data-theme="light"] .ribbon-tabs-bar .ribbon-tab.active {
+  background: #ffffff;
+  border-color: #b8c6d9;
+  color: #13273e;
+}
+
+body.excel-window[data-theme="light"] .excel-formula-input::placeholder {
+  color: #6b7f96;
+}
+
+body.excel-window[data-theme="light"] .status-pill {
+  color: #14304a;
+}
+
+body.excel-window[data-theme="light"] button:disabled,
+body.excel-window[data-theme="light"] input:disabled,
+body.excel-window[data-theme="light"] select:disabled {
+  opacity: 0.78;
+  color: #677b93;
+  border-color: #c2cddc;
+  background: #eef3f9;
+}
+
+/* Detail pane theme consistency (light/dark/system) */
+body.excel-window {
+  --theme-frozen-pane-bg: var(--theme-table-bg);
+  --theme-frozen-pane-alt-bg: var(--theme-table-bg);
+  --theme-frozen-pane-border: var(--theme-table-head-border);
+  --theme-frozen-pane-shadow: rgba(0, 0, 0, 0.14);
+  --theme-detail-head-accent: rgba(33, 163, 102, 0.08);
+}
+
+body.excel-window[data-theme="light"] {
+  --theme-frozen-pane-bg: #f9fcff;
+  --theme-frozen-pane-alt-bg: #f4f8fd;
+  --theme-frozen-pane-border: #b8c7da;
+  --theme-frozen-pane-shadow: rgba(35, 63, 94, 0.12);
+  --theme-detail-head-accent: rgba(31, 122, 69, 0.1);
+}
+
+body.excel-window .detail-panel .panel-head {
+  background:
+    linear-gradient(180deg, var(--theme-panel-head-bg) 0%, var(--theme-panel-head-bg) 72%, var(--theme-detail-head-accent) 100%);
+}
+
+body.excel-window .detail-panel .table-wrap {
+  background: var(--theme-table-wrap-bg);
+}
+
+body.excel-window .detail-panel .split-view {
+  gap: 0;
+}
+
+body.excel-window .detail-panel .split-pane-left {
+  border-right: 1px solid var(--theme-frozen-pane-border);
+  background: var(--theme-frozen-pane-bg);
+  box-shadow: inset -1px 0 0 var(--theme-frozen-pane-shadow);
+}
+
+body.excel-window .detail-panel .split-pane-right {
+  background: var(--theme-table-bg);
+}
+
+body.excel-window .detail-panel .split-pane-left table,
+body.excel-window .detail-panel .split-pane-right table {
+  background: var(--theme-table-bg);
+}
+
+body.excel-window .detail-panel .split-pane-left th,
+body.excel-window .detail-panel .split-pane-left td {
+  background-color: var(--theme-frozen-pane-bg) !important;
+  color: var(--theme-table-text);
+}
+
+body.excel-window .detail-panel .split-pane-left tbody tr:nth-child(even) td {
+  background-color: var(--theme-frozen-pane-alt-bg) !important;
+}
+
+body.excel-window .detail-panel .split-pane-right th,
+body.excel-window .detail-panel .split-pane-right td {
+  color: var(--theme-table-text);
+}
+
+body.excel-window .detail-panel .split-pane thead .split-head-cell,
+body.excel-window .detail-panel .split-pane th.split-head-cell {
+  background-color: var(--theme-table-head-bg) !important;
+  color: var(--theme-table-head-text) !important;
+  border-color: var(--theme-table-head-border);
+}
+
+body.excel-window .detail-panel .split-pane td.split-head-cell {
+  background-color: var(--theme-table-bg) !important;
+  color: var(--theme-table-text) !important;
+}
+
+/* Fixed-height ribbon with smart horizontal scroller controls */
+body.excel-window #ribbonRoot {
+  --ribbon-panel-fixed-height: 208px;
+}
+
+body.excel-window #ribbonRoot .ribbon-panel-wrap {
+  position: relative;
+  min-height: var(--ribbon-panel-fixed-height);
+  height: var(--ribbon-panel-fixed-height);
+  padding-left: 8px;
+  padding-right: 8px;
+  overflow: hidden;
+}
+
+body.excel-window #ribbonRoot .ribbon-panel-wrap.ribbon-panel-wrap-scrollable {
+  padding-left: 34px;
+  padding-right: 34px;
+}
+
+body.excel-window .ribbon-tabs-bar .ribbon-tabs {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+body.excel-window .ribbon-tabs-bar .ribbon-tabs::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+body.excel-window #ribbonRoot .ribbon-panel {
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+body.excel-window #ribbonRoot .ribbon-panel::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+body.excel-window #ribbonRoot .ribbon-group {
+  scroll-snap-align: start;
+}
+
+body.excel-window #ribbonRoot .ribbon-panel-stacked {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+body.excel-window #ribbonRoot .ribbon-panel-stacked::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+body.excel-window #ribbonRoot .ribbon-panel-stacked .ribbon-group-fill {
+  flex: 0 0 auto;
+  width: min(760px, 94vw);
+  max-width: 760px;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="onboarding"] .ribbon-group {
+  min-width: 540px;
+  max-width: 760px;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="onboarding"] .role-permission-quick {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="onboarding"] .onboarding-copy,
+body.excel-window #ribbonRoot [data-ribbon-panel="onboarding"] .onboarding-role-note,
+body.excel-window #ribbonRoot [data-ribbon-panel="onboarding"] .onboarding-quick {
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="onboarding"] .load-health {
+  gap: 6px;
+}
+
+body.excel-window #ribbonRoot .control-group {
+  padding: 8px;
+  border-radius: 8px;
+}
+
+body.excel-window #ribbonRoot .control-group h3 {
+  margin: 0 0 6px;
+  font-size: 0.74rem;
+}
+
+body.excel-window #ribbonRoot select[multiple] {
+  min-height: 86px;
+}
+
+body.excel-window #ribbonRoot .compact-wrap {
+  max-height: calc(var(--ribbon-panel-fixed-height) - 62px);
+}
+
+/* Keep ribbon tools inside fixed-height panel by laying controls horizontally */
+body.excel-window #ribbonRoot .ribbon-group-grid .ribbon-grid,
+body.excel-window #ribbonRoot [data-ribbon-panel="roles"] .management-groups .control-grid {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+body.excel-window #ribbonRoot .ribbon-group-grid .ribbon-grid > label,
+body.excel-window #ribbonRoot [data-ribbon-panel="roles"] .management-groups .control-grid > label {
+  flex: 0 0 176px;
+  min-width: 176px;
+  max-width: 176px;
+}
+
+body.excel-window #ribbonRoot .ribbon-group-grid .ribbon-grid > .upload-actions {
+  flex: 0 0 auto;
+  min-width: 188px;
+}
+
+body.excel-window #ribbonRoot .ribbon-group-grid label,
+body.excel-window #ribbonRoot [data-ribbon-panel="roles"] .management-groups label {
+  gap: 4px;
+  font-size: 0.75rem;
+  line-height: 1.15;
+}
+
+body.excel-window #ribbonRoot .ribbon-group-grid select,
+body.excel-window #ribbonRoot .ribbon-group-grid input,
+body.excel-window #ribbonRoot [data-ribbon-panel="roles"] .management-groups select,
+body.excel-window #ribbonRoot [data-ribbon-panel="roles"] .management-groups input {
+  min-height: 30px;
+  padding: 5px 8px;
+  font-size: 0.76rem;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="roles"] .management-groups {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="roles"] .management-groups .control-group {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 720px;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="roles"] .management-groups .control-group h3 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="onboarding"] .onboarding {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(230px, max-content);
+  column-gap: 10px;
+  row-gap: 0;
+  align-items: start;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="onboarding"] .onboarding > * {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="onboarding"] .onboarding-copy,
+body.excel-window #ribbonRoot [data-ribbon-panel="onboarding"] .onboarding-role-note,
+body.excel-window #ribbonRoot [data-ribbon-panel="onboarding"] .onboarding-quick {
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="onboarding"] .onboarding-actions {
+  gap: 6px;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="onboarding"] .onboarding-actions .action-btn {
+  min-width: 130px;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="onboarding"] .role-card {
+  min-height: 0;
+  padding: 7px 8px;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="onboarding"] .role-card p {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="onboarding"] .onboarding-steps {
+  margin-top: 0;
+}
+
+body.excel-window .ribbon-panel-scroll-btn {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  z-index: 4;
+  width: 24px;
+  border: 1px solid var(--theme-ribbon-head-border);
+  border-radius: 3px;
+  background: linear-gradient(180deg, var(--theme-ribbon-head-bg) 0%, var(--theme-ribbon-bg) 100%);
+  color: var(--theme-ribbon-tab-active-text);
+  font-family: "Segoe UI", "Calibri", sans-serif;
+  font-size: 0.84rem;
+  font-weight: 700;
+  line-height: 1;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+body.excel-window .ribbon-panel-scroll-btn.is-visible {
+  display: inline-flex;
+}
+
+body.excel-window .ribbon-panel-scroll-btn:disabled {
+  opacity: 0.36;
+  cursor: default;
+}
+
+body.excel-window .ribbon-panel-scroll-btn-left {
+  left: 6px;
+}
+
+body.excel-window .ribbon-panel-scroll-btn-right {
+  right: 6px;
+}
+
+body.excel-window .ribbon-panel-scroll-btn:hover:not(:disabled) {
+  background: linear-gradient(180deg, var(--theme-ribbon-head-bg) 0%, var(--theme-ribbon-button-hover-bg) 100%);
+}
+
+body.excel-window .ribbon-panel-scroll-btn:focus-visible {
+  outline: 2px solid var(--theme-ribbon-focus-ring);
+  outline-offset: 1px;
+}
+
+/* Light theme UX refinement: improve contrast hierarchy for onboarding + role management */
+body.excel-window[data-theme="light"] {
+  --text: #18293b;
+  --muted: #4a6077;
+  --good: #1f7a45;
+  --panel: rgba(255, 255, 255, 0.92);
+  --panel-border: #c9d6e5;
+  --sticky-bg: #f3f7fc;
+  --accent: #1f7a45;
+  --accent-soft: rgba(31, 122, 69, 0.16);
+  --theme-body-bg: #f3f6fb;
+  --theme-shell-bg: #f7f9fd;
+  --theme-ribbon-bg: #fbfdff;
+  --theme-ribbon-head-bg: #f2f6fb;
+  --theme-ribbon-head-border: #cbd6e4;
+  --theme-ribbon-tab-text: #2b415a;
+  --theme-ribbon-tab-active-text: #122a42;
+  --theme-ribbon-tab-hover-bg: rgba(18, 41, 67, 0.08);
+  --theme-ribbon-button-border: #afbfd3;
+  --theme-control-border: #afbfd3;
+  --theme-panel-head-bg: #f5f8fc;
+  --theme-panel-head-border: #cfdae7;
+  --theme-panel-meta: #49627d;
+  --theme-table-head-bg: #f0f5fb;
+  --theme-table-head-border: #c0cedf;
+  --theme-status-bg: #f2f7fc;
+  --theme-status-border: #ccd8e6;
+  --theme-status-text: #1e3650;
+  --theme-status-muted: #516981;
+}
+
+body.excel-window[data-theme="light"] .status {
+  color: #3c536d;
+}
+
+body.excel-window[data-theme="light"] .status::before {
+  background: #7d93ac;
+}
+
+body.excel-window[data-theme="light"] .status-hint {
+  color: #4d6480;
+}
+
+body.excel-window[data-theme="light"] .muted-inline {
+  color: #5a718b;
+}
+
+body.excel-window[data-theme="light"] .meta {
+  color: #1f7a45;
+}
+
+body.excel-window[data-theme="light"] #ribbonRoot .control-group {
+  background: #f8fbff;
+  border-color: #ccd9e8;
+}
+
+body.excel-window[data-theme="light"] #ribbonRoot .control-group h3 {
+  color: #294561;
+}
+
+body.excel-window[data-theme="light"] #ribbonRoot [data-ribbon-panel="onboarding"] .onboarding {
+  border-color: #c8d7e7;
+  background: linear-gradient(160deg, #ffffff 0%, #f6faff 60%, #edf5ff 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+body.excel-window[data-theme="light"] #ribbonRoot [data-ribbon-panel="onboarding"] .onboarding-note {
+  color: #1f7a45;
+  font-weight: 700;
+}
+
+body.excel-window[data-theme="light"] #ribbonRoot [data-ribbon-panel="onboarding"] .onboarding-copy {
+  color: #2a425c;
+}
+
+body.excel-window[data-theme="light"] #ribbonRoot [data-ribbon-panel="onboarding"] .onboarding-role-note {
+  background: #eaf3ff;
+  border-color: #bfd2e8;
+  color: #15314d;
+}
+
+body.excel-window[data-theme="light"] #ribbonRoot [data-ribbon-panel="onboarding"] .onboarding-quick {
+  color: #2c4662;
+}
+
+body.excel-window[data-theme="light"] #ribbonRoot [data-ribbon-panel="onboarding"] .role-card {
+  border-color: #c7d8ea;
+  background: #f8fbff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+body.excel-window[data-theme="light"] #ribbonRoot [data-ribbon-panel="onboarding"] .role-card h3 {
+  color: #1d3957;
+}
+
+body.excel-window[data-theme="light"] #ribbonRoot [data-ribbon-panel="onboarding"] .role-card p {
+  color: #35526e;
+}
+
+body.excel-window[data-theme="light"] #ribbonRoot [data-ribbon-panel="onboarding"] .role-card[data-active="true"] {
+  border-color: #2a8a52;
+  background: linear-gradient(180deg, #ffffff 0%, #e9f6ef 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(42, 138, 82, 0.2),
+    0 2px 10px rgba(31, 122, 69, 0.12);
+}
+
+body.excel-window[data-theme="light"] #ribbonRoot [data-ribbon-panel="onboarding"] .role-card[data-active="true"] h3 {
+  color: #0f5a31;
+}
+
+body.excel-window[data-theme="light"] #ribbonRoot [data-ribbon-panel="onboarding"] .step-item {
+  border-color: #c6d7e9;
+  background: #f7fbff;
+  color: #2a4561;
+}
+
+body.excel-window[data-theme="light"] #ribbonRoot [data-ribbon-panel="onboarding"] .step-num {
+  background: #1f7a45;
+  color: #ffffff;
+}
+
+body.excel-window[data-theme="light"] #ribbonRoot [data-ribbon-panel="onboarding"] .health-chip {
+  border-color: #c8d7e6;
+  background: #f7fbff;
+  color: #2b445f;
+}
+
+body.excel-window[data-theme="light"] #ribbonRoot [data-ribbon-panel="onboarding"] .health-chip[data-state="ok"] {
+  border-color: #8bcfa8;
+  background: #e9f7ef;
+  color: #145a33;
+}
+
+body.excel-window[data-theme="light"] #ribbonRoot [data-ribbon-panel="onboarding"] .health-chip[data-state="busy"] {
+  border-color: #e0c08a;
+  background: #fff5e6;
+  color: #7d5618;
+}
+
+body.excel-window[data-theme="light"] #ribbonRoot [data-ribbon-panel="onboarding"] .health-chip[data-state="warn"] {
+  border-color: #dfb795;
+  background: #fff2e8;
+  color: #8a4c13;
 }

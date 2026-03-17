@@ -416,6 +416,7 @@ def build_main_sheet_html_cached(
     has_explicit_freeze = worksheet_frozen_rows > 0 or worksheet_frozen_cols > 0
     frozen_row_boundary = worksheet_frozen_rows
     frozen_col_boundary = worksheet_frozen_cols
+    is_generic_fallback_sheet = False
 
     if detected_month_groups:
         month_by_key = {item["key"]: item for item in detected_month_groups}
@@ -458,6 +459,7 @@ def build_main_sheet_html_cached(
             frozen_col_boundary = len(selected_columns)
         min_required_row = layout["metrics_row"] + 1
     else:
+        is_generic_fallback_sheet = True
         used_columns: list[int] = []
         for col_idx in range(1, worksheet.max_column + 1):
             has_value = any(
@@ -507,6 +509,17 @@ def build_main_sheet_html_cached(
             if 1 <= col_idx <= worksheet.max_column and not is_column_hidden(worksheet, col_idx)
         ]
     )
+    if is_generic_fallback_sheet and selected_columns:
+        # Avoid collapsing sparse sheets into a 1x1 view; keep a minimum visible grid footprint.
+        min_visible_columns = 12
+        if len(selected_columns) < min_visible_columns:
+            max_selected_col = max(selected_columns)
+            padded_target_col = max(min_visible_columns, max_selected_col)
+            selected_columns = [
+                col_idx
+                for col_idx in range(1, padded_target_col + 1)
+                if not is_column_hidden(worksheet, col_idx)
+            ]
     if detected_month_groups and selected_month_keys:
         visible_column_set = set(selected_columns)
         month_by_key = {item["key"]: item for item in detected_month_groups}
@@ -529,8 +542,6 @@ def build_main_sheet_html_cached(
             "hidden_columns_skipped": hidden_columns_skipped,
             "html": '<div class="empty">All selected columns are hidden in this sheet.</div>',
         }
-
-    selected_col_set = set(selected_columns)
 
     visible_row_candidates = [
         row_idx for row_idx in range(1, worksheet.max_row + 1) if not is_row_hidden(worksheet, row_idx)
@@ -564,9 +575,33 @@ def build_main_sheet_html_cached(
     if last_row < min_required_row:
         last_row = next((row_idx for row_idx in visible_row_candidates if row_idx >= min_required_row), visible_row_candidates[-1])
 
-    visible_rows = [row_idx for row_idx in visible_row_candidates if row_idx <= last_row]
+    if is_generic_fallback_sheet and last_row < 24:
+        last_row = 24
+
+    visible_rows = [row_idx for row_idx in range(1, last_row + 1) if not is_row_hidden(worksheet, row_idx)]
     visible_row_set = set(visible_rows)
     hidden_rows_skipped = max(0, last_row - len(visible_rows))
+
+    sparse_sheet = len(visible_rows) <= 2 and len(selected_columns) <= 8
+    if sparse_sheet:
+        min_sparse_rows = 24
+        min_sparse_columns = 10
+        if last_row < min_sparse_rows:
+            last_row = min_sparse_rows
+        if selected_columns:
+            max_selected_col = max(selected_columns)
+            if len(selected_columns) < min_sparse_columns:
+                padded_target_col = max(min_sparse_columns, max_selected_col)
+                selected_columns = [
+                    col_idx
+                    for col_idx in range(1, padded_target_col + 1)
+                    if not is_column_hidden(worksheet, col_idx)
+                ]
+        visible_rows = [row_idx for row_idx in range(1, last_row + 1) if not is_row_hidden(worksheet, row_idx)]
+        visible_row_set = set(visible_rows)
+        hidden_rows_skipped = max(0, last_row - len(visible_rows))
+
+    selected_col_set = set(selected_columns)
 
     merge_top_left: dict[tuple[int, int], tuple[int, int]] = {}
     merge_skip: set[tuple[int, int]] = set()

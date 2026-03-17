@@ -98,6 +98,30 @@ Install if needed:
 pip install Flask openpyxl
 ```
 
+## Template JSON Generator
+
+Generate both template workbooks from normalized JSON while preserving formulas:
+
+```bash
+cd /Users/min/codex/SMM-SKU
+python3 generate_excel_from_template_json.py \
+  --input-json template_generation_input.example.json \
+  --mhl-template "MHL 2026 Feb.xlsx" \
+  --town-template "7-MTL for Township Summary_4.xlsx" \
+  --output-dir /Users/min/codex/SMM-SKU/outputs
+```
+
+Default output names:
+
+- `MHL_from_json.xlsx`
+- `7-MTL_for_Township_Summary_from_json.xlsx`
+
+You can extend the JSON with:
+
+- normalized facts (`sales_monthly_sku_township`, `sales_monthly_customer`, etc.)
+- explicit cell patches (`workbook_patches`)
+- explicit row/table patches (`workbook_table_patches`)
+
 ## Deploy On Render
 
 This repo now includes [`render.yaml`](/Users/min/codex/SMM-SKU/render.yaml), so you can deploy quickly.

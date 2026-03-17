@@ -1,0 +1,160 @@
+{
+  "sku_master": [
+    {
+      "sku_id": "ZVK-700",
+      "product_name": "\"Zay\" Vodka 700-ml",
+      "ml": 0.7,
+      "packing": "1 * 12",
+      "sales_price": 1870
+    },
+    {
+      "sku_id": "ZAY-1000",
+      "product_name": "\"Zay\" (1 Liter)",
+      "ml": 1.0,
+      "packing": "1 * 12",
+      "sales_price": 1580
+    }
+  ],
+  "township_master": [
+    {
+      "township_code": "Meiktila",
+      "township_name": "Meiktila",
+      "region": "MTL"
+    },
+    {
+      "township_code": "Tharzi",
+      "township_name": "Tharzi",
+      "region": "MTL"
+    }
+  ],
+  "customer_master": [
+    {
+      "customer_id": "SC",
+      "customer_name": "Sample Customer",
+      "township_code": "Meiktila",
+      "outlet_type": "Wholesale",
+      "sales_channel": "WholeSales/Contract"
+    }
+  ],
+  "sales_monthly_sku_township": [
+    {
+      "year_month": "2026-01-01",
+      "township_code": "Meiktila",
+      "sku_id": "ZVK-700",
+      "pk_qty": 10,
+      "bottle_qty": 120
+    },
+    {
+      "year_month": "2026-02-01",
+      "township_code": "Meiktila",
+      "sku_id": "ZVK-700",
+      "pk_qty": 9,
+      "bottle_qty": 108
+    },
+    {
+      "year_month": "2026-01-01",
+      "township_code": "Tharzi",
+      "sku_id": "ZAY-1000",
+      "pk_qty": 6,
+      "bottle_qty": 72
+    }
+  ],
+  "future_plan_monthly_sku_township_2026": [
+    {
+      "year_month": "2026-03-01",
+      "township_code": "Meiktila",
+      "sku_id": "ZVK-700",
+      "pk_qty": 11,
+      "bottle_qty": 132
+    }
+  ],
+  "sales_monthly_sku_region": [
+    {
+      "year_month": "2026-01-01",
+      "sku_id": "ZVK-700",
+      "bottle_qty": 160
+    },
+    {
+      "year_month": "2026-02-01",
+      "sku_id": "ZVK-700",
+      "bottle_qty": 130
+    }
+  ],
+  "sales_monthly_customer": [
+    {
+      "year_month": "2026-01-01",
+      "customer_id": "SC",
+      "pkt_qty": 2,
+      "bot_qty": 24
+    }
+  ],
+  "outlet_master": [
+    {
+      "outlet_id": "OUT-001",
+      "outlet_name": "Sample Outlet",
+      "type": "B",
+      "address": "Sample Street",
+      "township_code": "Meiktila",
+      "township_name": "Meiktila",
+      "way_code": "Van 1-1",
+      "phone": "09-123456789",
+      "owner_customer_id": "SC",
+      "investment_score": 3
+    }
+  ],
+  "way_plan_daily": [
+    {
+      "date": "2026-02-01",
+      "day_name": "SUN",
+      "way_code": "Van 1-1",
+      "actual_way_name": "Sample Route",
+      "a": 0,
+      "b": 0,
+      "c": 5,
+      "d": 6,
+      "s": 0
+    }
+  ],
+  "competition_info": [
+    {
+      "region": "MTL",
+      "town": "Meiktila",
+      "company_name": "Sample Co",
+      "distributor": "Sample Dist",
+      "township_code": "Meiktila",
+      "product_name": "Sample Brand 640ml",
+      "db_landing_price": 1200,
+      "db_selling_price": 1230,
+      "focus_or_budget": "FOCUS",
+      "size_ml": 640,
+      "packing_size": 24,
+      "abv": 0.2,
+      "buying_price": 1200,
+      "freight_labor": 35,
+      "trade_promo": 5,
+      "customer_selling_price": 1400,
+      "estimated_sec": 300
+    }
+  ],
+  "workbook_patches": [
+    {
+      "workbook": "mhl",
+      "sheet": "Business Summary",
+      "cell": "B2",
+      "value": "MTL"
+    }
+  ],
+  "workbook_table_patches": [
+    {
+      "workbook": "town",
+      "sheet": "7-MTL",
+      "start_row": 18,
+      "columns": ["A", "B", "C", "D", "E"],
+      "rows": [
+        [1, "Example Manual Row", "", 100, 70]
+      ],
+      "clear_after": false
+    }
+  ]
+}
+

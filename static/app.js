@@ -66,6 +66,7 @@ const MIN_VIEWS_MAIN_RATIO = 0.28;
 const MAX_VIEWS_MAIN_RATIO = 0.78;
 const VIEWS_SPLIT_KEY_STEP = 0.03;
 const THEME_PREF_STORAGE_KEY = "smm.themePreference";
+const RIBBON_COLLAPSED_STORAGE_KEY = "smm.ribbonCollapsed";
 const MAX_AUTO_FROZEN_ROWS = 6;
 const AUTO_FROZEN_ROW_RATIO_THRESHOLD = 0.25;
 const GRID_SELECTION_EDGE_CLASSNAMES = [
@@ -94,6 +95,35 @@ const themeMediaQuery =
   typeof window.matchMedia === "function" ? window.matchMedia("(prefers-color-scheme: dark)") : null;
 let floatingMetricsRafId = 0;
 let inMemoryClipboardText = "";
+
+function readStoredRibbonCollapsed() {
+  try {
+    if (!window.localStorage) {
+      return null;
+    }
+    const rawValue = window.localStorage.getItem(RIBBON_COLLAPSED_STORAGE_KEY);
+    if (rawValue === "true") {
+      return true;
+    }
+    if (rawValue === "false") {
+      return false;
+    }
+  } catch {
+    // Ignore storage read failures.
+  }
+  return null;
+}
+
+function storeRibbonCollapsed(collapsed) {
+  try {
+    if (!window.localStorage) {
+      return;
+    }
+    window.localStorage.setItem(RIBBON_COLLAPSED_STORAGE_KEY, collapsed ? "true" : "false");
+  } catch {
+    // Ignore storage write failures.
+  }
+}
 
 function scheduleFloatingLayoutMetricsSync() {
   if (typeof window.requestAnimationFrame !== "function") {
@@ -462,21 +492,60 @@ function setOnboardingExpanded(expanded) {
   );
 }
 
-function setRibbonCollapsed(collapsed) {
+function setRibbonCollapsed(collapsed, options = {}) {
+  const { persist = true } = options;
   state.ribbonCollapsed = Boolean(collapsed);
   document.body.classList.toggle("ribbon-collapsed", state.ribbonCollapsed);
   if (el.ribbonToggleBtn) {
     el.ribbonToggleBtn.setAttribute("aria-expanded", state.ribbonCollapsed ? "false" : "true");
     setText(el.ribbonToggleBtn, state.ribbonCollapsed ? "Expand Ribbon" : "Collapse Ribbon");
   }
+  if (persist) {
+    storeRibbonCollapsed(state.ribbonCollapsed);
+  }
   scheduleFloatingLayoutMetricsSync();
 }
 
-function setSheetZoom(percent) {
-  const zoom = clampZoomPercent(percent);
-  state.sheetZoomPercent = zoom;
-  document.documentElement.style.setProperty("--sheet-zoom", String(zoom / 100));
+function normalizeZoomScope(scope) {
+  if (scope === "main" || scope === "reference") {
+    return scope;
+  }
+  return normalizeViewScope(state.activeViewScope || "main");
+}
 
+function ensureZoomState() {
+  if (!state.sheetZoomByScope || typeof state.sheetZoomByScope !== "object") {
+    const fallback = clampZoomPercent(state.sheetZoomPercent || 100);
+    state.sheetZoomByScope = {
+      main: fallback,
+      reference: fallback,
+    };
+  }
+  const mainZoom = clampZoomPercent(state.sheetZoomByScope.main ?? state.sheetZoomPercent ?? 100);
+  const referenceZoom = clampZoomPercent(state.sheetZoomByScope.reference ?? state.sheetZoomPercent ?? 100);
+  state.sheetZoomByScope.main = mainZoom;
+  state.sheetZoomByScope.reference = referenceZoom;
+}
+
+function zoomPercentForScope(scope) {
+  ensureZoomState();
+  const normalized = normalizeZoomScope(scope);
+  return clampZoomPercent(state.sheetZoomByScope[normalized] ?? state.sheetZoomPercent ?? 100);
+}
+
+function applyScopeZoom(scope) {
+  const normalized = normalizeZoomScope(scope);
+  const zoom = zoomPercentForScope(normalized);
+  const wrap = tableWrapForScope(normalized);
+  if (wrap) {
+    wrap.style.setProperty("--sheet-zoom", String(zoom / 100));
+  }
+}
+
+function syncZoomControlForScope(scope = null) {
+  const normalized = normalizeZoomScope(scope);
+  const zoom = zoomPercentForScope(normalized);
+  state.sheetZoomPercent = zoom;
   if (el.zoomRangeInput && el.zoomRangeInput.value !== String(zoom)) {
     el.zoomRangeInput.value = String(zoom);
   }
@@ -485,9 +554,27 @@ function setSheetZoom(percent) {
   }
 }
 
-function adjustSheetZoom(delta) {
-  const next = clampZoomPercent((state.sheetZoomPercent || 100) + delta);
-  setSheetZoom(next);
+function syncAllScopeZooms() {
+  ensureZoomState();
+  applyScopeZoom("main");
+  applyScopeZoom("reference");
+  syncZoomControlForScope();
+}
+
+function setSheetZoom(percent, scope = null) {
+  ensureZoomState();
+  const normalized = normalizeZoomScope(scope);
+  const zoom = clampZoomPercent(percent);
+  state.sheetZoomByScope[normalized] = zoom;
+  state.sheetZoomPercent = zoom;
+  applyScopeZoom(normalized);
+  syncZoomControlForScope();
+}
+
+function adjustSheetZoom(delta, scope = null) {
+  const normalized = normalizeZoomScope(scope);
+  const next = clampZoomPercent(zoomPercentForScope(normalized) + delta);
+  setSheetZoom(next, normalized);
 }
 
 function resetSelectionStatusBar() {
@@ -527,6 +614,39 @@ function setViewsSplitRatio(ratio) {
   el.viewsSplit.style.setProperty("--views-main-width", percent);
 }
 
+function isDetailPanelVisible() {
+  const drawerMode = document.body.classList.contains("detail-drawer-mode");
+  if (drawerMode) {
+    return Boolean(state.referenceDrawerExpanded);
+  }
+  return !Boolean(state.desktopDetailCollapsed);
+}
+
+function syncSheetTabsDockVisibility() {
+  if (!el.sheetTabsDock || !el.referenceSheetTabs) {
+    return;
+  }
+
+  const referenceLane = el.referenceSheetTabs.closest(".sheet-tabs-dock-lane");
+  const mainLane = el.mainSheetTabs ? el.mainSheetTabs.closest(".sheet-tabs-dock-lane") : null;
+  const showDetailTabs = isDetailPanelVisible();
+
+  if (referenceLane instanceof HTMLElement) {
+    referenceLane.hidden = !showDetailTabs;
+    referenceLane.setAttribute("aria-hidden", showDetailTabs ? "false" : "true");
+  }
+  document.body.classList.toggle("detail-tabs-hidden", !showDetailTabs);
+
+  if (showDetailTabs) {
+    document.documentElement.style.removeProperty("--sheet-tabs-dock-height");
+  } else if (mainLane instanceof HTMLElement) {
+    const laneHeight = Math.max(36, Math.ceil(mainLane.getBoundingClientRect().height));
+    document.documentElement.style.setProperty("--sheet-tabs-dock-height", `${laneHeight}px`);
+  }
+
+  scheduleFloatingLayoutMetricsSync();
+}
+
 function setDesktopDetailCollapsed(collapsed) {
   const drawerMode = document.body.classList.contains("detail-drawer-mode");
   state.desktopDetailCollapsed = Boolean(collapsed);
@@ -545,9 +665,22 @@ function setDesktopDetailCollapsed(collapsed) {
   if (el.viewsSplitHandle) {
     el.viewsSplitHandle.hidden = drawerMode || collapsedDesktop;
   }
+
+  syncSheetTabsDockVisibility();
 }
 
 function shouldUseReferenceDrawerMode() {
+  const width = Number(window.innerWidth || document.documentElement.clientWidth || 0);
+  const height = Number(window.innerHeight || document.documentElement.clientHeight || 0);
+
+  if (typeof window.matchMedia === "function" && window.matchMedia("(orientation: portrait)").matches) {
+    return true;
+  }
+
+  if (width > 0 && height > 0 && height > width * 1.08) {
+    return true;
+  }
+
   return false;
 }
 
@@ -571,6 +704,8 @@ function setReferenceDrawerExpanded(expanded) {
   if (el.referenceDrawerBody) {
     el.referenceDrawerBody.setAttribute("aria-hidden", drawerMode && !effectiveExpanded ? "true" : "false");
   }
+
+  syncSheetTabsDockVisibility();
 }
 
 function syncReferenceDrawerMode() {
@@ -592,6 +727,7 @@ function syncReferenceDrawerMode() {
     setDesktopDetailCollapsed(state.desktopDetailCollapsed);
     setViewsSplitRatio(state.viewsSplitRatio);
   }
+  syncSheetTabsDockVisibility();
   syncFloatingLayoutMetrics();
 }
 
@@ -695,6 +831,11 @@ function setInteractiveControlsDisabled(disabled) {
     el.assignRsmRegionsInput,
     el.mapUserUsernameInput,
     el.mapUserRsmSelect,
+    el.switchUserRoleUsernameInput,
+    el.switchUserRoleDisplayInput,
+    el.switchUserRoleSelect,
+    el.switchUserRoleRsmSelect,
+    el.switchUserRoleRegionsInput,
     el.assignAsmUsernameInput,
     el.assignAsmDisplayInput,
     el.assignAsmRsmSelect,
@@ -1066,6 +1207,28 @@ function setTownshipSelect(selectElement, region, selectedTownships = []) {
   }
 }
 
+function syncSwitchUserRoleControls() {
+  if (!el.switchUserRoleSelect) {
+    return;
+  }
+  const role = normalizeRoleToken(el.switchUserRoleSelect.value || "user");
+  const needsRsm = role === "user" || role === "asm";
+  const needsRegions = role === "rsm";
+
+  if (el.switchUserRoleRsmWrap) {
+    el.switchUserRoleRsmWrap.classList.toggle("hidden", !needsRsm);
+  }
+  if (el.switchUserRoleRsmSelect) {
+    el.switchUserRoleRsmSelect.disabled = !needsRsm;
+  }
+  if (el.switchUserRoleRegionsWrap) {
+    el.switchUserRoleRegionsWrap.classList.toggle("hidden", !needsRegions);
+  }
+  if (el.switchUserRoleRegionsInput) {
+    el.switchUserRoleRegionsInput.disabled = !needsRegions;
+  }
+}
+
 function renderUsersList() {
   if (!el.usersList) {
     return;
@@ -1123,6 +1286,9 @@ function syncAccessControls() {
   if (el.mapUserRsmForm) {
     el.mapUserRsmForm.classList.toggle("hidden", !permissions.can_manage_rsm);
   }
+  if (el.switchUserRoleForm) {
+    el.switchUserRoleForm.classList.toggle("hidden", !permissions.can_manage_rsm);
+  }
   if (el.assignAsmForm) {
     el.assignAsmForm.classList.toggle("hidden", !permissions.can_manage_asm);
   }
@@ -1149,6 +1315,12 @@ function syncAccessControls() {
   }
 
   setSelectOptionsFromUsers(el.mapUserRsmSelect, rsmUsers, null, el.mapUserRsmSelect?.value || null);
+  setSelectOptionsFromUsers(
+    el.switchUserRoleRsmSelect,
+    rsmUsers,
+    null,
+    el.switchUserRoleRsmSelect?.value || null,
+  );
   setSelectOptionsFromUsers(el.assignAsmRsmSelect, rsmUsers, null, el.assignAsmRsmSelect?.value || null);
   setSelectOptionsFromUsers(
     el.asmTownshipUserSelect,
@@ -1162,6 +1334,7 @@ function syncAccessControls() {
   if (el.assignAsmRsmWrap) {
     el.assignAsmRsmWrap.classList.toggle("hidden", state.viewerRole !== "owner");
   }
+  syncSwitchUserRoleControls();
 
   const assignAsmRegion = el.assignAsmRegionSelect ? el.assignAsmRegionSelect.value : "";
   setTownshipSelect(el.assignAsmTownshipsSelect, assignAsmRegion, []);
@@ -2646,21 +2819,84 @@ function toSolidRgbString(color) {
   return `rgb(${Math.round(color.r)}, ${Math.round(color.g)}, ${Math.round(color.b)})`;
 }
 
+function cssVarValue(style, name) {
+  if (!style || !name) {
+    return "";
+  }
+  return style.getPropertyValue(name).trim();
+}
+
 function resolveOpaqueStickyBackground(cell, table) {
-  const root = getComputedStyle(document.documentElement);
-  const stickyBg = root.getPropertyValue("--sticky-bg").trim();
-  if (stickyBg) {
-    return stickyBg;
+  const rootStyle = getComputedStyle(document.documentElement);
+  const bodyStyle = document.body ? getComputedStyle(document.body) : null;
+  const tableStyle = table ? getComputedStyle(table) : null;
+  const cellStyle = cell ? getComputedStyle(cell) : null;
+
+  const tableBodyBg =
+    cssVarValue(tableStyle, "--theme-table-bg") ||
+    cssVarValue(bodyStyle, "--theme-table-bg") ||
+    cssVarValue(rootStyle, "--theme-table-bg");
+  const tableHeadBg =
+    cssVarValue(tableStyle, "--theme-table-head-bg") ||
+    cssVarValue(bodyStyle, "--theme-table-head-bg") ||
+    cssVarValue(rootStyle, "--theme-table-head-bg");
+  const stickyBg =
+    cssVarValue(tableStyle, "--sticky-bg") ||
+    cssVarValue(bodyStyle, "--sticky-bg") ||
+    cssVarValue(rootStyle, "--sticky-bg");
+  const softBg = cssVarValue(bodyStyle, "--bg-soft") || cssVarValue(rootStyle, "--bg-soft");
+  const tableBgColor = tableStyle ? tableStyle.backgroundColor : "";
+
+  const baseColor =
+    parseCssColor(tableBodyBg) ||
+    parseCssColor(tableBgColor) ||
+    parseCssColor(stickyBg) ||
+    parseCssColor(softBg) || { r: 245, g: 245, b: 245, a: 1 };
+  const opaqueBase =
+    baseColor.a >= 1 ? baseColor : blendColors(baseColor, { r: 245, g: 245, b: 245, a: 1 });
+
+  if (cellStyle) {
+    const cellColor = parseCssColor(cellStyle.backgroundColor);
+    if (cellColor && cellColor.a > 0) {
+      if (cellColor.a >= 1) {
+        return toSolidRgbString(cellColor);
+      }
+      return toSolidRgbString(blendColors(cellColor, opaqueBase));
+    }
   }
-  const fallback = root.getPropertyValue("--bg-soft").trim();
-  if (fallback) {
-    return fallback;
+
+  const isHeaderCell = Boolean(cell && cell.tagName === "TH");
+  const fallbackColor =
+    parseCssColor(isHeaderCell ? tableHeadBg : tableBodyBg) ||
+    parseCssColor(stickyBg) ||
+    parseCssColor(tableBgColor) ||
+    parseCssColor(softBg);
+  if (fallbackColor) {
+    if (fallbackColor.a >= 1) {
+      return toSolidRgbString(fallbackColor);
+    }
+    return toSolidRgbString(blendColors(fallbackColor, opaqueBase));
   }
-  const tableBg = getComputedStyle(table).backgroundColor;
-  if (tableBg && tableBg !== "transparent" && tableBg !== "rgba(0, 0, 0, 0)") {
-    return tableBg;
+
+  return toSolidRgbString(opaqueBase);
+}
+
+function refreshFrozenSurfaceColors(scope = null) {
+  const scopes = scope ? [normalizeViewScope(scope)] : ["main", "reference"];
+  for (const scopeName of scopes) {
+    for (const table of tablesForScope(scopeName)) {
+      for (const cell of table.querySelectorAll("th, td")) {
+        if (
+          !cell.classList.contains("sticky-col") &&
+          !cell.classList.contains("sticky-row") &&
+          !cell.classList.contains("split-head-cell")
+        ) {
+          continue;
+        }
+        cell.style.backgroundColor = resolveOpaqueStickyBackground(cell, table);
+      }
+    }
   }
-  return "rgb(16, 39, 51)";
 }
 
 function applyFrozenColumns(table, frozenCount) {
@@ -2793,6 +3029,7 @@ function refreshStatusSelectionScopeLabel() {
 
 function setActiveViewScope(scope, options = {}) {
   state.activeViewScope = normalizeViewScope(scope);
+  syncZoomControlForScope(state.activeViewScope);
   if (options.refresh !== false && !hasGridSelection()) {
     refreshStatusSelectionScopeLabel();
   }
@@ -3498,6 +3735,16 @@ function rangeIncludesCell(range, rowStart, rowEnd, colStart, colEnd) {
   return colEnd >= normalized.colStart && colStart <= normalized.colEnd;
 }
 
+function rangeFullyContainsCell(range, rowStart, rowEnd, colStart, colEnd) {
+  const normalized = normalizeSelectionRange(range);
+  return (
+    rowStart >= normalized.rowStart &&
+    rowEnd <= normalized.rowEnd &&
+    colStart >= normalized.colStart &&
+    colEnd <= normalized.colEnd
+  );
+}
+
 function pointInRange(range, point) {
   const normalized = normalizeSelectionRange(range);
   return (
@@ -4103,16 +4350,16 @@ function selectionEdgeClassesForCell(rowStart, rowEnd, colStart, colEnd, ranges)
       continue;
     }
 
-    if (normalized.rowStart >= rowStart && normalized.rowStart <= rowEnd) {
+    if (normalized.rowStart === rowStart) {
       top = true;
     }
-    if (normalized.colEnd >= colStart && normalized.colEnd <= colEnd) {
+    if (normalized.colEnd === colEnd) {
       right = true;
     }
-    if (normalized.rowEnd >= rowStart && normalized.rowEnd <= rowEnd) {
+    if (normalized.rowEnd === rowEnd) {
       bottom = true;
     }
-    if (normalized.colStart >= colStart && normalized.colStart <= colEnd) {
+    if (normalized.colStart === colStart) {
       left = true;
     }
 
@@ -5543,7 +5790,13 @@ function refreshGridSelectionVisuals() {
         continue;
       }
 
-      const selected = normalizedRanges.some((range) => rangeIncludesCell(range, rowStart, rowEnd, colStart, colEnd));
+      const isMergedCell = rowEnd > rowStart || colEnd > colStart;
+      const selected = normalizedRanges.some((range) => {
+        if (isMergedCell) {
+          return rangeFullyContainsCell(range, rowStart, rowEnd, colStart, colEnd);
+        }
+        return rangeIncludesCell(range, rowStart, rowEnd, colStart, colEnd);
+      });
       if (!selected) {
         continue;
       }
@@ -5995,6 +6248,13 @@ function bindEvents() {
   if (el.themeSelect) {
     el.themeSelect.addEventListener("change", () => {
       applyThemePreference(el.themeSelect.value);
+      if (typeof window.requestAnimationFrame === "function") {
+        window.requestAnimationFrame(() => {
+          refreshFrozenSurfaceColors();
+        });
+      } else {
+        refreshFrozenSurfaceColors();
+      }
     });
   }
 
@@ -6003,6 +6263,13 @@ function bindEvents() {
       return;
     }
     applyThemePreference("system", { persist: false });
+    if (typeof window.requestAnimationFrame === "function") {
+      window.requestAnimationFrame(() => {
+        refreshFrozenSurfaceColors();
+      });
+    } else {
+      refreshFrozenSurfaceColors();
+    }
   };
   if (themeMediaQuery && typeof themeMediaQuery.addEventListener === "function") {
     themeMediaQuery.addEventListener("change", handleSystemThemeChange);
@@ -6460,7 +6727,9 @@ function bindEvents() {
           return;
         }
         event.preventDefault();
-        adjustSheetZoom(event.deltaY < 0 ? ZOOM_STEP : -ZOOM_STEP);
+        const zoomScope = wrap === el.referenceTableWrap ? "reference" : "main";
+        setActiveViewScope(zoomScope, { refresh: false });
+        adjustSheetZoom(event.deltaY < 0 ? ZOOM_STEP : -ZOOM_STEP, zoomScope);
       },
       { passive: false },
     );
@@ -6613,13 +6882,17 @@ function bindEvents() {
   }
   if (el.ctxZoomInBtn) {
     el.ctxZoomInBtn.addEventListener("click", () => {
-      adjustSheetZoom(ZOOM_STEP);
+      const scope = normalizeViewScope(state.contextMenuScope || state.selectionScope || state.activeViewScope || "main");
+      setActiveViewScope(scope, { refresh: false });
+      adjustSheetZoom(ZOOM_STEP, scope);
       hideGridContextMenu();
     });
   }
   if (el.ctxZoomOutBtn) {
     el.ctxZoomOutBtn.addEventListener("click", () => {
-      adjustSheetZoom(-ZOOM_STEP);
+      const scope = normalizeViewScope(state.contextMenuScope || state.selectionScope || state.activeViewScope || "main");
+      setActiveViewScope(scope, { refresh: false });
+      adjustSheetZoom(-ZOOM_STEP, scope);
       hideGridContextMenu();
     });
   }
@@ -6867,6 +7140,11 @@ function bindEvents() {
       setTownshipSelect(el.asmTownshipSelect, region, selected);
     });
   }
+  if (el.switchUserRoleSelect) {
+    el.switchUserRoleSelect.addEventListener("change", () => {
+      syncSwitchUserRoleControls();
+    });
+  }
 
   if (el.assignRsmForm) {
     el.assignRsmForm.addEventListener("submit", (event) => {
@@ -6910,6 +7188,41 @@ function bindEvents() {
           await loadWorkbookOptions();
           await loadSheets();
           setText(el.statusText, "User mapped to RSM.");
+        } finally {
+          endBusy();
+        }
+      })().catch((err) => {
+        setStatusError(err);
+      });
+    });
+  }
+
+  if (el.switchUserRoleForm) {
+    el.switchUserRoleForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      (async () => {
+        beginBusy("Saving user role...");
+        try {
+          const role = normalizeRoleToken(el.switchUserRoleSelect ? el.switchUserRoleSelect.value : "user");
+          const payload = {
+            username: el.switchUserRoleUsernameInput.value,
+            display_name: el.switchUserRoleDisplayInput.value,
+            role,
+          };
+          if (role === "rsm") {
+            payload.regions = (el.switchUserRoleRegionsInput.value || "")
+              .split(",")
+              .map((item) => item.trim())
+              .filter(Boolean);
+          } else if (el.switchUserRoleRsmSelect && el.switchUserRoleRsmSelect.value) {
+            payload.rsm_username = el.switchUserRoleRsmSelect.value;
+          }
+
+          await postScopedJson("/api/access/set-user-role", payload);
+          await refreshAccessAndFiles();
+          await loadWorkbookOptions();
+          await loadSheets();
+          setText(el.statusText, "User role updated.");
         } finally {
           endBusy();
         }
@@ -7130,8 +7443,9 @@ function bindEvents() {
     applyThemePreference(readStoredThemePreference(), { persist: false });
     setOnboardingExpanded(false);
     setModalOpen(false);
-    setRibbonCollapsed(false);
-    setSheetZoom(state.sheetZoomPercent || 100);
+    const storedRibbonCollapsed = readStoredRibbonCollapsed();
+    setRibbonCollapsed(storedRibbonCollapsed === null ? false : storedRibbonCollapsed, { persist: false });
+    syncAllScopeZooms();
     resetSelectionStatusBar();
     setRibbonTab("home");
     setViewsSplitRatio(state.viewsSplitRatio);

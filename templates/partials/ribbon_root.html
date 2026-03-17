@@ -32,6 +32,16 @@
 
       <section id="ribbonRoot" class="panel ribbon" aria-label="Office style ribbon controls">
         <div class="ribbon-panel-wrap">
+          <button
+            id="ribbonPanelScrollLeftBtn"
+            type="button"
+            class="ribbon-panel-scroll-btn ribbon-panel-scroll-btn-left"
+            aria-label="Scroll ribbon left"
+            title="Scroll ribbon left"
+            hidden
+          >
+            &lt;
+          </button>
           <div class="ribbon-panel active" data-ribbon-panel="home" role="tabpanel">
             <div class="ribbon-group">
               <h3>Actions</h3>
@@ -287,6 +297,37 @@
                   <button id="mapUserRsmBtn" type="submit" class="action-btn action-btn-sm">Assign to RSM</button>
                 </form>
 
+                <form id="switchUserRoleForm" class="control-group hidden">
+                  <h3>Owner: Add User / Switch Role</h3>
+                  <div class="control-grid">
+                    <label>
+                      Username
+                      <input id="switchUserRoleUsernameInput" type="text" placeholder="e.g. user_b" />
+                    </label>
+                    <label>
+                      Display name (optional)
+                      <input id="switchUserRoleDisplayInput" type="text" placeholder="e.g. Sales User B" />
+                    </label>
+                    <label>
+                      Role
+                      <select id="switchUserRoleSelect">
+                        <option value="user">User</option>
+                        <option value="rsm">RSM</option>
+                        <option value="asm">ASM</option>
+                      </select>
+                    </label>
+                    <label id="switchUserRoleRsmWrap">
+                      Mapped RSM (User/ASM)
+                      <select id="switchUserRoleRsmSelect"></select>
+                    </label>
+                    <label id="switchUserRoleRegionsWrap" class="hidden">
+                      Regions (RSM, comma separated)
+                      <input id="switchUserRoleRegionsInput" type="text" placeholder="e.g. MHL, YGN" />
+                    </label>
+                  </div>
+                  <button id="switchUserRoleBtn" type="submit" class="action-btn action-btn-sm">Save User Role</button>
+                </form>
+
                 <form id="assignAsmForm" class="control-group hidden">
                   <h3>Owner/RSM: Assign ASM</h3>
                   <div class="control-grid">
@@ -377,5 +418,15 @@
               </div>
             </div>
           </div>
+          <button
+            id="ribbonPanelScrollRightBtn"
+            type="button"
+            class="ribbon-panel-scroll-btn ribbon-panel-scroll-btn-right"
+            aria-label="Scroll ribbon right"
+            title="Scroll ribbon right"
+            hidden
+          >
+            &gt;
+          </button>
         </div>
       </section>

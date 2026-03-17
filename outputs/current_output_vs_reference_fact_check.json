@@ -1,0 +1,976 @@
+[
+  {
+    "pair": [
+      "/Users/min/codex/SMM-SKU/outputs/MHL_from_json.xlsx",
+      "/Users/min/codex/SMM-SKU/MHL 2026 Feb.xlsx"
+    ],
+    "sheet_count_output": 25,
+    "sheet_count_template": 25,
+    "sheet_order_match": true,
+    "missing_sheets": [],
+    "extra_sheets": [],
+    "formula_cells_total": 13334,
+    "formula_cells_changed": 0,
+    "formula_cells_unchanged": 13334,
+    "nonformula_cells_total": 82675,
+    "nonformula_cells_changed": 38,
+    "nonformula_cells_unchanged": 82637,
+    "cells_changed_total": 38,
+    "sheet_summaries": [
+      {
+        "sheet": "7-MTL",
+        "formula_total": 3206,
+        "formula_changed": 0,
+        "nonformula_total": 3906,
+        "nonformula_changed": 0,
+        "cells_changed": 0
+      },
+      {
+        "sheet": "Business Summary",
+        "formula_total": 20,
+        "formula_changed": 0,
+        "nonformula_total": 882,
+        "nonformula_changed": 0,
+        "cells_changed": 0
+      },
+      {
+        "sheet": "Ws Semi Ws ",
+        "formula_total": 545,
+        "formula_changed": 0,
+        "nonformula_total": 3615,
+        "nonformula_changed": 0,
+        "cells_changed": 0
+      },
+      {
+        "sheet": "Final MTL SKU Wise",
+        "formula_total": 943,
+        "formula_changed": 0,
+        "nonformula_total": 8017,
+        "nonformula_changed": 0,
+        "cells_changed": 0
+      },
+      {
+        "sheet": "MTL Individual",
+        "formula_total": 1266,
+        "formula_changed": 0,
+        "nonformula_total": 5078,
+        "nonformula_changed": 0,
+        "cells_changed": 0
+      },
+      {
+        "sheet": "MTL SKU Analysis",
+        "formula_total": 2308,
+        "formula_changed": 0,
+        "nonformula_total": 9704,
+        "nonformula_changed": 4,
+        "cells_changed": 4
+      },
+      {
+        "sheet": "Township wise Analysis",
+        "formula_total": 408,
+        "formula_changed": 0,
+        "nonformula_total": 1632,
+        "nonformula_changed": 8,
+        "cells_changed": 8
+      },
+      {
+        "sheet": "Final Town SKU wise Analysis",
+        "formula_total": 1522,
+        "formula_changed": 0,
+        "nonformula_total": 1650,
+        "nonformula_changed": 0,
+        "cells_changed": 0
+      },
+      {
+        "sheet": "Outlet Summary",
+        "formula_total": 40,
+        "formula_changed": 0,
+        "nonformula_total": 830,
+        "nonformula_changed": 0,
+        "cells_changed": 0
+      },
+      {
+        "sheet": "Outlet List ",
+        "formula_total": 0,
+        "formula_changed": 0,
+        "nonformula_total": 31262,
+        "nonformula_changed": 5,
+        "cells_changed": 5
+      },
+      {
+        "sheet": "Way Plan",
+        "formula_total": 86,
+        "formula_changed": 0,
+        "nonformula_total": 764,
+        "nonformula_changed": 8,
+        "cells_changed": 8
+      },
+      {
+        "sheet": "3-Van Wise SKU",
+        "formula_total": 502,
+        "formula_changed": 0,
+        "nonformula_total": 2033,
+        "nonformula_changed": 0,
+        "cells_changed": 0
+      },
+      {
+        "sheet": "Competition Information",
+        "formula_total": 49,
+        "formula_changed": 0,
+        "nonformula_total": 518,
+        "nonformula_changed": 13,
+        "cells_changed": 13
+      },
+      {
+        "sheet": "Top 3 or 4 brands in Township",
+        "formula_total": 375,
+        "formula_changed": 0,
+        "nonformula_total": 1220,
+        "nonformula_changed": 0,
+        "cells_changed": 0
+      },
+      {
+        "sheet": "Meiktila",
+        "formula_total": 242,
+        "formula_changed": 0,
+        "nonformula_total": 1184,
+        "nonformula_changed": 0,
+        "cells_changed": 0
+      },
+      {
+        "sheet": "Tharzi",
+        "formula_total": 170,
+        "formula_changed": 0,
+        "nonformula_total": 796,
+        "nonformula_changed": 0,
+        "cells_changed": 0
+      },
+      {
+        "sheet": "Pyawbwe",
+        "formula_total": 185,
+        "formula_changed": 0,
+        "nonformula_total": 873,
+        "nonformula_changed": 0,
+        "cells_changed": 0
+      },
+      {
+        "sheet": "Wantwin",
+        "formula_total": 249,
+        "formula_changed": 0,
+        "nonformula_total": 1131,
+        "nonformula_changed": 0,
+        "cells_changed": 0
+      },
+      {
+        "sheet": "Mahlaing",
+        "formula_total": 199,
+        "formula_changed": 0,
+        "nonformula_total": 767,
+        "nonformula_changed": 0,
+        "cells_changed": 0
+      },
+      {
+        "sheet": "Yamethin",
+        "formula_total": 197,
+        "formula_changed": 0,
+        "nonformula_total": 861,
+        "nonformula_changed": 0,
+        "cells_changed": 0
+      },
+      {
+        "sheet": "Kyaukpandaung",
+        "formula_total": 198,
+        "formula_changed": 0,
+        "nonformula_total": 906,
+        "nonformula_changed": 0,
+        "cells_changed": 0
+      },
+      {
+        "sheet": "Taungthar",
+        "formula_total": 155,
+        "formula_changed": 0,
+        "nonformula_total": 1240,
+        "nonformula_changed": 0,
+        "cells_changed": 0
+      },
+      {
+        "sheet": "Myingan",
+        "formula_total": 125,
+        "formula_changed": 0,
+        "nonformula_total": 1135,
+        "nonformula_changed": 0,
+        "cells_changed": 0
+      },
+      {
+        "sheet": "Bagan",
+        "formula_total": 201,
+        "formula_changed": 0,
+        "nonformula_total": 1464,
+        "nonformula_changed": 0,
+        "cells_changed": 0
+      },
+      {
+        "sheet": "Pakokku",
+        "formula_total": 143,
+        "formula_changed": 0,
+        "nonformula_total": 1207,
+        "nonformula_changed": 0,
+        "cells_changed": 0
+      }
+    ],
+    "top_changed_sheets": [
+      {
+        "sheet": "Competition Information",
+        "formula_total": 49,
+        "formula_changed": 0,
+        "nonformula_total": 518,
+        "nonformula_changed": 13,
+        "cells_changed": 13
+      },
+      {
+        "sheet": "Township wise Analysis",
+        "formula_total": 408,
+        "formula_changed": 0,
+        "nonformula_total": 1632,
+        "nonformula_changed": 8,
+        "cells_changed": 8
+      },
+      {
+        "sheet": "Way Plan",
+        "formula_total": 86,
+        "formula_changed": 0,
+        "nonformula_total": 764,
+        "nonformula_changed": 8,
+        "cells_changed": 8
+      },
+      {
+        "sheet": "Outlet List ",
+        "formula_total": 0,
+        "formula_changed": 0,
+        "nonformula_total": 31262,
+        "nonformula_changed": 5,
+        "cells_changed": 5
+      },
+      {
+        "sheet": "MTL SKU Analysis",
+        "formula_total": 2308,
+        "formula_changed": 0,
+        "nonformula_total": 9704,
+        "nonformula_changed": 4,
+        "cells_changed": 4
+      },
+      {
+        "sheet": "7-MTL",
+        "formula_total": 3206,
+        "formula_changed": 0,
+        "nonformula_total": 3906,
+        "nonformula_changed": 0,
+        "cells_changed": 0
+      },
+      {
+        "sheet": "Business Summary",
+        "formula_total": 20,
+        "formula_changed": 0,
+        "nonformula_total": 882,
+        "nonformula_changed": 0,
+        "cells_changed": 0
+      },
+      {
+        "sheet": "Ws Semi Ws ",
+        "formula_total": 545,
+        "formula_changed": 0,
+        "nonformula_total": 3615,
+        "nonformula_changed": 0,
+        "cells_changed": 0
+      },
+      {
+        "sheet": "Final MTL SKU Wise",
+        "formula_total": 943,
+        "formula_changed": 0,
+        "nonformula_total": 8017,
+        "nonformula_changed": 0,
+        "cells_changed": 0
+      },
+      {
+        "sheet": "MTL Individual",
+        "formula_total": 1266,
+        "formula_changed": 0,
+        "nonformula_total": 5078,
+        "nonformula_changed": 0,
+        "cells_changed": 0
+      }
+    ],
+    "formula_changed_samples": [],
+    "nonformula_changed_samples": [
+      {
+        "sheet": "MTL SKU Analysis",
+        "cell": "4,120",
+        "template": 1224,
+        "output": 160
+      },
+      {
+        "sheet": "MTL SKU Analysis",
+        "cell": "4,121",
+        "template": 856.8,
+        "output": 112
+      },
+      {
+        "sheet": "MTL SKU Analysis",
+        "cell": "4,122",
+        "template": 900,
+        "output": 130
+      },
+      {
+        "sheet": "MTL SKU Analysis",
+        "cell": "4,123",
+        "template": 630,
+        "output": 91
+      },
+      {
+        "sheet": "Township wise Analysis",
+        "cell": "4,63",
+        "template": 339857,
+        "output": 120
+      },
+      {
+        "sheet": "Township wise Analysis",
+        "cell": "4,64",
+        "template": 225404.48000000027,
+        "output": 84
+      },
+      {
+        "sheet": "Township wise Analysis",
+        "cell": "4,65",
+        "template": 286632,
+        "output": 108
+      },
+      {
+        "sheet": "Township wise Analysis",
+        "cell": "4,66",
+        "template": 188273.5200000001,
+        "output": 75.6
+      },
+      {
+        "sheet": "Township wise Analysis",
+        "cell": "4,67",
+        "template": null,
+        "output": 132
+      },
+      {
+        "sheet": "Township wise Analysis",
+        "cell": "4,68",
+        "template": null,
+        "output": 92.39999999999999
+      },
+      {
+        "sheet": "Township wise Analysis",
+        "cell": "5,63",
+        "template": 15858,
+        "output": 72
+      },
+      {
+        "sheet": "Township wise Analysis",
+        "cell": "5,64",
+        "template": 10534.560000000003,
+        "output": 72
+      },
+      {
+        "sheet": "Outlet List ",
+        "cell": "5,2",
+        "template": "ဖူးပွင့်",
+        "output": "Sample Outlet"
+      },
+      {
+        "sheet": "Outlet List ",
+        "cell": "5,4",
+        "template": "ယင်းမာပင်",
+        "output": "Sample Street"
+      },
+      {
+        "sheet": "Outlet List ",
+        "cell": "5,5",
+        "template": "သာစည်မြို့",
+        "output": "Meiktila"
+      },
+      {
+        "sheet": "Outlet List ",
+        "cell": "5,7",
+        "template": "09-961848872",
+        "output": "09-123456789"
+      },
+      {
+        "sheet": "Outlet List ",
+        "cell": "5,8",
+        "template": "ရွှေမြင်း",
+        "output": "SC"
+      },
+      {
+        "sheet": "Way Plan",
+        "cell": "2,1",
+        "template": "2026-02-01 00:00:00",
+        "output": "2026-02-01"
+      },
+      {
+        "sheet": "Way Plan",
+        "cell": "2,3",
+        "template": null,
+        "output": "Van 1-1"
+      },
+      {
+        "sheet": "Way Plan",
+        "cell": "2,4",
+        "template": null,
+        "output": "Sample Route"
+      },
+      {
+        "sheet": "Way Plan",
+        "cell": "2,5",
+        "template": null,
+        "output": 0
+      },
+      {
+        "sheet": "Way Plan",
+        "cell": "2,6",
+        "template": null,
+        "output": 0
+      },
+      {
+        "sheet": "Way Plan",
+        "cell": "2,7",
+        "template": null,
+        "output": 5
+      },
+      {
+        "sheet": "Way Plan",
+        "cell": "2,8",
+        "template": null,
+        "output": 6
+      },
+      {
+        "sheet": "Way Plan",
+        "cell": "2,9",
+        "template": null,
+        "output": 0
+      },
+      {
+        "sheet": "Competition Information",
+        "cell": "3,2",
+        "template": "မိထ္တီလာ",
+        "output": "MTL"
+      },
+      {
+        "sheet": "Competition Information",
+        "cell": "3,3",
+        "template": "ပျော်ဘွယ်",
+        "output": "Meiktila"
+      },
+      {
+        "sheet": "Competition Information",
+        "cell": "3,4",
+        "template": "ဆင်မင်း",
+        "output": "Sample Co"
+      },
+      {
+        "sheet": "Competition Information",
+        "cell": "3,5",
+        "template": "ရွှေဇင်ယော်",
+        "output": "Sample Dist"
+      },
+      {
+        "sheet": "Competition Information",
+        "cell": "3,6",
+        "template": "ပျော်ဘွယ်",
+        "output": "Meiktila"
+      },
+      {
+        "sheet": "Competition Information",
+        "cell": "3,7",
+        "template": "မန်း BE",
+        "output": "Sample Brand 640ml"
+      },
+      {
+        "sheet": "Competition Information",
+        "cell": "3,8",
+        "template": 1358,
+        "output": 1200
+      },
+      {
+        "sheet": "Competition Information",
+        "cell": "3,9",
+        "template": 1375,
+        "output": 1230
+      },
+      {
+        "sheet": "Competition Information",
+        "cell": "3,12",
+        "template": "640ml",
+        "output": 640
+      },
+      {
+        "sheet": "Competition Information",
+        "cell": "3,15",
+        "template": 1358,
+        "output": 1200
+      },
+      {
+        "sheet": "Competition Information",
+        "cell": "3,17",
+        "template": 4,
+        "output": 5
+      },
+      {
+        "sheet": "Competition Information",
+        "cell": "3,19",
+        "template": 1500,
+        "output": 1400
+      },
+      {
+        "sheet": "Competition Information",
+        "cell": "3,20",
+        "template": 1500,
+        "output": 300
+      }
+    ]
+  },
+  {
+    "pair": [
+      "/Users/min/codex/SMM-SKU/outputs/7-MTL_for_Township_Summary_from_json.xlsx",
+      "/Users/min/codex/SMM-SKU/7-MTL for Township Summary_4.xlsx"
+    ],
+    "sheet_count_output": 12,
+    "sheet_count_template": 12,
+    "sheet_order_match": true,
+    "missing_sheets": [],
+    "extra_sheets": [],
+    "formula_cells_total": 56680,
+    "formula_cells_changed": 0,
+    "formula_cells_unchanged": 56680,
+    "nonformula_cells_total": 175613,
+    "nonformula_cells_changed": 54,
+    "nonformula_cells_unchanged": 175559,
+    "cells_changed_total": 54,
+    "sheet_summaries": [
+      {
+        "sheet": "7-MTL",
+        "formula_total": 1037,
+        "formula_changed": 0,
+        "nonformula_total": 2148,
+        "nonformula_changed": 9,
+        "cells_changed": 9
+      },
+      {
+        "sheet": "Meiktila",
+        "formula_total": 5647,
+        "formula_changed": 0,
+        "nonformula_total": 15181,
+        "nonformula_changed": 7,
+        "cells_changed": 7
+      },
+      {
+        "sheet": "Tharzi",
+        "formula_total": 5425,
+        "formula_changed": 0,
+        "nonformula_total": 15403,
+        "nonformula_changed": 2,
+        "cells_changed": 2
+      },
+      {
+        "sheet": "Pyaw Bwe",
+        "formula_total": 4852,
+        "formula_changed": 0,
+        "nonformula_total": 15976,
+        "nonformula_changed": 4,
+        "cells_changed": 4
+      },
+      {
+        "sheet": "Want Twin",
+        "formula_total": 5209,
+        "formula_changed": 0,
+        "nonformula_total": 15619,
+        "nonformula_changed": 4,
+        "cells_changed": 4
+      },
+      {
+        "sheet": "Mahaling",
+        "formula_total": 5174,
+        "formula_changed": 0,
+        "nonformula_total": 15654,
+        "nonformula_changed": 4,
+        "cells_changed": 4
+      },
+      {
+        "sheet": "Yamethin",
+        "formula_total": 4922,
+        "formula_changed": 0,
+        "nonformula_total": 15906,
+        "nonformula_changed": 4,
+        "cells_changed": 4
+      },
+      {
+        "sheet": "Kyaukpadaung",
+        "formula_total": 5013,
+        "formula_changed": 0,
+        "nonformula_total": 15815,
+        "nonformula_changed": 4,
+        "cells_changed": 4
+      },
+      {
+        "sheet": "Taungthar",
+        "formula_total": 4747,
+        "formula_changed": 0,
+        "nonformula_total": 16081,
+        "nonformula_changed": 4,
+        "cells_changed": 4
+      },
+      {
+        "sheet": "Myingyan",
+        "formula_total": 4945,
+        "formula_changed": 0,
+        "nonformula_total": 15883,
+        "nonformula_changed": 4,
+        "cells_changed": 4
+      },
+      {
+        "sheet": "Bagan",
+        "formula_total": 4943,
+        "formula_changed": 0,
+        "nonformula_total": 15885,
+        "nonformula_changed": 4,
+        "cells_changed": 4
+      },
+      {
+        "sheet": "Pakokku",
+        "formula_total": 4766,
+        "formula_changed": 0,
+        "nonformula_total": 16062,
+        "nonformula_changed": 4,
+        "cells_changed": 4
+      }
+    ],
+    "top_changed_sheets": [
+      {
+        "sheet": "7-MTL",
+        "formula_total": 1037,
+        "formula_changed": 0,
+        "nonformula_total": 2148,
+        "nonformula_changed": 9,
+        "cells_changed": 9
+      },
+      {
+        "sheet": "Meiktila",
+        "formula_total": 5647,
+        "formula_changed": 0,
+        "nonformula_total": 15181,
+        "nonformula_changed": 7,
+        "cells_changed": 7
+      },
+      {
+        "sheet": "Pyaw Bwe",
+        "formula_total": 4852,
+        "formula_changed": 0,
+        "nonformula_total": 15976,
+        "nonformula_changed": 4,
+        "cells_changed": 4
+      },
+      {
+        "sheet": "Want Twin",
+        "formula_total": 5209,
+        "formula_changed": 0,
+        "nonformula_total": 15619,
+        "nonformula_changed": 4,
+        "cells_changed": 4
+      },
+      {
+        "sheet": "Mahaling",
+        "formula_total": 5174,
+        "formula_changed": 0,
+        "nonformula_total": 15654,
+        "nonformula_changed": 4,
+        "cells_changed": 4
+      },
+      {
+        "sheet": "Yamethin",
+        "formula_total": 4922,
+        "formula_changed": 0,
+        "nonformula_total": 15906,
+        "nonformula_changed": 4,
+        "cells_changed": 4
+      },
+      {
+        "sheet": "Kyaukpadaung",
+        "formula_total": 5013,
+        "formula_changed": 0,
+        "nonformula_total": 15815,
+        "nonformula_changed": 4,
+        "cells_changed": 4
+      },
+      {
+        "sheet": "Taungthar",
+        "formula_total": 4747,
+        "formula_changed": 0,
+        "nonformula_total": 16081,
+        "nonformula_changed": 4,
+        "cells_changed": 4
+      },
+      {
+        "sheet": "Myingyan",
+        "formula_total": 4945,
+        "formula_changed": 0,
+        "nonformula_total": 15883,
+        "nonformula_changed": 4,
+        "cells_changed": 4
+      },
+      {
+        "sheet": "Bagan",
+        "formula_total": 4943,
+        "formula_changed": 0,
+        "nonformula_total": 15885,
+        "nonformula_changed": 4,
+        "cells_changed": 4
+      }
+    ],
+    "formula_changed_samples": [],
+    "nonformula_changed_samples": [
+      {
+        "sheet": "7-MTL",
+        "cell": "4,62",
+        "template": 339857,
+        "output": 120
+      },
+      {
+        "sheet": "7-MTL",
+        "cell": "4,63",
+        "template": 225404.48000000027,
+        "output": 84
+      },
+      {
+        "sheet": "7-MTL",
+        "cell": "4,64",
+        "template": 286632,
+        "output": 108
+      },
+      {
+        "sheet": "7-MTL",
+        "cell": "4,65",
+        "template": 188273.5200000001,
+        "output": 75.6
+      },
+      {
+        "sheet": "7-MTL",
+        "cell": "4,66",
+        "template": null,
+        "output": 132
+      },
+      {
+        "sheet": "7-MTL",
+        "cell": "4,67",
+        "template": null,
+        "output": 92.39999999999999
+      },
+      {
+        "sheet": "7-MTL",
+        "cell": "5,62",
+        "template": 15858,
+        "output": 72
+      },
+      {
+        "sheet": "7-MTL",
+        "cell": "5,63",
+        "template": 10534.560000000003,
+        "output": 72
+      },
+      {
+        "sheet": "7-MTL",
+        "cell": "18,1",
+        "template": "Meiktila Market ( Townwise Report ) (2024, 2025)",
+        "output": 1
+      },
+      {
+        "sheet": "Meiktila",
+        "cell": "4,87",
+        "template": null,
+        "output": 10
+      },
+      {
+        "sheet": "Meiktila",
+        "cell": "4,88",
+        "template": null,
+        "output": 120
+      },
+      {
+        "sheet": "Meiktila",
+        "cell": "4,90",
+        "template": null,
+        "output": 9
+      },
+      {
+        "sheet": "Meiktila",
+        "cell": "4,91",
+        "template": null,
+        "output": 108
+      },
+      {
+        "sheet": "Meiktila",
+        "cell": "4,93",
+        "template": null,
+        "output": 11
+      },
+      {
+        "sheet": "Meiktila",
+        "cell": "4,94",
+        "template": null,
+        "output": 132
+      },
+      {
+        "sheet": "Meiktila",
+        "cell": "4,95",
+        "template": null,
+        "output": 92.39999999999999
+      },
+      {
+        "sheet": "Tharzi",
+        "cell": "7,87",
+        "template": null,
+        "output": 6
+      },
+      {
+        "sheet": "Tharzi",
+        "cell": "7,88",
+        "template": null,
+        "output": 72
+      },
+      {
+        "sheet": "Pyaw Bwe",
+        "cell": "4,87",
+        "template": null,
+        "output": 0
+      },
+      {
+        "sheet": "Pyaw Bwe",
+        "cell": "4,88",
+        "template": null,
+        "output": 160
+      },
+      {
+        "sheet": "Pyaw Bwe",
+        "cell": "4,90",
+        "template": null,
+        "output": 0
+      },
+      {
+        "sheet": "Pyaw Bwe",
+        "cell": "4,91",
+        "template": null,
+        "output": 130
+      },
+      {
+        "sheet": "Want Twin",
+        "cell": "4,87",
+        "template": null,
+        "output": 0
+      },
+      {
+        "sheet": "Want Twin",
+        "cell": "4,88",
+        "template": null,
+        "output": 160
+      },
+      {
+        "sheet": "Want Twin",
+        "cell": "4,90",
+        "template": null,
+        "output": 0
+      },
+      {
+        "sheet": "Want Twin",
+        "cell": "4,91",
+        "template": null,
+        "output": 130
+      },
+      {
+        "sheet": "Mahaling",
+        "cell": "4,87",
+        "template": 22,
+        "output": 0
+      },
+      {
+        "sheet": "Mahaling",
+        "cell": "4,88",
+        "template": 264,
+        "output": 160
+      },
+      {
+        "sheet": "Mahaling",
+        "cell": "4,90",
+        "template": null,
+        "output": 0
+      },
+      {
+        "sheet": "Mahaling",
+        "cell": "4,91",
+        "template": null,
+        "output": 130
+      },
+      {
+        "sheet": "Yamethin",
+        "cell": "4,87",
+        "template": null,
+        "output": 0
+      },
+      {
+        "sheet": "Yamethin",
+        "cell": "4,88",
+        "template": null,
+        "output": 160
+      },
+      {
+        "sheet": "Yamethin",
+        "cell": "4,90",
+        "template": null,
+        "output": 0
+      },
+      {
+        "sheet": "Yamethin",
+        "cell": "4,91",
+        "template": null,
+        "output": 130
+      },
+      {
+        "sheet": "Kyaukpadaung",
+        "cell": "4,87",
+        "template": 30,
+        "output": 0
+      },
+      {
+        "sheet": "Kyaukpadaung",
+        "cell": "4,88",
+        "template": 360,
+        "output": 160
+      },
+      {
+        "sheet": "Kyaukpadaung",
+        "cell": "4,90",
+        "template": null,
+        "output": 0
+      },
+      {
+        "sheet": "Kyaukpadaung",
+        "cell": "4,91",
+        "template": null,
+        "output": 130
+      },
+      {
+        "sheet": "Taungthar",
+        "cell": "4,87",
+        "template": null,
+        "output": 0
+      },
+      {
+        "sheet": "Taungthar",
+        "cell": "4,88",
+        "template": null,
+        "output": 160
+      }
+    ]
+  }
+]

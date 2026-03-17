@@ -1,0 +1,696 @@
+[
+  {
+    "pair": [
+      "MLM 2026 Feb.xlsx",
+      "MHL 2026 Feb.xlsx"
+    ],
+    "common_sheets": [
+      "7-MTL",
+      "Business Summary",
+      "Ws Semi Ws ",
+      "Final MTL SKU Wise",
+      "MTL Individual",
+      "MTL SKU Analysis",
+      "Township wise Analysis",
+      "Final Town SKU wise Analysis",
+      "Outlet Summary",
+      "Outlet List ",
+      "Way Plan",
+      "3-Van Wise SKU",
+      "Competition Information",
+      "Top 3 or 4 brands in Township",
+      "Meiktila",
+      "Tharzi",
+      "Pyawbwe",
+      "Wantwin",
+      "Mahlaing",
+      "Yamethin",
+      "Kyaukpandaung",
+      "Taungthar",
+      "Myingan",
+      "Bagan",
+      "Pakokku"
+    ],
+    "missing_sheets": [],
+    "extra_sheets": [],
+    "out_totals": {
+      "sheet_count": 25,
+      "merged_total": 0,
+      "formula_total": 0,
+      "styled_total": 3404,
+      "nonempty_total": 11461
+    },
+    "tpl_totals": {
+      "sheet_count": 25,
+      "merged_total": 702,
+      "formula_total": 13334,
+      "styled_total": 62751,
+      "nonempty_total": 40125
+    },
+    "key": {
+      "sheet_name_match": "25/25",
+      "rows_ratio_common_weighted": 0.8861154446177847,
+      "cols_ratio_common_weighted": 0.3432642487046632,
+      "nonempty_ratio_common": 0.28563239875389407,
+      "merge_ratio_common": 0.0,
+      "formula_ratio_common": 0.0,
+      "style_ratio_common": 0.054246147471753436
+    },
+    "lowest_nonempty_ratio_sheets": [
+      {
+        "sheet": "Final MTL SKU Wise",
+        "nonempty_ratio": 0.03955288048151333,
+        "rows_ratio": 0.32857142857142857,
+        "cols_ratio": 0.078125,
+        "out_nonempty": 230,
+        "tpl_nonempty": 5815,
+        "out_rows": 23,
+        "tpl_rows": 70,
+        "out_cols": 10,
+        "tpl_cols": 128
+      },
+      {
+        "sheet": "Competition Information",
+        "nonempty_ratio": 0.07017543859649122,
+        "rows_ratio": 0.6666666666666666,
+        "cols_ratio": 0.09523809523809523,
+        "out_nonempty": 36,
+        "tpl_nonempty": 513,
+        "out_rows": 18,
+        "tpl_rows": 27,
+        "out_cols": 2,
+        "tpl_cols": 21
+      },
+      {
+        "sheet": "MTL SKU Analysis",
+        "nonempty_ratio": 0.07784854918612881,
+        "rows_ratio": 0.7142857142857143,
+        "cols_ratio": 0.0641025641025641,
+        "out_nonempty": 550,
+        "tpl_nonempty": 7065,
+        "out_rows": 55,
+        "tpl_rows": 77,
+        "out_cols": 10,
+        "tpl_cols": 156
+      },
+      {
+        "sheet": "Ws Semi Ws ",
+        "nonempty_ratio": 0.15064935064935064,
+        "rows_ratio": 0.5576923076923077,
+        "cols_ratio": 0.225,
+        "out_nonempty": 522,
+        "tpl_nonempty": 3465,
+        "out_rows": 29,
+        "tpl_rows": 52,
+        "out_cols": 18,
+        "tpl_cols": 80
+      },
+      {
+        "sheet": "7-MTL",
+        "nonempty_ratio": 0.15222337125129265,
+        "rows_ratio": 0.4107142857142857,
+        "cols_ratio": 0.25196850393700787,
+        "out_nonempty": 736,
+        "tpl_nonempty": 4835,
+        "out_rows": 23,
+        "tpl_rows": 56,
+        "out_cols": 32,
+        "tpl_cols": 127
+      },
+      {
+        "sheet": "Taungthar",
+        "nonempty_ratio": 0.17647058823529413,
+        "rows_ratio": 0.06451612903225806,
+        "cols_ratio": 0.7333333333333333,
+        "out_nonempty": 66,
+        "tpl_nonempty": 374,
+        "out_rows": 2,
+        "tpl_rows": 31,
+        "out_cols": 33,
+        "tpl_cols": 45
+      },
+      {
+        "sheet": "Business Summary",
+        "nonempty_ratio": 0.18055555555555555,
+        "rows_ratio": 0.0975609756097561,
+        "cols_ratio": 0.5909090909090909,
+        "out_nonempty": 52,
+        "tpl_nonempty": 288,
+        "out_rows": 4,
+        "tpl_rows": 41,
+        "out_cols": 13,
+        "tpl_cols": 22
+      },
+      {
+        "sheet": "Way Plan",
+        "nonempty_ratio": 0.2079207920792079,
+        "rows_ratio": 0.24705882352941178,
+        "cols_ratio": 0.5,
+        "out_nonempty": 105,
+        "tpl_nonempty": 505,
+        "out_rows": 21,
+        "tpl_rows": 85,
+        "out_cols": 5,
+        "tpl_cols": 10
+      },
+      {
+        "sheet": "Top 3 or 4 brands in Township",
+        "nonempty_ratio": 0.233134073441503,
+        "rows_ratio": 0.7090909090909091,
+        "cols_ratio": 0.2413793103448276,
+        "out_nonempty": 273,
+        "tpl_nonempty": 1171,
+        "out_rows": 39,
+        "tpl_rows": 55,
+        "out_cols": 7,
+        "tpl_cols": 29
+      },
+      {
+        "sheet": "Kyaukpandaung",
+        "nonempty_ratio": 0.26720647773279355,
+        "rows_ratio": 0.16666666666666666,
+        "cols_ratio": 0.717391304347826,
+        "out_nonempty": 132,
+        "tpl_nonempty": 494,
+        "out_rows": 4,
+        "tpl_rows": 24,
+        "out_cols": 33,
+        "tpl_cols": 46
+      }
+    ]
+  },
+  {
+    "pair": [
+      "7-MLM for Township Summary_4.xlsx",
+      "7-MTL for Township Summary_4.xlsx"
+    ],
+    "common_sheets": [
+      "7-MTL",
+      "Meiktila",
+      "Tharzi",
+      "Pyaw Bwe",
+      "Want Twin",
+      "Mahaling",
+      "Yamethin",
+      "Kyaukpadaung",
+      "Taungthar",
+      "Myingyan",
+      "Bagan",
+      "Pakokku"
+    ],
+    "missing_sheets": [],
+    "extra_sheets": [],
+    "out_totals": {
+      "sheet_count": 12,
+      "merged_total": 0,
+      "formula_total": 0,
+      "styled_total": 690,
+      "nonempty_total": 2901
+    },
+    "tpl_totals": {
+      "sheet_count": 12,
+      "merged_total": 647,
+      "formula_total": 56680,
+      "styled_total": 230731,
+      "nonempty_total": 73277
+    },
+    "key": {
+      "sheet_name_match": "12/12",
+      "rows_ratio_common_weighted": 0.048395867319195214,
+      "cols_ratio_common_weighted": 0.26411290322580644,
+      "nonempty_ratio_common": 0.03958950284536758,
+      "merge_ratio_common": 0.0,
+      "formula_ratio_common": 0.0,
+      "style_ratio_common": 0.0029904954254088094
+    },
+    "lowest_nonempty_ratio_sheets": [
+      {
+        "sheet": "Taungthar",
+        "nonempty_ratio": 0.011484252653558378,
+        "rows_ratio": 0.012195121951219513,
+        "cols_ratio": 0.25984251968503935,
+        "out_nonempty": 66,
+        "tpl_nonempty": 5747,
+        "out_rows": 2,
+        "tpl_rows": 164,
+        "out_cols": 33,
+        "tpl_cols": 127
+      },
+      {
+        "sheet": "Kyaukpadaung",
+        "nonempty_ratio": 0.02001516300227445,
+        "rows_ratio": 0.024390243902439025,
+        "cols_ratio": 0.25984251968503935,
+        "out_nonempty": 132,
+        "tpl_nonempty": 6595,
+        "out_rows": 4,
+        "tpl_rows": 164,
+        "out_cols": 33,
+        "tpl_cols": 127
+      },
+      {
+        "sheet": "Bagan",
+        "nonempty_ratio": 0.021225277375783887,
+        "rows_ratio": 0.024390243902439025,
+        "cols_ratio": 0.25984251968503935,
+        "out_nonempty": 132,
+        "tpl_nonempty": 6219,
+        "out_rows": 4,
+        "tpl_rows": 164,
+        "out_cols": 33,
+        "tpl_cols": 127
+      },
+      {
+        "sheet": "Pakokku",
+        "nonempty_ratio": 0.022940563086548488,
+        "rows_ratio": 0.024390243902439025,
+        "cols_ratio": 0.25984251968503935,
+        "out_nonempty": 132,
+        "tpl_nonempty": 5754,
+        "out_rows": 4,
+        "tpl_rows": 164,
+        "out_cols": 33,
+        "tpl_cols": 127
+      },
+      {
+        "sheet": "Meiktila",
+        "nonempty_ratio": 0.026277372262773723,
+        "rows_ratio": 0.036585365853658534,
+        "cols_ratio": 0.25984251968503935,
+        "out_nonempty": 198,
+        "tpl_nonempty": 7535,
+        "out_rows": 6,
+        "tpl_rows": 164,
+        "out_cols": 33,
+        "tpl_cols": 127
+      },
+      {
+        "sheet": "Myingyan",
+        "nonempty_ratio": 0.02754131196795193,
+        "rows_ratio": 0.03048780487804878,
+        "cols_ratio": 0.25984251968503935,
+        "out_nonempty": 165,
+        "tpl_nonempty": 5991,
+        "out_rows": 5,
+        "tpl_rows": 164,
+        "out_cols": 33,
+        "tpl_cols": 127
+      },
+      {
+        "sheet": "Yamethin",
+        "nonempty_ratio": 0.03625804426306702,
+        "rows_ratio": 0.042682926829268296,
+        "cols_ratio": 0.25984251968503935,
+        "out_nonempty": 231,
+        "tpl_nonempty": 6371,
+        "out_rows": 7,
+        "tpl_rows": 164,
+        "out_cols": 33,
+        "tpl_cols": 127
+      },
+      {
+        "sheet": "Want Twin",
+        "nonempty_ratio": 0.03707344474090717,
+        "rows_ratio": 0.04878048780487805,
+        "cols_ratio": 0.25984251968503935,
+        "out_nonempty": 264,
+        "tpl_nonempty": 7121,
+        "out_rows": 8,
+        "tpl_rows": 164,
+        "out_cols": 33,
+        "tpl_cols": 127
+      },
+      {
+        "sheet": "Mahaling",
+        "nonempty_ratio": 0.03945008965929468,
+        "rows_ratio": 0.04878048780487805,
+        "cols_ratio": 0.25984251968503935,
+        "out_nonempty": 264,
+        "tpl_nonempty": 6692,
+        "out_rows": 8,
+        "tpl_rows": 164,
+        "out_cols": 33,
+        "tpl_cols": 127
+      },
+      {
+        "sheet": "Pyaw Bwe",
+        "nonempty_ratio": 0.062215239591516105,
+        "rows_ratio": 0.07317073170731707,
+        "cols_ratio": 0.25984251968503935,
+        "out_nonempty": 396,
+        "tpl_nonempty": 6365,
+        "out_rows": 12,
+        "tpl_rows": 164,
+        "out_cols": 33,
+        "tpl_cols": 127
+      }
+    ]
+  },
+  {
+    "pair": [
+      "MTL_source_to_MHL_test.xlsx",
+      "MHL 2026 Feb.xlsx"
+    ],
+    "common_sheets": [
+      "7-MTL",
+      "Business Summary",
+      "Ws Semi Ws ",
+      "Final MTL SKU Wise",
+      "MTL Individual",
+      "MTL SKU Analysis",
+      "Township wise Analysis",
+      "Final Town SKU wise Analysis",
+      "Outlet Summary",
+      "Outlet List ",
+      "Way Plan",
+      "3-Van Wise SKU",
+      "Competition Information",
+      "Top 3 or 4 brands in Township",
+      "Meiktila",
+      "Tharzi",
+      "Pyawbwe",
+      "Wantwin",
+      "Mahlaing",
+      "Yamethin",
+      "Kyaukpandaung",
+      "Taungthar",
+      "Myingan",
+      "Bagan",
+      "Pakokku"
+    ],
+    "missing_sheets": [],
+    "extra_sheets": [],
+    "out_totals": {
+      "sheet_count": 25,
+      "merged_total": 0,
+      "formula_total": 0,
+      "styled_total": 559,
+      "nonempty_total": 1789
+    },
+    "tpl_totals": {
+      "sheet_count": 25,
+      "merged_total": 702,
+      "formula_total": 13334,
+      "styled_total": 62751,
+      "nonempty_total": 40125
+    },
+    "key": {
+      "sheet_name_match": "25/25",
+      "rows_ratio_common_weighted": 0.27769110764430577,
+      "cols_ratio_common_weighted": 0.133419689119171,
+      "nonempty_ratio_common": 0.044585669781931465,
+      "merge_ratio_common": 0.0,
+      "formula_ratio_common": 0.0,
+      "style_ratio_common": 0.008908224570126373
+    },
+    "lowest_nonempty_ratio_sheets": [
+      {
+        "sheet": "MTL SKU Analysis",
+        "nonempty_ratio": 0.0014154281670205238,
+        "rows_ratio": 0.012987012987012988,
+        "cols_ratio": 0.0641025641025641,
+        "out_nonempty": 10,
+        "tpl_nonempty": 7065,
+        "out_rows": 1,
+        "tpl_rows": 77,
+        "out_cols": 10,
+        "tpl_cols": 156
+      },
+      {
+        "sheet": "7-MTL",
+        "nonempty_ratio": 0.001654601861427094,
+        "rows_ratio": 0.017857142857142856,
+        "cols_ratio": 0.06299212598425197,
+        "out_nonempty": 8,
+        "tpl_nonempty": 4835,
+        "out_rows": 1,
+        "tpl_rows": 56,
+        "out_cols": 8,
+        "tpl_cols": 127
+      },
+      {
+        "sheet": "Final MTL SKU Wise",
+        "nonempty_ratio": 0.0017196904557179708,
+        "rows_ratio": 0.014285714285714285,
+        "cols_ratio": 0.078125,
+        "out_nonempty": 10,
+        "tpl_nonempty": 5815,
+        "out_rows": 1,
+        "tpl_rows": 70,
+        "out_cols": 10,
+        "tpl_cols": 128
+      },
+      {
+        "sheet": "Ws Semi Ws ",
+        "nonempty_ratio": 0.0017316017316017316,
+        "rows_ratio": 0.019230769230769232,
+        "cols_ratio": 0.075,
+        "out_nonempty": 6,
+        "tpl_nonempty": 3465,
+        "out_rows": 1,
+        "tpl_rows": 52,
+        "out_cols": 6,
+        "tpl_cols": 80
+      },
+      {
+        "sheet": "MTL Individual",
+        "nonempty_ratio": 0.0019300361881785283,
+        "rows_ratio": 0.019230769230769232,
+        "cols_ratio": 0.06557377049180328,
+        "out_nonempty": 8,
+        "tpl_nonempty": 4145,
+        "out_rows": 1,
+        "tpl_rows": 52,
+        "out_cols": 8,
+        "tpl_cols": 122
+      },
+      {
+        "sheet": "Final Town SKU wise Analysis",
+        "nonempty_ratio": 0.005208333333333333,
+        "rows_ratio": 0.01639344262295082,
+        "cols_ratio": 0.21153846153846154,
+        "out_nonempty": 11,
+        "tpl_nonempty": 2112,
+        "out_rows": 1,
+        "tpl_rows": 61,
+        "out_cols": 11,
+        "tpl_cols": 52
+      },
+      {
+        "sheet": "Top 3 or 4 brands in Township",
+        "nonempty_ratio": 0.005977796754910333,
+        "rows_ratio": 0.01818181818181818,
+        "cols_ratio": 0.2413793103448276,
+        "out_nonempty": 7,
+        "tpl_nonempty": 1171,
+        "out_rows": 1,
+        "tpl_rows": 55,
+        "out_cols": 7,
+        "tpl_cols": 29
+      },
+      {
+        "sheet": "3-Van Wise SKU",
+        "nonempty_ratio": 0.009237875288683603,
+        "rows_ratio": 0.02564102564102564,
+        "cols_ratio": 0.12307692307692308,
+        "out_nonempty": 8,
+        "tpl_nonempty": 866,
+        "out_rows": 1,
+        "tpl_rows": 39,
+        "out_cols": 8,
+        "tpl_cols": 65
+      },
+      {
+        "sheet": "Way Plan",
+        "nonempty_ratio": 0.009900990099009901,
+        "rows_ratio": 0.011764705882352941,
+        "cols_ratio": 0.5,
+        "out_nonempty": 5,
+        "tpl_nonempty": 505,
+        "out_rows": 1,
+        "tpl_rows": 85,
+        "out_cols": 5,
+        "tpl_cols": 10
+      },
+      {
+        "sheet": "Wantwin",
+        "nonempty_ratio": 0.01355421686746988,
+        "rows_ratio": 0.03333333333333333,
+        "cols_ratio": 0.1956521739130435,
+        "out_nonempty": 9,
+        "tpl_nonempty": 664,
+        "out_rows": 1,
+        "tpl_rows": 30,
+        "out_cols": 9,
+        "tpl_cols": 46
+      }
+    ]
+  },
+  {
+    "pair": [
+      "MTL_source_to_7MTL_test.xlsx",
+      "7-MTL for Township Summary_4.xlsx"
+    ],
+    "common_sheets": [
+      "7-MTL",
+      "Meiktila",
+      "Tharzi",
+      "Pyaw Bwe",
+      "Want Twin",
+      "Mahaling",
+      "Yamethin",
+      "Kyaukpadaung",
+      "Taungthar",
+      "Myingyan",
+      "Bagan",
+      "Pakokku"
+    ],
+    "missing_sheets": [],
+    "extra_sheets": [],
+    "out_totals": {
+      "sheet_count": 12,
+      "merged_total": 0,
+      "formula_total": 0,
+      "styled_total": 138,
+      "nonempty_total": 160
+    },
+    "tpl_totals": {
+      "sheet_count": 12,
+      "merged_total": 647,
+      "formula_total": 56680,
+      "styled_total": 230731,
+      "nonempty_total": 73277
+    },
+    "key": {
+      "sheet_name_match": "12/12",
+      "rows_ratio_common_weighted": 0.012506797172376292,
+      "cols_ratio_common_weighted": 0.07056451612903226,
+      "nonempty_ratio_common": 0.002183495503363948,
+      "merge_ratio_common": 0.0,
+      "formula_ratio_common": 0.0,
+      "style_ratio_common": 0.0005980990850817619
+    },
+    "lowest_nonempty_ratio_sheets": [
+      {
+        "sheet": "Meiktila",
+        "nonempty_ratio": 0.0011944260119442602,
+        "rows_ratio": 0.006097560975609756,
+        "cols_ratio": 0.07086614173228346,
+        "out_nonempty": 9,
+        "tpl_nonempty": 7535,
+        "out_rows": 1,
+        "tpl_rows": 164,
+        "out_cols": 9,
+        "tpl_cols": 127
+      },
+      {
+        "sheet": "Want Twin",
+        "nonempty_ratio": 0.0012638674343491082,
+        "rows_ratio": 0.006097560975609756,
+        "cols_ratio": 0.07086614173228346,
+        "out_nonempty": 9,
+        "tpl_nonempty": 7121,
+        "out_rows": 1,
+        "tpl_rows": 164,
+        "out_cols": 9,
+        "tpl_cols": 127
+      },
+      {
+        "sheet": "Tharzi",
+        "nonempty_ratio": 0.0012906926717338304,
+        "rows_ratio": 0.006097560975609756,
+        "cols_ratio": 0.07086614173228346,
+        "out_nonempty": 9,
+        "tpl_nonempty": 6973,
+        "out_rows": 1,
+        "tpl_rows": 164,
+        "out_cols": 9,
+        "tpl_cols": 127
+      },
+      {
+        "sheet": "Mahaling",
+        "nonempty_ratio": 0.0013448894202032278,
+        "rows_ratio": 0.006097560975609756,
+        "cols_ratio": 0.07086614173228346,
+        "out_nonempty": 9,
+        "tpl_nonempty": 6692,
+        "out_rows": 1,
+        "tpl_rows": 164,
+        "out_cols": 9,
+        "tpl_cols": 127
+      },
+      {
+        "sheet": "Kyaukpadaung",
+        "nonempty_ratio": 0.0013646702047005307,
+        "rows_ratio": 0.006097560975609756,
+        "cols_ratio": 0.07086614173228346,
+        "out_nonempty": 9,
+        "tpl_nonempty": 6595,
+        "out_rows": 1,
+        "tpl_rows": 164,
+        "out_cols": 9,
+        "tpl_cols": 127
+      },
+      {
+        "sheet": "Yamethin",
+        "nonempty_ratio": 0.0014126510751844294,
+        "rows_ratio": 0.006097560975609756,
+        "cols_ratio": 0.07086614173228346,
+        "out_nonempty": 9,
+        "tpl_nonempty": 6371,
+        "out_rows": 1,
+        "tpl_rows": 164,
+        "out_cols": 9,
+        "tpl_cols": 127
+      },
+      {
+        "sheet": "Pyaw Bwe",
+        "nonempty_ratio": 0.0014139827179890023,
+        "rows_ratio": 0.006097560975609756,
+        "cols_ratio": 0.07086614173228346,
+        "out_nonempty": 9,
+        "tpl_nonempty": 6365,
+        "out_rows": 1,
+        "tpl_rows": 164,
+        "out_cols": 9,
+        "tpl_cols": 127
+      },
+      {
+        "sheet": "Bagan",
+        "nonempty_ratio": 0.001447178002894356,
+        "rows_ratio": 0.006097560975609756,
+        "cols_ratio": 0.07086614173228346,
+        "out_nonempty": 9,
+        "tpl_nonempty": 6219,
+        "out_rows": 1,
+        "tpl_rows": 164,
+        "out_cols": 9,
+        "tpl_cols": 127
+      },
+      {
+        "sheet": "Myingyan",
+        "nonempty_ratio": 0.0015022533800701052,
+        "rows_ratio": 0.006097560975609756,
+        "cols_ratio": 0.07086614173228346,
+        "out_nonempty": 9,
+        "tpl_nonempty": 5991,
+        "out_rows": 1,
+        "tpl_rows": 164,
+        "out_cols": 9,
+        "tpl_cols": 127
+      },
+      {
+        "sheet": "Pakokku",
+        "nonempty_ratio": 0.0015641293013555788,
+        "rows_ratio": 0.006097560975609756,
+        "cols_ratio": 0.07086614173228346,
+        "out_nonempty": 9,
+        "tpl_nonempty": 5754,
+        "out_rows": 1,
+        "tpl_rows": 164,
+        "out_cols": 9,
+        "tpl_cols": 127
+      }
+    ]
+  }
+]

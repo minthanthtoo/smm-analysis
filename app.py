@@ -15,6 +15,18 @@ def clear_workbook_caches() -> None:
     clear_data_caches()
     clear_styled_cache()
 
+
+def canonical_manageable_role(raw_role: Any) -> str | None:
+    role = normalize_token(raw_role)
+    if role in {"rsm", "regionalmanager", "regional_manager"}:
+        return ROLE_RSM
+    if role == "asm":
+        return ROLE_ASM
+    if role in {"user", "staff"}:
+        return ROLE_USER
+    return None
+
+
 @app.route("/")
 def index() -> str:
     return render_template("index.html", static_version=int(time.time()))
@@ -69,6 +81,74 @@ def api_access_assign_user_to_rsm():
         return jsonify({"error": f"Target user is not an RSM: {rsm_username}"}), 400
 
     access.setdefault("user_to_rsm", {})[username] = rsm_username
+    save_access_control(access)
+
+    refreshed = resolve_principal(principal["username"], principal["selected_region"])
+    return jsonify(access_context_payload(refreshed))
+
+
+@app.route("/api/access/set-user-role", methods=["POST"])
+def api_access_set_user_role():
+    principal = principal_from_request()
+    if not principal_can_manage_rsm(principal):
+        return jsonify({"error": "Only Owner can add users or switch roles."}), 403
+
+    payload = request_json_payload()
+    username = normalize_username(payload.get("username") or request.form.get("username"))
+    if not username:
+        return jsonify({"error": "Missing required field: username"}), 400
+    if username == "owner":
+        return jsonify({"error": "Owner role cannot be modified."}), 400
+
+    target_role = canonical_manageable_role(payload.get("role") or request.form.get("role"))
+    if not target_role:
+        return jsonify({"error": "Invalid role. Allowed roles: user, rsm, asm."}), 400
+
+    display_name = payload.get("display_name") or request.form.get("display_name")
+    requested_rsm = normalize_username(payload.get("rsm_username") or request.form.get("rsm_username"))
+
+    access = load_access_control()
+    user_record = ensure_access_user(access, username, role=target_role, display_name=display_name)
+    user_record["role"] = target_role
+
+    rsm_regions = access.setdefault("rsm_regions", {})
+    user_to_rsm = access.setdefault("user_to_rsm", {})
+    asm_townships = access.setdefault("asm_townships", {})
+
+    if target_role != ROLE_RSM:
+        rsm_regions.pop(username, None)
+        for candidate, manager in list(user_to_rsm.items()):
+            if candidate != username and normalize_username(manager) == username:
+                user_to_rsm.pop(candidate, None)
+
+    if target_role != ROLE_ASM:
+        asm_townships.pop(username, None)
+
+    if target_role == ROLE_RSM:
+        regions = normalize_region_list(payload.get("regions") or request.form.get("regions"))
+        user_to_rsm.pop(username, None)
+        if regions:
+            rsm_regions[username] = regions
+        else:
+            rsm_regions.setdefault(username, [])
+    else:
+        manager_rsm = requested_rsm or normalize_username(user_to_rsm.get(username))
+        if manager_rsm:
+            if manager_rsm == username:
+                return jsonify({"error": "User cannot be mapped to self as RSM."}), 400
+            ensure_access_user(access, manager_rsm, role=ROLE_RSM)
+            if normalize_viewer_role(access["users"][manager_rsm].get("role")) != ROLE_RSM:
+                return jsonify({"error": f"Target user is not an RSM: {manager_rsm}"}), 400
+            user_to_rsm[username] = manager_rsm
+        else:
+            user_to_rsm.pop(username, None)
+
+        if target_role == ROLE_ASM:
+            manager_rsm = normalize_username(user_to_rsm.get(username))
+            if not manager_rsm:
+                return jsonify({"error": "ASM role requires rsm_username (or existing RSM mapping)."}), 400
+            asm_townships.setdefault(username, {})
+
     save_access_control(access)
 
     refreshed = resolve_principal(principal["username"], principal["selected_region"])

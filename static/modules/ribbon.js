@@ -1,5 +1,11 @@
 (function initRibbonModule(global) {
   const App = (global.SMMApp = global.SMMApp || {});
+  const DEFAULT_RIBBON_TAB = "home";
+  const RIBBON_TAB_GROUPS = Object.freeze([
+    Object.freeze({ id: "workspace", tabs: Object.freeze(["home", "filters"]) }),
+    Object.freeze({ id: "access", tabs: Object.freeze(["onboarding", "account", "roles"]) }),
+    Object.freeze({ id: "files", tabs: Object.freeze(["files"]) }),
+  ]);
 
   function copySelectOptions(source, target) {
     if (!source || !target) {
@@ -20,26 +26,295 @@
     }
   }
 
+  function slugifyRibbonToken(value) {
+    return String(value || "")
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  }
+
+  function tabTarget(button) {
+    if (!button || !(button instanceof HTMLElement)) {
+      return "";
+    }
+    return String(button.dataset.ribbonTarget || "").trim();
+  }
+
+  function panelTarget(panel) {
+    if (!panel || !(panel instanceof HTMLElement)) {
+      return "";
+    }
+    return String(panel.dataset.ribbonPanel || "").trim();
+  }
+
+  function resolveRibbonTarget(el, name) {
+    const requested = String(name || "").trim();
+    if (requested) {
+      for (const button of el.ribbonTabButtons || []) {
+        if (tabTarget(button) === requested) {
+          return requested;
+        }
+      }
+    }
+    return DEFAULT_RIBBON_TAB;
+  }
+
+  function buildRibbonTabIndex(el) {
+    const index = new Map();
+    for (const button of el.ribbonTabButtons || []) {
+      const target = tabTarget(button);
+      if (!target) {
+        continue;
+      }
+      index.set(target, button);
+    }
+    return index;
+  }
+
+  function buildRibbonPanelIndex(el) {
+    const index = new Map();
+    for (const panel of el.ribbonPanels || []) {
+      const target = panelTarget(panel);
+      if (!target) {
+        continue;
+      }
+      index.set(target, panel);
+    }
+    return index;
+  }
+
+  function ensureRibbonAriaLink(button, panel, target) {
+    if (!button || !panel) {
+      return;
+    }
+    const safeTarget = slugifyRibbonToken(target) || DEFAULT_RIBBON_TAB;
+    if (!button.id) {
+      button.id = `ribbonTab-${safeTarget}`;
+    }
+    if (!panel.id) {
+      panel.id = `ribbonPanel-${safeTarget}`;
+    }
+    button.setAttribute("aria-controls", panel.id);
+    panel.setAttribute("aria-labelledby", button.id);
+  }
+
+  function annotateRibbonPanelSections(panel) {
+    if (!panel || !(panel instanceof HTMLElement)) {
+      return;
+    }
+    const directGroups = Array.from(panel.children || []).filter(
+      (child) => child instanceof HTMLElement && child.classList.contains("ribbon-group"),
+    );
+    for (let idx = 0; idx < directGroups.length; idx += 1) {
+      const group = directGroups[idx];
+      const heading = group.querySelector(":scope > h3");
+      const sectionToken = slugifyRibbonToken(heading ? heading.textContent : "") || `section-${idx + 1}`;
+      group.dataset.ribbonSection = sectionToken;
+    }
+  }
+
+  function applyRibbonGrouping(el) {
+    const tabHost =
+      el.ribbonTabButtons && el.ribbonTabButtons.length && el.ribbonTabButtons[0] instanceof HTMLElement
+        ? el.ribbonTabButtons[0].parentElement
+        : null;
+    if (!tabHost) {
+      return;
+    }
+
+    for (const separator of Array.from(tabHost.querySelectorAll(".ribbon-tab-group-separator"))) {
+      separator.remove();
+    }
+
+    const tabIndex = buildRibbonTabIndex(el);
+    const panelIndex = buildRibbonPanelIndex(el);
+    let previousGroupHadTabs = false;
+
+    for (const group of RIBBON_TAB_GROUPS) {
+      const groupTabs = [];
+      for (const target of group.tabs) {
+        const button = tabIndex.get(target);
+        const panel = panelIndex.get(target);
+        if (!button) {
+          continue;
+        }
+        button.dataset.ribbonGroup = group.id;
+        if (panel) {
+          panel.dataset.ribbonGroup = group.id;
+          ensureRibbonAriaLink(button, panel, target);
+          annotateRibbonPanelSections(panel);
+        }
+        groupTabs.push(button);
+      }
+
+      if (previousGroupHadTabs && groupTabs.length) {
+        const separator = document.createElement("span");
+        separator.className = "ribbon-tab-group-separator";
+        separator.setAttribute("aria-hidden", "true");
+        tabHost.insertBefore(separator, groupTabs[0]);
+      }
+      previousGroupHadTabs = previousGroupHadTabs || groupTabs.length > 0;
+    }
+  }
+
+  function activeRibbonPanel(el) {
+    for (const panel of el.ribbonPanels || []) {
+      if (!panel || !(panel instanceof HTMLElement)) {
+        continue;
+      }
+      if (panel.classList.contains("active") && !panel.hidden) {
+        return panel;
+      }
+    }
+    return null;
+  }
+
+  function queueRibbonPanelScrollerSync(el) {
+    if (!el) {
+      return;
+    }
+    if (el.__ribbonPanelScrollerRaf) {
+      return;
+    }
+    const flush = () => {
+      el.__ribbonPanelScrollerRaf = 0;
+      syncRibbonPanelScroller(el);
+    };
+    if (typeof window.requestAnimationFrame === "function") {
+      el.__ribbonPanelScrollerRaf = window.requestAnimationFrame(flush);
+      return;
+    }
+    el.__ribbonPanelScrollerRaf = window.setTimeout(flush, 16);
+  }
+
+  function syncRibbonPanelScroller(el) {
+    const leftBtn = el.ribbonPanelScrollLeftBtn;
+    const rightBtn = el.ribbonPanelScrollRightBtn;
+    const activePanel = activeRibbonPanel(el);
+    const wrap = activePanel ? activePanel.closest(".ribbon-panel-wrap") : null;
+    if (!leftBtn || !rightBtn || !activePanel || !wrap) {
+      if (leftBtn) {
+        leftBtn.hidden = true;
+      }
+      if (rightBtn) {
+        rightBtn.hidden = true;
+      }
+      return;
+    }
+
+    const maxScroll = Math.max(0, activePanel.scrollWidth - activePanel.clientWidth);
+    const canScroll = maxScroll > 6;
+
+    wrap.classList.toggle("ribbon-panel-wrap-scrollable", canScroll);
+    leftBtn.hidden = !canScroll;
+    rightBtn.hidden = !canScroll;
+    leftBtn.classList.toggle("is-visible", canScroll);
+    rightBtn.classList.toggle("is-visible", canScroll);
+
+    if (!canScroll) {
+      leftBtn.disabled = true;
+      rightBtn.disabled = true;
+      return;
+    }
+
+    const scrollLeft = Math.max(0, activePanel.scrollLeft);
+    leftBtn.disabled = scrollLeft <= 2;
+    rightBtn.disabled = scrollLeft >= maxScroll - 2;
+  }
+
+  function scrollActiveRibbonPanel(el, direction) {
+    const activePanel = activeRibbonPanel(el);
+    if (!activePanel) {
+      return;
+    }
+
+    const step = Math.max(220, Math.floor(activePanel.clientWidth * 0.68));
+    activePanel.scrollBy({
+      left: step * direction,
+      behavior: "smooth",
+    });
+
+    window.setTimeout(() => {
+      queueRibbonPanelScrollerSync(el);
+    }, 200);
+  }
+
+  function bindRibbonPanelScroller(el) {
+    if (!el || el.__ribbonPanelScrollerBound) {
+      return;
+    }
+    el.__ribbonPanelScrollerBound = true;
+
+    if (el.ribbonPanelScrollLeftBtn) {
+      el.ribbonPanelScrollLeftBtn.addEventListener("click", () => {
+        scrollActiveRibbonPanel(el, -1);
+      });
+    }
+    if (el.ribbonPanelScrollRightBtn) {
+      el.ribbonPanelScrollRightBtn.addEventListener("click", () => {
+        scrollActiveRibbonPanel(el, 1);
+      });
+    }
+
+    for (const panel of el.ribbonPanels || []) {
+      if (!panel || !(panel instanceof HTMLElement)) {
+        continue;
+      }
+      panel.addEventListener("scroll", () => {
+        queueRibbonPanelScrollerSync(el);
+      });
+    }
+
+    const onWindowResize = () => {
+      queueRibbonPanelScrollerSync(el);
+    };
+    window.addEventListener("resize", onWindowResize, { passive: true });
+
+    if (typeof ResizeObserver !== "undefined") {
+      const observer = new ResizeObserver(() => {
+        queueRibbonPanelScrollerSync(el);
+      });
+      for (const panel of el.ribbonPanels || []) {
+        if (panel && panel instanceof HTMLElement) {
+          observer.observe(panel);
+        }
+      }
+      if (el.ribbonPanelScrollLeftBtn) {
+        const wrap = el.ribbonPanelScrollLeftBtn.closest(".ribbon-panel-wrap");
+        if (wrap && wrap instanceof HTMLElement) {
+          observer.observe(wrap);
+        }
+      }
+      el.__ribbonPanelScrollerObserver = observer;
+    }
+
+    queueRibbonPanelScrollerSync(el);
+  }
+
   function setRibbonTab(el, name) {
-    const activeName = name || "home";
+    const activeName = resolveRibbonTarget(el, name);
     for (const button of el.ribbonTabButtons || []) {
       if (!button || !(button instanceof HTMLElement)) {
         continue;
       }
-      const target = button.dataset.ribbonTarget || "";
+      const target = tabTarget(button);
       const active = target === activeName;
       button.classList.toggle("active", active);
       button.setAttribute("aria-selected", active ? "true" : "false");
+      button.setAttribute("tabindex", active ? "0" : "-1");
     }
     for (const panel of el.ribbonPanels || []) {
       if (!panel || !(panel instanceof HTMLElement)) {
         continue;
       }
-      const target = panel.dataset.ribbonPanel || "";
+      const target = panelTarget(panel);
       const active = target === activeName;
       panel.classList.toggle("active", active);
       panel.hidden = !active;
+      panel.setAttribute("aria-hidden", active ? "false" : "true");
     }
+    queueRibbonPanelScrollerSync(el);
   }
 
   function triggerChange(control) {
@@ -126,6 +401,7 @@
         } · ASM manage: ${permissions.can_manage_asm ? "yes" : "no"}`,
       );
     }
+    queueRibbonPanelScrollerSync(el);
   }
 
   function scrollToNode(node) {
@@ -136,12 +412,15 @@
   }
 
   function bindRibbonTabEvents({ el, state, setRibbonTab, setRibbonCollapsed }) {
+    applyRibbonGrouping(el);
+    bindRibbonPanelScroller(el);
+
     for (const ribbonTab of el.ribbonTabButtons || []) {
       if (!ribbonTab || !(ribbonTab instanceof HTMLElement)) {
         continue;
       }
       ribbonTab.addEventListener("click", () => {
-        const targetTab = ribbonTab.dataset.ribbonTarget || "home";
+        const targetTab = tabTarget(ribbonTab) || DEFAULT_RIBBON_TAB;
         const clickedActiveTab = ribbonTab.classList.contains("active");
 
         setRibbonTab(targetTab);
@@ -152,18 +431,23 @@
         if (clickedActiveTab) {
           setRibbonCollapsed(true);
         }
+        queueRibbonPanelScrollerSync(el);
       });
       ribbonTab.addEventListener("dblclick", (event) => {
         event.preventDefault();
         setRibbonCollapsed(!state.ribbonCollapsed);
+        queueRibbonPanelScrollerSync(el);
       });
     }
 
     if (el.ribbonToggleBtn) {
       el.ribbonToggleBtn.addEventListener("click", () => {
         setRibbonCollapsed(!state.ribbonCollapsed);
+        queueRibbonPanelScrollerSync(el);
       });
     }
+
+    queueRibbonPanelScrollerSync(el);
   }
 
   function bindMirrorControls({ el, triggerChange, triggerInput, syncUploadRegionInputs }) {

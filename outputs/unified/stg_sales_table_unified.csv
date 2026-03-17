@@ -1,0 +1,1162 @@
+source_file,source_sheet,source_row,stock_id,stock_particular,ml,qty,product_group,sales_price,customer_code,customer_name,customer_address,township,sales_channel,sale_particular,car_no,pg_name,secondary_stock_id,secondary_particular,secondary_ml,secondary_qty,secondary_product_group,secondary_sales_price,team_or_van,extra_unmapped
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,2,Zay Vodka-12,ဇေ Vodka,0.7,12,BE,1870,Kyaw Star,ကျော်စတား,ရေး,Yay,WholeSales,ကုန်ရောင်း(လက်ငင်း),7F-9918,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,3,Zay Vodka-12-(8.2.2025),ဇေ Vodka,0.7,12,BE,2020,Daw New New Yee,ဒေါ်နွယ်နွယ်ရီ(ရွှေတောင်ကြား),ရေး,Yay,WholeSales,ကုန်ရောင်း(အကြွေး),6Q-5159,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,4,Zay Vodka-14,ဇေ Vodka,0.64,14,BE,1250,Pyae Hlan,ပြည့်လျှံ,ဈေးကြို,Maw La Myaing,WholeSales,ကုန်ရောင်းပြန်သွင်း,6Q-5326,,,,,,,,Van-1,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,5,Zay Vodka-1(8.3.2025),ဇေ Vodka,0.64,14,BE,1400,Ko Myo Aung,ကိုမျိုးအောင်,ဈေးကြို,Maw La Myaing,WholeSales,ဈေးဟောင်းလျှော့,3R-4271,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,6,Zay -14-001,ဇေ အရက်သန့်,0.64,14,BE,1150,Ko Htike Soe,ကိုထိုက်စိုး,အစင်,Yay,WholeSales,ကော်မရှင်,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,7,Zay -14,ဇေ အရက်သန့်,0.64,14,BE,1250,U Min Lwin,ဦးမင်းလွင်,ဈေးကြီး,Maw La Myaing,WholeSales,အရက်ဖာကော်မရှင်,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,8,Zay .35li-12,"""ဇေ"" ကော်ဘူး (0.35Liter)",0.35,40,BE,750,Ko Htun Naing,ကိုထွန်းနိုင်,ရေး(ကျောင်းရွာ),Yay,WholeSales,အကွဲ,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,9,Zay .35li-12(8.3.2025),"""ဇေ"" ကော်ဘူး (0.35Liter)",0.35,40,BE,780,Daw Htun May,ဒေါ်ထွန်းမေ,ဈေးကြို,Maw La Myaing,WholeSales,လက်ဆောင်,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,10,Zay .1Li-12-001,"""ဇေ"" ကော်ဘူး (1 Liter)",1,12,BE,1475,Ma Wint War Htike,မဝင့်ဝါထိုက်(ရွှေပင်လယ်),အစင်,Yay,WholeSales,ဖောက်တိုက်,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,11,Zay .1Li-12-002,"""ဇေ"" ကော်ဘူး (1 Liter)",1,12,BE,1575,Ko Nyi Nyi Swe,ကိုညီညီဆွေ,ဈေးကြို,Maw La Myaing,WholeSales,ကြိုရောင်း,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,12,Zay .1Li-12-003(8.3.2025),"""ဇေ"" ကော်ဘူး (1 Liter)",1,12,BE,1675,Lin Thit,လင်းသစ်,ရေး,Yay,WholeSales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,13,Zay Red 1Li-001,ဇေယျဝတီ Red (1 Liter) 30%,1,12,BE,1510,Ko Mg+Ma Thu Zar,ကိုမောင်+မသူဇာ,လမိုင်း,Yay,WholeSales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,14,Zay Red 1Li-002,ဇေယျဝတီ Red (1 Liter) 30%,1,12,BE,1610,Moe San Char Li,မိုးဆန်းချာလီ,သိမ်ဇရပ်,Thein Zayet,WholeSales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,15,Zay Red 1Li-003(8.3.2025),ဇေယျဝတီ Red (1 Liter) 30%,1,12,BE,1710,Ko Mya Khat,ကိုမြခက်,ရေး(ကျောင်းရွာ),Yay,WholeSales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,16,Zay 0.6Li,ဇေသန့် 0.6Li,0.6,12,BE,1100,Win Aung Shwe,၀င်းအောင်ရွှေ,ဇာသပြင်,Hpa-an,SemiWholeSales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,17,DGN 1Li-12,ဒဂုံမန်ကျည်း ကော်ဘူး (1 Liter),1,12,BE,1500,U Aye Myint,ဦးအေးမြင့်,သိမ်ဇရပ်,Thein Zayet,SemiWholeSales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,18,DGN 1Li-12(8.3.2025),ဒဂုံမန်ကျည်း ကော်ဘူး (1 Liter),1,12,BE,1600,Ko Mon Lay,ကိုမွန်လေး,ရေး,Yay,SemiWholeSales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,19,Zay Red-14,ဇေယျဝတီ Red,0.64,14,BE,1250,Ko Kyaw Shwe,ကိုကျော်ရွှေ,မုဒုံ,Mudon,SemiWholeSales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,20,Zay Red-14-1,ဇေယျဝတီ Red-1,0.64,14,BE,1270,Ko Kyaw Naing Soe,ကိုကျော်နိုင်စိုး,ဇီးဖြူသောင်,Yay,SemiWholeSales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,21,Zay Red-14-001,ဇေယျဝတီ Red,0.64,14,BE,1150,Ko Bar Buu,ကိုဘာဘူ,ဇာသပြင်,Hpa-an,SemiWholeSales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,22,Zay Red-14-004,ဇေယျဝတီ Red,0.64,14,BE,1080,Taw Win,တော်၀င်,တောင်စွန်း,Belin,SemiWholeSales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,23,Zay Red-14-003,ဇေယျဝတီ Red,0.64,14,BE,1270,Ma Maw,မမော်,စစ်မှုထမ်းဟောင်း,Hpa-an,SemiWholeSales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,24,Zay Red-14-005,ဇေယျဝတီ Red,0.64,14,BE,1350,Ma Chaw,မ‌ချော,ဇီးဖြူသောင်,Yay,SemiWholeSales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,25,Zay Red-14-006,ဇေယျဝတီ Red,0.64,14,BE,1400,Daw Sein,ဒေါ်စိန်,သိမ်ဇရပ်,Thein Zayet,SemiWholeSales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,26,Zay Red-24-001,ဇေယျဝတီ Red,0.64,24,BE,1250,Ko Zaw Lin Myat,ကိုဇော်လင်းမြတ်,ဇီးဖြူသောင်,Yay,SemiWholeSales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,27,Zay Red-24-002,ဇေယျဝတီ Red,0.64,24,BE,1350,Sate Tine Kya,စိတ်တိုင်းကျ,မြိုင်ကလေး,Hpa-an,SemiWholeSales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,28,kk-1Li(25%),ကောင်းကြည်-1Li,1,12,BE,1500,Daw Mi Sen,ဒေါ်မိစိန်,ရေး,Yay,SemiWholeSales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,29,kk-1Li(40%),ကောင်းကြည်-1Li,1,12,BE,1850,Ko Shan,ကိုရှမ်း,ဇီးဖြူသောင်,Yay,SemiWholeSales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,30,KK-14,ကောင်းကြည်,0.64,14,BE,1250,Ma Sandar,မစန္ဒာ,ဇာသပြင်,Hpa-an,SemiWholeSales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,31,KK-14(8.3.2025),ကောင်းကြည်,0.64,14,BE,1350,Ko Aung Naing Oo,ကိုအောင်နိုင်ဦး,မုဒုံ,Mudon,SemiWholeSales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,32,Zay Red ပု-14-001,ဇေယျဝတီ Red (ပု),0.64,14,BE,1600,U Pyi Aye,ဦးပြည်အေး,နတ်ကြီးချောင်,Paung,SemiWholeSales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,33,Zay Red ပု-14-002,ဇေယျဝတီ  Red(ပု),0.64,14,BE,1700,Ma Thida Win,မသီတာ၀င်း,မုဒုံ,Mudon,SemiWholeSales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,34,Zay Red ပု-14-003(8.3.2025),ဇေယျဝတီ  Red(ပု),0.64,14,BE,1800,A1,A1,မြေနီကုန်း,Maw La Myaing,SemiWholeSales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,35,DGN-14-001,ဒဂုံနာနတ်ဝိုင်,0.64,14,BE,1150,KP,KP,မြိုင်သာယာ,Maw La Myaing,SemiWholeSales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,36,DGN-14-002,ဒဂုံနာနတ်ဝိုင်,0.64,14,BE,1250,3 Brother,3 Brother,ရေး,Yay,SemiWholeSales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,37,DGN-14-003(3.8.2025),ဒဂုံနာနတ်ဝိုင်,0.64,14,BE,1350,Thailand,Thailand,မုဒုံ,Mudon,SemiWholeSales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,38,DG-24-001,ဒဂုံအရက်သန့်,0.64,24,BE,1150,U Myint Kyi,ဦးမြင့်ကြည်,ဘီးလင်း,Belin,SemiWholeSales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,39,DG-24-002,ဒဂုံအရက်သန့်,0.64,24,BE,1250,Kant Kaw Store,ကံ့ကော်စတိုး,ရေး,Yay,Mini Whole Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,40,DG-1Li,ဒဂုံအရက်သန့်,1,12,BE,1675,Daw Mwe,ဒေါ်မွှေး,ကမမောင်း,Phar Pun,Mini Whole Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,41,Shwe man,ရွှေမန်း,0.64,14,BE,1500,U Hla Win,ဦးလှ၀င်း,စစ်မှုထမ်းဟောင်း,Hpa-an,Mini Whole Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,42,Shwe man-1Li,ရွှေမန်း,1,12,BE,,Mon Lay,မွန်လေး,မြိုင်သာယာ,Maw La Myaing,Mini Whole Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,43,DG-24-003(8.3.2025),ဒဂုံအရက်သန့်,0.64,24,BE,1350,War Eain,ဝါးအိမ်,သိမ်ဇရပ်(၀ါးဒတ်ကွင်း),Thein Zayet,Mini Whole Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,44,Mone Nae Kon Ki,မိုးနဲကွန်ကီ,0.64,14,BE,1500,Say Thitsar,ဆေးသစ္စာ,ဒေါင်းဇရပ်,Maw La Myaing,Mini Whole Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,45,Mone Nae Kon Ki-1,မိုးနဲကွန်ကီ,0.64,14,BE,1700,Ye Nyunt Aung,ရဲညွှန့်အောင်,ကျိုက်ထို,Kyaikto,Mini Whole Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,46,Zay Red High-14-001,ဇေယျဝတီ High 43%,0.64,14,BE,1250,La Pyae,လပြည့်,ဒုံ၀န်း,ThaHtone,Mini Whole Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,47,Zay Red High-14-002,ဇေယျဝတီ High 43%,0.64,14,BE,1400,Ko Kyaw Soe,ကိုကျော်စိုး (နံ့သာ),သထုံ,ThaHtone,Mini Whole Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,48,Zay Red High-14-003,ဇေယျဝတီ High 43%,0.64,14,BE,1420,One Dollar,၀မ်းဒေါ်လာ,မုဒုံ,Mudon,Mini Whole Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,49,Zay Red High-14-004(8.3.2025),ဇေယျဝတီ High 43%,0.64,14,BE,1500,Ko Maung Oo,ကိုမောင်ဦး,တောင်၀ိုင်း(နတ်စင်ရှေ့),Maw La Myaing,Mini Whole Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,50,Zay Red High-14-005,ဇေယျဝတီ High 43%,0.64,14,BE,1550,Daw Sein Yone,ဒေါ်စိန်ယုံ,မုဒုံ,Mudon,Mini Whole Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,51,FR-700-12,Formula Rum 700ml,0.7,12,Formula,3600,Nan Tha Zin,နန်းသဇင်,ဈေးကြို,Maw La Myaing,Mini Whole Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,52,Col-700,Col-700ml,0.7,12,Whisky,5200,A Nae Gyi,အနဲကြီး,မြိုင်သာယာ,Maw La Myaing,Mini Whole Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,53,Col-700-1,Col-700ml-1,0.7,12,Whisky,4000,Ko Soe Naing,ကိုစိုးနိုင်,ကြခတ်ငူ,Paung,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,54,Col-700-2,Col-700ml-2,0.7,12,Whisky,4500,Min Min Htun,မင်းမင်းထွန်း,မုတ္တမ,Paung,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,55,Col-350,Col-350ml,0.35,24,Whisky,2300,Daw Kaw,ဒေါ်ကော,ပေါင်,Paung,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,56,Col-350-1,Col-350ml-1,0.35,24,Whisky,2000,Char Li,ချာလီ,ကျိုက်ထို,Kyaikto,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,57,Col-175,Col-175ml,0.35,24,Whisky,1300,Yaung Chi Oo,ရောင်ခြည်ဦး,ဇီးဖြူသောင်,Thein Zayet,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,58,Col-700 SRS,Col-700SRS,0.7,12,Whisky,5200,Ngwe Hlaing Than,ငွေလှိုင်းသံ,ကွမ်ရိုက်,Chang Sone,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,59,Col-350 SRS,Col-350SRS,0.35,24,Whisky,2600,Ko Nay Naing,ကိုနေနိုင်,ပေါင်,Paung,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,60,Col-350 SRS-1,Col-350SRS,0.35,24,Whisky,2600,Ma Thandar,မသန္တာ,ဖက်ခင်းလမ်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,61,Col-175 SRS,Col-175SRS,0.35,48,Whisky,1200,Ko Yan Naing Oo,ကိုရန်နိုင်ဦး,ပိုင်ရပ်,Hpa-an,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,62,Col-175 SRS-1,Col-175SRS,0.35,48,Whisky,1450,Ma Wai-2,မ‌ေ၀-၂,တံခွန်တိုင်(မုဒုံ),Mudon,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,63,FR-350-24,Formula Rum 350ml,0.35,24,Formula,1500,Daw Mya Sein,ဒေါ်မြစိန်,ဘုရားသုံးဆူ,Bagoda-3,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,64,FR-350-24-1,Formula Rum 350ml,0.35,24,Formula,2100,745,745,မုဒုံ,Mudon,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,65,BE Debtors Opening,BE,,,BE,,A Maung,အမောင်,မုဒုံ,Mudon,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,66,Whisky Debtors Opening,Whisky,,,Whisky,,Daw Mi Mi Naing,ဒေါ်မိမိနိုင်,မုဒုံ,Mudon,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,67,Formula Debtors Opening,Formula,,,Formula,,Ma Zar Zar,မဇာဇာ,မြိုင်သာယာ,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,68,OP Debtors Opening,OP,,,OP,,Phyo Wai San,ဖြိုး‌‌ေစံ,ဒေါင်းဇရပ်မီးပွုင့်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,69,kk-1Li(40%),ကောင်းကြည်-1Li,1,12,BE,1500,A Mi Yin Khwin,အမိရင်ခွင်,မုဒွန်း,Chang Sone,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,70,,,,,,,Sein Lae Kan Thar,စိမ်းလဲ့ကန်သာ,ကလော့,Chang Sone,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,71,,,,,,,Daw Moe Moe Myint,ဒေါ်မိုးမိုးမြင့်,မုဒုံ,Mudon,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,72,,,,,,,Ko Pain,ကိုပိန်,မြိုင်သာယာ,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,73,,,,,,,Ma Sandar Moe,မစန္ဒာမိုး,ဘီးလင်း,Belin,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,74,,,,,,,My-2,My-2,ဒိုက်၀န်ကွင်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,75,,,,,,,Yadanar Pone,ရတနာပုံ,သထုံ,ThaHtone,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,76,,,,,,,Bhone Myat Hlan,ဘုန်းမြတ်လျှံ,ပန်းဘဲတန်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,77,,,,,,,Daw Htay,ဒေါ်ဌေး,သိမ်ဇရမ်,Thein Zayet,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,78,,,,,,,U Soe Win,ဦးစိုး၀င်း,တောင်စွန်း,Belin,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,79,,,,,,,Hay Won Nan,ဟေ၀န်နန်း,ဈေးကြို,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,80,,,,,,,Hay Mar Pyae Wa,ဟေမာြပည့်၀,ဘန့်ဘွေးကုန်း,Paung,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,81,,,,,,,M-City,M-City,နတ်ကြီးချောင်,Paung,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,82,,,,,,,Tha Yat Myaing,သရက်မြိုင်,သရက်ကုန်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,83,,,,,,,Shin Thant,ရှင်းသန့်,စက်မှုဇုန်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,84,,,,,,,Kaung Khat,ကောင်းခေတ်,ဖက်ခင်းလမ်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,85,,,,,,,Daw Cho Cho Win,ဒေါ်ချိုချို၀င်း,သက္ကော,Chang Sone,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,86,,,,,,,U Bhone Myint,ဦးဘုန်းမြင့်,ပေါင်,Paung,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,87,,,,,,,Pea Cock,Pea Cock,သီရိမြိုင်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,88,,,,,,,Ma New Ni,မနွယ်နီ,ဒေါင်းဇရပ်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,89,,,,,,,Min San Thit,မင်းဆန်းသစ်,ဒေါင်းဇရပ်မီးပွုင့်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,90,,,,,,,Ya Mone Nar,ယမုံနာ,မြိုင်သာယာ,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,91,,,,,,,U Aung Myint,ဦးအောင်မြင့်,ကမာမို,Chang Sone,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,92,,,,,,,My-1,My-1,မောင်ငံ,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,93,,,,,,,Ko Kyi,ကိုကြီး,ဇေယျာ-၁,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,94,,,,,,,Tha Pyay,သပြေ,သီရိမြိုင်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,95,,,,,,,Pyone Pan Wai,ပြုံးပန်း‌ေ,မြေနီကုန်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,96,,,,,,,Bae Gyi Phyo,ဘဲကြီးဖြိုး,မြိုင်သာယာ,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,97,,,,,,,Hi Hi,Hi Hi,ဖက်ခင်းလမ်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,98,,,,,,,OMG,OMG,မြေနီကုန်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,99,,,,,,,Ever First,Ever First,စက်မှုဇုန်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,100,,,,,,,Ko Nay Kyaw,ကိုနေကျော်,မုဒုံ,Mudon,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,101,,,,,,,Daw Mya Lay,ဒေါ်မြလေး,အီဗြစ်,Paung,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,102,,,,,,,Min Htun Thein,မင်းထွန်းသိန်း,တော်ကနာ,Chang Sone,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,103,,,,,,,Shwe La Win,ရွှေလ၀န်း (၀င်း),ကမမောင်း,Phar Pun,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,104,,,,,,,Naing Kyaw,နိုင်ကျော်,စက်မှုဇုန်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,105,,,,,,,Naw Thin Su Hlaing,နော်သင်းစုလှိုင်,ကျုံဒိုး,KawKareik,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,106,,,,,,,Kabar Kyaw,ကမ္ဘာကျော်,မုဒုံ,Mudon,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,107,,,,,,,Shwe Kokeko,ရွှေကုက္ကိုလ်,ဒေါင်းဥ,Chang Sone,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,108,,,,,,,U Htwe Han,ဦးထွေးဟန်,ရွာလွတ်(ကွမ်ဒိုင်း),Chang Sone,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,109,,,,,,,Ko Thar Ngwe,ကိုသားငယ်,ကော့နွတ်,Chang Sone,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,110,,,,,,,Sone See Yar,ဆုံဆည်းရာ,အုတ်ဖို,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,111,,,,,,,155,155,မောင်ငံ,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,112,,,,,,,1948,1948,ဒိုက်၀န်ကွင်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,113,,,,,,,Wa Than Hnin,၀ဿာန်နှင်း,ကျိုက်မရော,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,114,,,,,,,Feeling Store,Feeling Store,မောင်ငံ,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,115,,,,,,,Firday Mon,Firday Mon,မြိုင်သာယာ,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,116,,,,,,,Outlet,Outlet,မော်လမြိုင်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,117,,,,,,,XOX,XOX,လမုတန်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,118,,,,,,,Kyin Thin,ကျင်းသန်း(သင်း),ပိုင်ကျုံ,Hpa-an,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,119,,,,,,,Ko Win Khaing,ကို၀င်းခိုင်,ကရုပ္ပိ,Than Phyu ZaYat,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,120,,,,,,,Ko Wanna,ကို၀ဏ္ဏ,လမုတန်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,121,,,,,,,Ko Wa Toke,ကို၀တုတ်,စစ်မှုထမ်းဟောင်း,Hpa-an,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,122,,,,,,,Ko Kyaw Min Htun,ကိုကျော်မင်းထွန်း,စက်မှုဇုန်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,123,,,,,,,Ko Kyaw Myint,ကိုကျော်မြင့်,မောင်ငံ,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,124,,,,,,,Ko Kyaw Oo,ကိုကျော်ဦး,နဘူး,KawKareik,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,125,,,,,,,Ko Chan Thar,ကိုချမ်းသာ,မုဒုံ,Mudon,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,126,,,,,,,Ko Ngwe Lay,ကိုငယ်လေး,သံဖြူဇရပ်,Than Phyu ZaYat,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,127,,,,,,,Ko Zaw,ကိုဇော်,ဖားပြရွာ,Hpa-an,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,128,,,,,,,Ko Zaw Win Htun,ကိုဇော်၀င်းထွန်း,မုဒုံ,Mudon,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,129,,,,,,,Ko Zaw Min,ကိုဇော်မင်း,ဘားအံ,Hpa-an,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,130,,,,,,,Ko Zaw Lay,ကိုဇော်လေး,မုဒုံ,Mudon,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,131,,,,,,,Ko Htay,ကိုဌေး,ဇာသပြင်,Hpa-an,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,132,,,,,,,Ko Htwe,ကိုထွေး,ဘားအံအဖြောင့်လမ်း,Hpa-an,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,133,,,,,,,Ko Htike,ကိုထိုက်,ဒေါင်းဥ,Chang Sone,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,134,,,,,,,Ko Htoo Zaw,ကိုထူးဇော်,ကော့ကရိတ်,KawKareik,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,135,,,,,,,Ko Bo Ni,ကိုဘိုနီ,အလူးကျေးရွာ,Belin,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,136,,,,,,,Ko Min Min Htun,ကိုမင်းမင်းထွန်း,ဇေယျာ-၁,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,137,,,,,,,Ko Maung Lay,ကိုမောင်လေး,သံဖြူဇရပ် (နှစ်ကိုင်း),Than Phyu ZaYat,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,138,,,,,,,Ko Ye,ကိုရဲ,လမိုင်း,Yay,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,139,,,,,,,Ko Lay,ကိုလေး,မြိုင်သာယာ,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,140,,,,,,,Ko Win Htut Aung,ကိုဝင်းထွဋ်အောင်,ဈေးကြိုဆန်တန်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,141,,,,,,,Ko Than Htun Oo,ကိုသန်းထွန်းဦး,အီဗြစ်,Paung,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,142,,,,,,,Ko Arr Noe,ကိုအာနိုး,လမိုင်း,yaY,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,143,,,,,,,Ko Aye Min Naing,ကိုအေးမင်းနိုင်,ဆင်ရွာ,Paung,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,144,,,,,,,Ko Aung,ကိုအောင်,သီရိမြိုင်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,145,,,,,,,Kaung Htet Hlan,ကောင်းထက်လျှံ,လမုတန်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,146,,,,,,,Kaung Lite,ကောင်းလိုက်,သထုံကြာပန်း,ThaHtone,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,147,,,,,,,Cherry Myaing,ချယ်ရီမြိုင်,ရခိုင်ကုန်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,148,,,,,,,June,ဂျွန်,ဂေါက်ကွင်းရှေ့(ဘုရားသုံးဆူ),Bagoda-3,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,149,,,,,,,Ngwe Lin Yone,ငွေလင်းယုန်,ဇာသပြင်,Hpa-an,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,150,,,,,,,Swal Nay Pi,စွဲနေပြီ,မုခနီး (စော်ကဲ),Chang Sone,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,151,,,,,,,Soe Thiha,စိုးသီဟ,မောင်ငံ,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,152,,,,,,,Super,စူပါ,မုဒုံ,Mudon,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,153,,,,,,,Sone Mhat,ဆုံမှတ်,၆ မိုင်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,154,,,,,,,Saung Hnin Wai,ဆောင်းနှင်း‌ေ,ကွမ်ဒိုင်း,Chang Sone,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,155,,,,,,,Zabu Aye,ဇဗ္ဗူအေး,ကျိုက်ထို,Kyaikto,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,156,,,,,,,Zar Ni Lwin,ဇာနည်လွင်,မောင်ငံ,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,157,,,,,,,Zar Ni Lay,ဇာနည်လေး,ထီးလင်း၀င်းသာယာ(ဇာသပြင်),Hpa-an,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,158,,,,,,,T Narr Lay,တီနားလေး,စစ်မှုထမ်းဟောင်း,Hpa-an,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,159,,,,,,,Taung Paw Tan,တောင်ပေါ်တန်း,တောင်ရိုးတန်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,160,,,,,,,Htet Lin Aung,ထက်လင်းအောင်,ကွမ်ရိုက်,Chang Sone,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,161,,,,,,,Htun+Win,ထွန်း+၀င်း,ဘားအံအဖြောင့်လမ်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,162,,,,,,,Htaw Ma Ngway,ထောမငေး,စက်မှုဇုန်,Hpa-an,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,163,,,,,,,Dingar,ဒဂါးစားသောက်ဆိုင်,သဲအိမ်,ThaHtone,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,164,,,,,,,Daw Ka Lar Ma,ဒေါ်ကုလားမ,စစ်မှုထမ်းဟောင်း,Hpa-an,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,165,,,,,,,Daw Khin,ဒေါ်ခင်,ပိုင်ကျုံ,Hpa-an,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,166,,,,,,,Daw Khin Kyi,ဒေါ်ခင်ကြည်,စစ်မှုထမ်းဟောင်း,Hpa-an,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,167,,,,,,,Daw Khaing,ဒေါ်ခိုင်,ပိုင်ကျုံ,Hpa-an,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,168,,,,,,,Daw Ka Tone Ma,ဒေါ်ဂတုံးမ,စစ်မှုထမ်းဟောင်း,Hpa-an,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,169,,,,,,,Daw New New Win,ဒေါ်နွယ်နွယ်ဝင်း,ဘားအံ,Hpa-an,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,170,,,,,,,Daw Pwal,ဒေါ်ပွဲ,ဆင်ခေါင်းမိုတဲ,Bagoda-3,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,171,,,,,,,Daw Bote,ဒေါ်ဘုတ်,အိန္ဒုလမ်း,Hpa-an,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,172,,,,,,,Daw Mi Ngwe,ဒေါ်မိငယ်,ဆောင်နိုင်ကြီး,Kyaikto,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,173,,,,,,,Daw Mu,ဒေါ်မူ,ချောင်းတောင်,KawKareik,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,174,,,,,,,Daw Aye Aye Myint,ဒေါ်အေးအေးမြင့်,ကလိုင်ပဒေါ,Than Phyu ZaYat,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,175,,,,,,,Ngwe Thar Gi,နွယ်သာကီ,ဖားအောက်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,176,,,,,,,Hnin Nu Wai,နှင်းနုဝေ,မုဒုံ,Mudon,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,177,,,,,,,Pyae Sone Shin,ပြည့်စုံရှင်,ရေး,Yay,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,178,,,,,,,Pyae Hlan Kyaw,ပြည့်လျှံကျော်,တောင်စွန်း,Belin,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,179,,,,,,,Pyone Cho,ပြုံးချို,နောင်တမံ,Bagoda-3,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,180,,,,,,,Pwa Gyi,ပွကြီးကွမ်းယာ,ရေလယ်လမ်းဝ,Bagoda-3,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,181,,,,,,,Phyo,ဖြိုး,သွေးသောက်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,182,,,,,,,Phoe Khwar Lay,ဖိုးခွားလေး,မုဒုံ,Mudon,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,183,,,,,,,Bhone Nay Kha Htun,ဘုန်းနေခထွန်း,၉ တိုင်,KawKareik,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,184,,,,,,,Ma Kyi Aye,မကြည်အေး,ချောင်းတောင်,KawKareik,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,185,,,,,,,Ma Kay Kay,မကေကေ,ဘီးလင်း,Belin,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,186,,,,,,,Ma Kay Thi Khaing,မ‌ကေသီခိုင်,အိန္ဒုလမ်း,Hpa-an,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,187,,,,,,,Ma Khaing,မခိုင်,မက္ကသာ,Bagoda-3,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,188,,,,,,,Ma Juee Li Ma,မဂျူးလီမ,အနန်းပင်,ThaHtone,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,189,,,,,,,Min Than Lwin,မင်းသံလွင်,ဈေးကြို,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,190,,,,,,,Ma Sa Muu,မစမူး,ပိုင်ကျုံ,Hpa-an,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,191,,,,,,,Ma Tin Tin Win,မတင်တင်၀င်း,ကျိုက်ဒုံ,Bagoda-3,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,192,,,,,,,Ma Nandar Aye,မနန္ဒာအေး,သံဖြူဇရပ်,Than Phyu ZaYat,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,193,,,,,,,Ma New New Win,မနွယ်နွယ်၀င်း,ဘားအံ,Hpa-an,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,194,,,,,,,Ma Nant Thar,မနံသာ,ဘားအံ,Hpa-an,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,195,,,,,,,Ma Nant Thar,မနံ့သာ,ရေး,Yay,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,196,,,,,,,Ma Hnin Pwint Phyu,မနှင်းပွင့်ဖြူ,အစင်,Yay,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,197,,,,,,,Ma Pu,မပု,ကျွန်းချောင်း,Bagoda-3,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,198,,,,,,,Ma Yin Yin Than,မယဥ်ယဥ်သန်း,ပေါင်,Paung,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,199,,,,,,,Ma Shwe Sin,မ‌ရွှေစင်,သထုံ,ThaHtone,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,200,,,,,,,Ma Yi Mon,မရီမွန်,ကုန်းမြင့်သာယာ,Than Phyu ZaYat,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,201,,,,,,,Ma Yi Yi Mar,မရီရီမာ,ပင,Than Phyu ZaYat,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,202,,,,,,,Ma Lat To San,မလတ်တိုစန်း,အနန်းပင်,ThaHtone,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,203,,,,,,,Ma Hla Myi,မလှကြည်,မြောက်ကြာအင်း,KawKareik,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,204,,,,,,,Ma Win Maw,မဝင်းမော်,နတ်ကြီးချောင်,Paung,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,205,,,,,,,Ma Wai Thar,မ‌ဝေသား,တံခွန်တိုင်(မုဒုံ),Mudon,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,206,,,,,,,Ma Than Than Aye,မသန်းသန်းအေး,ကျိုက္ခမီ,Than Phyu ZaYat,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,207,,,,,,,Ma Thi,မသီ,ကျိုက်မရော,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,208,,,,,,,Ma Thida Oo,မသီတာဦး,ကျိုက်ကော်,ThaHtone,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,209,,,,,,,Miba Myitter,မိဘမေတ္တာ,ကုန်းမြင့်သာယာ,Than Phyu ZaYat,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,210,,,,,,,Mi Ba Yite,မိဘရိပ်,ဇာသပြင်,Hpa-an,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,211,,,,,,,Moe San,မိုးဆမ်း,မုဒုံ,Mudon,SemiWholeSales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,212,,,,,,,Moe Ma Kha,မိုးမခ,ဈေးကြို,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,213,,,,,,,Ma Wai,မ‌‌ေ,မုဒုံ,Mudon,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,214,,,,,,,Shwe Kokeko,ရွှေကုက္ကိုရိပ်,ချောင်းနှစ်ခွ,Bagoda-3,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,215,,,,,,,Shwe Khaung Yi,ရွှေခေါင်ရည်,မုဒုံ,Mudon,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,216,,,,,,,Shwe Pa Line,ရွှေပလိုင်း,မြိုင်သာယာ,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,217,,,,,,,Shwe Moe,ရွှေမိုး,မြိုင်သာယာ,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,218,,,,,,,Shwe Myitter,ရွှေမေတ္တာ,ဒရယ်,Chang Sone,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,219,,,,,,,Shwe Yin Aye,ရွှေရင်အေး,ကလော့သော့,Than Phyu ZaYat,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,220,,,,,,,Shwe Yaung A Nar Gat,ရွှေရောင်အနာဂတ်,ရွှေရောင်ပြ,Belin,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,221,,,,,,,Yar Ma Nya,ရာမည,တရနာ,Hpa-an,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,222,,,,,,,Ye Yint Aung,ရဲရင့်အောင်,ခလွန်,Kyaikto,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,223,,,,,,,Lin Lin,လင်းလင်း,စစ်မှုထမ်းဟောင်း,Hpa-an,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,224,,,,,,,Lu Wa Gyi,လူဝကြီး,ဘီးလင်း,Belin,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,225,,,,,,,Thoon Shwe Sin,သွန်းရွှေစင်,မုပွန်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,226,,,,,,,Thein Gabar,သိန်းကမ္ဘာ,ဘီးလမိုင်း,Than Phyu ZaYat,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,227,,,,,,,Thein Than,သိန်းသန်း,စက်မှုဇုန်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,228,,,,,,,Thaw Tar Win,သော်တာဝင်း,ပေါင်,Paung,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,229,,,,,,,Han Thar,ဟန်သာ,စက်မှုဇုန်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,230,,,,,,,Ingyin May,အင်ကြင်းမေ,ရွေလှေ,Belin,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,231,,,,,,,A Lin Yaung,အလင်းရောင်,ဒူရိန်,KawKareik,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,232,,,,,,,Ooe Lay,အိုးလေး,ကလွီ,Chang Sone,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,233,,,,,,,Oak Gyi,အုပ်ကြီး,စမ်းကြီး,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,234,,,,,,,U Win Myint,ဦး၀င်းမြင့်,ဖက်တန်းလမ်း (ဈေးကြီး),Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,235,,,,,,,U Ka Yin,ဦးကရင်,ဘားအံအဖြောင့်လမ်း,Hpa-an,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,236,,,,,,,U Sein Myint+Daw Owne Myint,ဦးစိန်မြင့်+ဒေါ်အုန်းမြင့်,အိန္ဒုလမ်း,Hpa-an,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,237,,,,,,,U Pan Char,ဦးပန်ချာ,ကမနင်း,Chang Sone,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,238,,,,,,,U Bo Ni,ဦးဘိုနီ,သာယာအေး,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,239,,,,,,,U Myint Ko,ဦးမြင့်ကို,ဇပြွန်းပင်,Than Phyu ZaYat,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,240,,,,,,,U Aung Myint,ဦးမြင့်အောင်,အိန္ဒုလမ်း,Hpa-an,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,241,,,,,,,U Maung Thein,ဦးမောင်သိန်း,အင်းကွဲရွာ,ThaHtone,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,242,,,,,,,U Win Shine,ဦးဝင်းရှိန်,လမိုင်း,Yay,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,243,,,,,,,U Myint Naing,ဦိးမြင့်နိုင်,ခလွန်,Kyaikto,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,244,,,,,,,A Lin Thit,အလင်းသစ်,မုဒုံ,Mudon,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,245,,,,,,,Golden Bell,Golden Bell,မြိုင်သာယာ,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,246,,,,,,,Moon,Moon,မောင်ငံ,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,247,,,,,,,Billionaire,ဘီလျှံနာ,မောင်ငံ,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,248,,,,,,,san thit kabar,ဆန်းသစ်ကမ္ဘာ,မောင်ငံ,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,249,,,,,,,Hlann,လျှမ်း,ကမ်းနားလမ်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,250,,,,,,,Shwe Nagar,ရွှေနဂါး,မောင်ငံ,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,251,,,,,,,Baw Dar Gyi,ဘော်ဒါကြီး,ဇေယျာ-၁,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,252,,,,,,,KKK,KKK,ဇေယျာ-၁,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,253,,,,,,,U Thein Win,ဦးသိန်းဝင်း,မုပွန်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,254,,,,,,,La Yaung Win,လရောင်ဝင်း,ဖက်ခင်းလမ်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,255,,,,,,,Friday Mon,Friday Mon,မြိုင်သာယာ,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,256,,,,,,,Phyo Wai Win,ဖြိုးဝေဝင်း,တောင်ဝိုင်းဥယျာဥ်လမ်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,257,,,,,,,U Saw Maung,ဦးစောမောင်,မြိုင်သာယာ,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,258,,,,,,,Phaung Taine,ဖောင်တိန်,,Mudon,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,259,,,,,,,Ma Zar Zar Oo,မဇာဇာဦး,,Yay,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,260,,,,,,,Phyo Wai Oo,ဖြိူးဝေဦး,သီရိမြိုင်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,261,,,,,,,Moe Hti Aung,မိုးထိအောင်,သီရိမြိုင်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,262,,,,,,,Daily One,Daily One,သီရိမြိုင်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,263,,,,,,,Shwe Kyoekyar,ရွှေကြိုးကြာ,သီရိမြိုင်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,264,,,,,,,Phyo Wai Win,ဖြိုးဝေဝင်း,တောင်ဝိုင်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,265,,,,,,,Ko san,ကိုစံ,ဈေးကြီး,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,266,,,,,,,Nyi Nyi,ညီညီ,ကမ်းနားလမ်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,267,,,,,,,Lucky,Lucky,မုပွန်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,268,,,,,,,Thar Gyi,သားကြီး,ရွေ ပြည်အေး,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,269,,,,,,,Sa Aung San,စအောင်စန်း,ထီးလုံ၀င်းသာယာ(ဇာသပြင်),Hpa-an,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,270,,,,,,,Comment,Comment,မြိုင်သာယာ,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,271,,,,,,,Hein,ဟိန်း,မြိုင်သာယာ,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,272,,,,,,,U Than Swe,ဦးသန်းဆွေ,မင်းရွာ,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,273,,,,,,,Ok 1-2,Ok 1-2,မြိုင်သာယာ,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,274,,,,,,,Jocker,Jocker,နတ်စင်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,275,,,,,,,Daw Khin Than Myint,ဒေါ်ခင်သန်းမြင့်,နတ်ခမ်းရွာ,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,276,,,,,,,Daw Tin Tin Aye,ဒေါ်တင်တင်အေး,သီရိမြိုင်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,277,,,,,,,KS,KS,သီရိမြိုင်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,278,,,,,,,Shwe Taw Win,ရွှေတော်ဝင်,သီရိမြိုင်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,279,,,,,,,Shwe Hlaing Bwar,ရွှေလှိုင်ဘွား,သီရိမြိုင်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,280,,,,,,,Daw Mee,ဒေါ်မီး,သီရိမြိုင်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,281,,,,,,,Shwe Nan Htet,ရွှေနန်းထက်,မြို့ရှောင်လမ်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,282,,,,,,,Shwe Nadi,ရွှေနဒီ,မြို့ရှောင်လမ်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,283,,,,,,,Marlar Myaing,မာလာမြို်င,ဘူတာကြီး,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,284,,,,,,,Aung Kabar,အောင်ကမ္ဘာ,မြို့ရှောင်လမ်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,285,,,,,,,Ko Ch,ကိုချိုင်,သီရိမြိုင်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,286,,,,,,,Shwe ban Dar,ရွှေဗန်ဒါ,ဗဟိုလမ်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,287,,,,,,,Pan Ei Phyu,ပန်းအိဖြူ,အုတ်ဖို,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,288,,,,,,,Sk,Sk,အုတ်ဖို,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,289,,,,,,,Queen,ဘုရင်မ,တိုးချဲ့ကမ်းနား,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,290,,,,,,,Han Thar Myaing,ဟံသာမြိုင်,သီရိမြိုင်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,291,,,,,,,AKK,AKK,မြို့ရှောင်လမ်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,292,,,,,,,Than Myitter,သန်းမေတ္တာ,မြို့ရှောင်လမ်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,293,,,,,,,Yati,ရတီ,ချောင်းဆောက်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,294,,,,,,,Shwe Sate Kuu,ရွှေစိတ်ကူး,ဖားအောက်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,295,,,,,,,R Gyi,အာကြီး,မုပွန်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,296,,,,,,,Ma Ni Ni Mar,မနီနီမာ,ကျောက်တန်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,297,,,,,,,Shwe Sate Shwin,ရွှေစိတ်ရွှင်,ဖားအောက်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,298,,,,,,,Ko Ngwe Lay+Ma Nan,ကိုငယ်လေး+မနန်း,ရခိုင်ကုန်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,299,,,,,,,A Lin Thit,အလင်းသစ်,မုဒုံ,Mudon,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,300,,,,,,,Tow Brother,Tow Brother,မြိုင်သာယာ,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,301,,,,,,,Hnin Lwin Lwi,နှင်းလွင်လွင်,မုဒုံ,Mudon,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,302,,,,,,,AAK,AAK,မြို့ရှောင်လမ်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,303,,,,,,,AK,AK,မုဒုံ,Mudon,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,304,,,,,,,Saung Ngwe Oo,ဆောင်းနွေဦး,မုဒုံ,Mudon,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,305,,,,,,,Ko Myo Aung-1,ကိုမျိုးအောင်,သီရိမြိုင်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,306,,,,,,,Ko Than Chaung,ကိုသံချောင်း,တံခွန်တိုင်(မုဒုံ),Mudon,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,307,,,,,,,Shwe Mingalar,ရွေမင်္ဂလာ,လမုတန်းဈေး,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,308,,,,,,,Daw Htan Pain,ဒေါ်ထန်းပိန်,မုပွန်‌ကျောက်တန်း,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,309,,,,,,,Hinn Thar Myaing,ဟင်္သာမြိုင်,သီရိမြိုင်,Maw La Myaing,Van Sales,,,,,,,,,,,{}
+9-MLM Table and DailySales-2026_Feb.xlsx,Table,310,,,,,,,Kyaw Gyi,ကျော်ကြီး,သီရိမြိုင်,Maw La Myaing,,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,2,ZVK-700,"""ဇေ"" Vodka 700ml",0.7,12,BE,2020,SC,စံချိန်,ရမည်းသင်း,Yamethin,WholeSales/Contract,ကုန်ရောင်း(လက်ငင်း),4R-2966,နီနီအောင်,700-Col,Columbus Whisky 700 Ml,0.7,12,Whisky,4000,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,3,Zay-640,ဇေ အရက်သန့်,0.64,14,BE,1380,UWN,ဦးဝင်းနိုင်,လျှော်ပင်,Wandwin,WholeSales/Contract,ကုန်ရောင်း(အကြွေး),5H-1758,အေးသဇင်မြင့်,350-Col,Columbus Whisky 350 Ml,0.35,24,Whisky,2000,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,4,Zay 1000,ဇေ ကော် 1Ltr,1,12,BE,1680,SM(NST),ရွှေမြင်း(ငွေစည်တော်),ဝမ်းတွင်း,Wandwin,WholeSales/Contract,ကုန်ရောင်းပြန်သွင်း,4F-9227,မြင်မြတ်မျိုး,175-Col,Columbus Whisky 175 Ml,0.175,48,Whisky,1100,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,5,Zay 600,ဇေ ကော် .6 Ltr,0.6,12,BE,1130,SM(STMT),ရွှေမြင်း(ရွှေတမာတန်း),ဝမ်းတွင်း,Wandwin,WholeSales/Contract,ဈေးဟောင်းလျှော့,3R-5803,မီမီဇော်,700-SRS,Columbus Super Red Smooth 700 Ml,0.7,12,Whisky,5200,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,6,KK 25% 1000,ကောင်းကြည် ကော် 25%  (1Ltr ),1,12,BE,1530,SM(SNG),ရွှေမြင်း(ရွှေနဂါး),ဝမ်းတွင်း,Wandwin,WholeSales/Contract,ကော်မရှင်,7F-9857,အေးချမ်းမို့မို့,350-SRS,Columbus Super Red Smooth 350 Ml,0.35,24,Whisky,2600,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,7,,,,,,,SM(KTT),ရွှေမြင်း(ကိုထွန်းထွန်း),သဲတော,Wandwin,WholeSales/Contract,အရက်ဖာကော်မရှင်,3I-1960,သိင်္ဂီရွှေ,175-SRS,Columbus Super Red Smooth 175 Ml,0.175,48,Whisky,1450,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,8,KK 25% 600,ကောင်းကြည် ကော် 25%(.6 Ltr),0.6,12,BE,1090,SM(KMM),ရွှေမြင်း(ကိုမျိုးမင်း),သာစည်,Tharzi,WholeSales/Contract,အကွဲ,1G-8948,ဝေဝေနိုင်,700-FR,Formula Rum 700ml,0.7,12,Formula,3600,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,9,,,,,,,SM(TTW),ရွှေမြင်း(တိုးတက်ဝေ),သာစည်,Tharzi,WholeSales/Contract,လက်ဆောင်,6Q-5306,သက်မွန်မြင့်,350-FR,Formula Rum 350ml,0.35,24,Formula,2100,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,10,SMT,ရွှေမင်းသားခေါင်ရည်,0.64,24,BE,800,SM(MBY),ရွှေမြင်း(မိဘရိပ်),သာစည်,Tharzi,WholeSales/Contract,ဖောက်တိုက်,6Q-2768,ရင်ရင်သိန်း,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,11,,,,,,,MM,မြို့မ,တောင်သာ,Taungthar,WholeSales/Contract,FOC,7Q-8019,ခိုင်သဇင်ဝင်း,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,12,,,,,,,SM(NL),ရွှေမြင်း(ကိုဉာဏ်လင်း),ပျော်ဘွယ်,Pyawbwe,WholeSales/Contract,ကားကွဲ,6Q-3948,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,13,SMT MK,ရွှေမင်းသားမန်ကျည်းခေါင်ရည်,0.64,14,BE,830,SM(KASM),ရွှေမြင်း(ကိုအောင်စန်းမြင့်),ပျော်ဘွယ်,Pyawbwe,WholeSales/Contract,ကုန်သည်လက်ဆောင်,2R-8625,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,14,,,,,,,SM(PG),ရွှေမြင်း(ပေါ်ကြီး),ပျော်ဘွယ်,Pyawbwe,WholeSales/Contract,စစ်ဆေးရေးဂိတ်လက်ဆောင်,5D-9867,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,15,Z red-700,ဇေယျဝတီ Red,0.7,12,BE,1800,SM(MTN),ရွှေမြင်း(မင်းသက်နောင်),ပျော်ဘွယ်,Pyawbwe,WholeSales/Contract,,3F-2352,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,16,Z Red-1000,ဇေယျဝတီ Red,1,12,BE,1680,SM(MT),‌ရွှေမြင်း(မြို့တော်),‌ပျော်ဘွယ်,Pyawbwe,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,17,Z red-640,ဇေယျဝတီ Red,0.64,14,BE,1330,SM(MSS),ရွှေမြင်း(မိတ်ဆွေစစ်),ပျော်ဘွယ်,Pyawbwe,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,18,,,,,,,SM(Mka),ရွှေမြင်း(မေခ),‌ပျော်ဘွယ်,Pyawbwe,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,19,Z red-640 Army,ဇေယျဝတီ Red ပု,0.64,14,BE,1600,SM(SS),ရွှေမြင်း(ရွှေဆု),‌ပျော်ဘွယ်,Pyawbwe,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,20,,,,,,,SM(SMM),ရွှေမြင်း(ရွှေမြင့်မိုရ်),ပျော်ဘွယ်,Pyawbwe,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,21,Z red-680 Army,ဇေယျဝတီ Red ပု,0.68,12,BE,1550,SM(ST),ရွှေမြင်း(ရှိုင်းစတား),ပျော်ဘွယ်,Pyawbwe,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,22,,,,,,,UYM,ဦးရဲမြင့်,ပျော်ဘွယ်,Pyawbwe,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,23,2 in 1,2 in 1 မန်ကျည်း,0.64,14,BE,1350,SM(UMA),ရွှေမြင်း(ဦးမြင့်အောင်),ယင်းတော်,Pyawbwe,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,24,,,,,,,KH,ကောင်းဟိန်း,ပခုက္ကူ,Pakkoku,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,25,DGMK,ဒဂုံမန်ကျည်း,0.64,14,BE,1280,UTM,ဦးတင်မောင်,ပခုက္ကူ,Pakkoku,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,26,,,,,,,SM(KMH),ရွှေမြင်း(မခင်မာဌေး),ကျွဲတပ်ဆုံ,Meiktila,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,27,KK-640,ကောင်းကြည်,0.64,14,BE,1330,SM(SLP),ရွှေမြင်း(ရွှေလွန်းပျံ),စက်မှုဇုံ,Meiktila,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,28,,,,,,,SM(YMH),ရွှေမြင်း(ရဲမာန်ဟိန်း),စက်မှုဇုံ,Meiktila,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,29,L,သံပုရာအရက်,0.64,14,BE,1330,SCT,‌ရွှေခြင်္သေ့,မိတ္ထီလာ,Meiktila,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,30,,,,,,,SM,ရွှေမြင်း,မိတ္ထီလာ,Meiktila,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,31,DGNN,ဒဂုံနာနတ်,0.64,24,BE,1330,SM(KCT),ရွှေမြင်း(ကျော်ချမ်းသာ),မိတ္ထီလာ,Meiktila,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,32,,,,,,,SM(KMA),ရွှေမြင်း(ကိုမောင်အေး),မိတ္ထီလာ,Meiktila,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,33,DGT,ဒဂုံအရက်သန့်,0.64,14,BE,1330,SM(HK),ရွှေမြင်း(ထူးကျော်),မိတ္ထီလာ,Meiktila,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,34,,,,,,,SM(SCT),ရွှေမြင်း(ရွှေခြင်္သေ့),မိတ္ထီလာ,Meiktila,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,35,WO,လိမ္မော်ဖြူ,0.64,24,BE,1330,SM(AYWD),ရွှေမြင်း(ဧရာဝတီ),မိတ္ထီလာ,Meiktila,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,36,WO-1000,လိမ္မော်ဖြူ,1,12,BE,,UAM(KT),ဦးအောင်မိုး(ကောင်းသန့်),မိတ္ထီလာ,Meiktila,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,37,BC,Black Cat,0.64,24,BE,1330,KK,ကျော်ကြား,မလှိုင်,Mahlaing,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,38,,,,,,,MYYA,မယဉ်ယဉ်အေး,မလှိုင်,Mahlaing,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,39,KMK,ကင်းမြီးကောက်,0.64,14,BE,1330,SM(KK),ရွှေမြင်း(ကျော်ကြား),မလှိုင်,Mahlaing,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,40,,,,,,,SM(SEIN),ရွှေမြင်း(စိန်),မလှိုင်,Mahlaing,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,41,SP,မြန်မာရှောက်ပျား,0.64,14,BE,1370,SM(ZYM),ရွှေမြင်း(ဇေယျာမင်း),မလှိုင်,Mahlaing,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,42,SP-1000,မြန်မာရှောက်ပျား   ကော်(1L),1,12,BE,1700,SM(MK),ရွှေမြင်း(မိုးကျော်),မလှိုင်,Mahlaing,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,43,MNKK,မိုးနဲကွန်ကီး,0.64,14,BE,1500,SM(LH),ရွှေမြင်း( Liquor HOUSE),မိတ္ထီလာ,Meiktila,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,44,MNKK-1,မိုးနဲကွန်ကီး,0.64,14,BE,1700,KSW,ကောင်းဆုဝေ,ကျောက်ပန်းတောင်း,Kyukpadaung,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,45,MNKK-1000,မိုးနဲကွန်ကီး ကော် (1L),1,24,BE,1900,KHT,ကောင်းထက်သူ,ကျောက်ပန်းတောင်း,Kyukpadaung,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,46,,,,,,,L,လွင်,ကျောက်ပန်းတောင်း,Kyukpadaung,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,47,12MNKK-1000,မိုးနဲကွန်ကီး ကော် (1L),1,12,BE,1900,USW,ဦးစိုးဝင်း,ကျောက်ပန်းတောင်း,Kyukpadaung,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,48,12MNKK-1000-1,မိုးနဲကွန်ကီး ကော် (1L),1,12,BE,2100,UTS,ဦးသိန်းစိုး,ကျောက်ပန်းတောင်း,Kyukpadaung,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,49,Cherry-640,ချယ်ရီအရက်သန့်,0.64,14,BE,1360,ST,ရွှေတောင်,ပုဂံ,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,50,,,,,,,UAM,ဦးအောင်မိုး,ရမည်းသင်း,Yamethin,WholeSales,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,51,Cherry-640 pkk,ချယ်ရီအရက်သန့်,0.64,14,BE,1380,UKH,ဦးကျော်လှ,သာစည်,Tharzi,WholeSales,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,52,,,,,,,UWAK,ဦးဝင်းအောင်ကြွယ်,ပျော်ဘွယ်,Pyawbwe,WholeSales,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,53,,,,,,,Su1,Summer-1,မိတ္ထီလာ,Meiktila,WholeSales,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,54,,,,,,,Su2,Summer-2,မိတ္ထီလာ,Meiktila,WholeSales,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,55,Cherry-600,ချယ်ရီအရက်သန့်ကော် (.6Ltr),0.6,24,BE,875,UAKM,ဦးအေးခင်မောင်,မိတ္ထီလာ,Meiktila,WholeSales,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,56,,,,,,,DKSM,ဒေါ်ခင်စန်းမြင့်,ကျောက်ပန်းတောင်း,Kyukpadaung,WholeSales,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,57,,,,,,,YTN,ရတနာ,ပုဂံ,Bagan,WholeSales,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,58,CherryLemon-600,ချယ်ရီသံပုရာအရက်သန့်ကော် (.6Ltr),0.6,24,BE,915,KoYiGyi,ကိုရင်ကြီး,ကန်စွယ်,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,59,,,,,,,K TZ,ကိုသန့််ဇင်,ကန်စွယ်,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,60,,,,,,,UZG,ဦးဇင်းကြီး,ကန်စွယ်,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,61,,,,,,,MKWY,မခင်ဝင်းရီ,ကန်အောက်,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,62,CherryLemon-1000,ချယ်ရီသံပုရာအရက်သန့်ကော် (1Ltr),1,12,BE,1260,K TH,ကိုသိန်းထိုက်,ကျောက်ပနား,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,63,,,,,,,MaAMH,မအေးမြထွေး,ကျောက်ပနား,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,64,,,,,,,MHWA,မနှင်းဝေအောင်,ကျောင်းကုန်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,65,,,,,,,KKT,ကိုကျော်သင်း,ကုက္ကိုခါးလှ,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,66,Zay-1000,ဇေသန့်ကော်ဗူး 1L,1,12,BE,1580,KoMgKyi,ကိုမောင်ကြည်,ကုက္ကိုခါးလှ,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,67,,,,,,,KMA-2,ကိုမြင့်အောင်(2),ခင်ကြီး,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,68,.6SMT,ရွှေမင်းသားခေါင်ရည်ကော်ဗူး(.6Ltr),0.6,12,BE,800,KWN,ကိုဝင်းနိုင်,ခင်ကြီး,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,69,,,,,,,DK,ဒေါ်ကြူ,ခင်ဘန်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,70,.6SMT MK,ရွှေမင်းသားမန်ကျည်းခေါင်ရည်(.6Ltr),0.6,12,BE,800,KoNyingLin,ကိုနိုင်လင်း,ဂုဏ်ရွာ,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,71,,,,,,,KSO,ကိုစန်းဦး,ဆပ်ခင်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,72,SM,ရွှေမန်းပုလင်း,0.64,14,BE,1500,KNMA,ကိုနေမျိုးအောင်,ဆပ်ခင်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,73,SM-1000,ရွှေမန်းကော်(1Ltr),1,12,BE,1600,KMN,ကိုမောင်နိုင်,ဆပ်ခင်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,74,FR-700,Formula Rum 700ml,0.7,12,Formula,3600,KYAM,ကိုရန်အောင်မြင့်,ဆပ်ခင်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,75,FR-350,Formula Rum 350ml,0.35,24,Formula,2100,MNNK,မနှင်းနှင်းခိုင်,သီးကုန်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,76,,,,,,,MaShweYin,မရွှေရင်,ဆပ်ခင်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,77,Col-700,Columbus Whisky 700 Ml,0.7,12,Whisky,4500,Ma Ei,မအိ,ဆပ်ခင်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,78,Col-350,Columbus Whisky 350 Ml,0.35,24,Whisky,2000,MaEiThuAung,မအိသူအောင်,ဆပ်ခင်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,79,Col-175,Columbus Whisky 175 Ml,0.175,48,Whisky,1100,UYM-2,ဦးရဲမြင့်-၂,ဆပ်ခင်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,80,SRS-700,Columbus Super Red Smooth 700 Ml,0.7,12,Whisky,5200,KoChitHla,ကိုချစ်လှ,ဆူးပန်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,81,SRS-350,Columbus Super Red Smooth 350 Ml,0.35,24,Whisky,2600,KSM,ကိုဆန်းမင်း,ဆူးပန်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,82,SRS-175,Columbus Super Red Smooth 175 Ml,0.175,48,Whisky,1450,KSP,ကိုစန်းပွင့်,ညောင်ပင်လှ,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,83,Sample-700,Columbus Super Red Smooth 700 Ml  Sample,0.7,12,Whisky,5500,MZ,မဉ္ဇူ,တဲစု,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,84,Sample-350,Columbus Super Red Smooth 350 Ml  Sample,0.35,24,Whisky,4000,Sphyo,ရွှေဖြိုး,ဒိုင်ကောင်းကုန်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,85,,,,,,,KoK,ကိုကြာ,ပင်းတလဲ,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,86,,,,,,,KKSW,ကိုကျော်စိန်ဝင်း,ဖလန်ကန်,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,87,NT-700,Ngwe Taung 700ml,0.7,12,Whisky,4700,KoKhinMgMyint,ကိုခင်မောင်မြင့်,ဖလန်ကန်,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,88,NT(NFS)-700,Ngwe Taung 700ml(NFS),0.7,12,Whisky,4700,KMgLay,ကိုမောင်လေး,ဖလန်ကန်,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,89,,,,,,,METK,မအိသူကျော်,ဖလန်ကန်,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,90,,,,,,,KoWinTinn,ကိုဝင်းတင့်,ဘုရားစု,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,91,,,,,,,PWH,ပန်းဝါလှိုင်,ဝက်ချုပ်ကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,92,,,,,,,KZW-3,ကိုဇော်ဝင်း-၃,မန်ကျီးအုပ်,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,93,BE Debtors,BE Debtors Opening,,,BE,,MaKhingKhingThin,မခိုင်ခိုင်သင်း,မန်ကျီးအုပ်,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,94,Whisky Debtors,Whisky Debtors Opening,,,Whisky,,AMNM,အမွှာညီမ,မန်ကျီးအုပ်,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,95,Formula Debtors,Formula Debtors Opening,,,Formula,,KoAyeMin,ကိုအေးမင်း,မုန်တော,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,96,ခေါင်ရည် Debtors,ခေါင်ရည် Debtors Opening,,,BE,,WLA,ဝေလုအောင်,ရွှေတောင်,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,97,,,,,,,KoAKW,ကိုအောင်ကျော်ဝင်း,ရိုးစုံ,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,98,,,,,,,KoAungKoLet,ကိုအောင်ကိုလတ်,ရိုးစုံ,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,99,,,,,,,KAML,ကိုအောင်မင်းလွင်,ရိုးစုံ,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,100,,,,,,,NgweSiTaw,ငွေစည်တော်,ဝမ်းတွင်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,101,,,,,,,UMD,ဦးမာဒင်,ဝမ်းတွင်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,102,ဈေးတက်နေ့,ID,,,,,Ma MMK,မမူမူခိုင်,သစ်ပုလွေကန်,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,103,2025-08-04 00:00:00,N1,,,,,MWWL,မဝေဝေလွင်,သစ်ပုလွေကန်,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,104,,,,,,,MTZ,မသူဇာ,သစ်ပုလွေကန်,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,105,13.11.25,,,,,,KKSO,ကိုကျော်စွာဦး,သဖန်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,106,Cherry.6 21000,,,,,,KPK,ကိုပေါက်ကျိုင်း,သဖန်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,107,,,,,,,KoMZO,ကိုမြင့်ဇော်ဦး,သဖန်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,108,,,,,,,San Myint,မစန်းမြင့်,သဖန်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,109,,,,,,,TZW,မသင်ဇာဝင်း,ရွှေတုတ်ကုန်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,110,,,,,,,MaNying,မနိုင်,သဖန်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,111,,,,,,,MTTW-2,မသီတာဝင်း-၂,သဖန်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,112,,,,,,,KWT,ကိုဝင်းတောင်,သရက်ကန်,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,113,,,,,,,KKS,ကိုကံရှိန်,သာဂရ,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,114,,,,,,,KKMC,ကိုခင်မောင်ချို,သာဂရ,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,115,,,,,,,KSMA,ကိုစိုးမင်းအောင်,သာဂရ,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,116,,,,,,,KHWM,ကိုထွန်းဝင်းမြိုင်,သာဂရ,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,117,,,,,,,KTKH,ကိုသန်းကျော်ဌေး,သာဂရ,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,118,,,,,,,MKH,မကြည်ဌေး,သာဂရ,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,119,,,,,,,MTSM,မတင်ဆန်းမူ,သာဂရ,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,120,,,,,,,SPT,ရှိုင်းဖုန်းသန့်,သာဂရ,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,121,,,,,,,KKK,ကိုကျောက်ခဲ,သီးကုန်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,122,,,,,,,KoKyawThu,ကိုကျော်သူ,သီးကုန်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,123,,,,,,,Ma Ma Lay,မမလေး,သီးကုန်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,124,,,,,,,KKA,ကိုကျော်အောင်,သုံးပတ်လည်,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,125,,,,,,,KZHA,ကိုဇော်ထက်အောင်,သုံးပတ်လည်,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,126,,,,,,,KNHL,ကိုနေထက်လင်း,သုံးပတ်လည်,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,127,,,,,,,KoAT,ကိုအောင်သင်း,သုံးပတ်လည်,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,128,,,,,,,TTG,တောသာကြီး,သဲတော,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,129,,,,,,,MoeKK,မိုးကောင်းကင်,သဲတော,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,130,,,,,,,LwilPhyo,လျှံဖြိုး,သဲတော,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,131,,,,,,,MAC,မအေးချာ,သဲပုံ,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,132,,,,,,,MCT,မချိုသဲ,အင်းကုန်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,133,,,,,,,MMK,မွန်မွန်ကို,အင်းကုန်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,134,,,,,,,DPY,ဒေါ်ပေါရီ,အိုမတွေ့,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,135,,,,,,,ML,မလွင်,အိုမတွေ့,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,136,,,,,,,MaWai,မဝေ,အိုမတွေ့,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,137,,,,,,,MZMH,မဇင်မာဌေး,ကျားပစ်ကန်,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,138,,,,,,,KAKL,ကိုအောင်ကိုလင်း,ကြာပစ်ကန်,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,139,,,,,,,MKMH,မခင်မာဌေး,ကြာပစ်ကန်,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,140,,,,,,,MPPW,မဖြူဖြူဝင်း,ကြာပစ်ကန်,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,141,,,,,,,MMH,မမာဌေး,ကြာပစ်ကန်,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,142,,,,,,,DawThanMyint,ဒေါ်သန်းမြင့်,ကုက္ကိုပေါက်,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,143,,,,,,,KTH(2),ကိုသန်းထိုက်,ကေသာရွာ,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,144,,,,,,,MTTW-3,မသီတာဝင်း,ခပေါင်းကုန်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,145,,,,,,,SNH,စိန်ငွေနှင်း,ဇဝင်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,146,,,,,,,MNNM,မနိုင်နိုင်မော်,ဇီးတောအိုင်,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,147,,,,,,,KMM,ကိုမင်းမင်း,ဇီးပင်တွင်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,148,,,,,,,MSSM,မစန်းစန်းမော်,ဇီးပင်တွင်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,149,,,,,,,MMTN,မမေသန်းနု,ဇီးပင်တွင်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,150,,,,,,,MCG-2,အန်ကယ်ကြီး-2,ညောင်ကုန်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,151,,,,,,,KL,ကိုလင်း,ညောင်ရမ်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,152,,,,,,,KKH,ကိုကျော်ဟိန်း,ထနောင်းကန်,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,153,,,,,,,MPPW,မဖြူဖြူဝင်း,ထနောင်းကန်,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,154,,,,,,,MaMoeThu,မမိုးသူ,ထနောင်းကန်,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,155,,,,,,,KoWinZaw,ကိုဝင်းဇော်,ထနောင်းကုန်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,156,,,,,,,KTTO,ကိုသိန်းထွန်းဦး,ထနောင်းကုန်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,157,,,,,,,MaYuSwe,မယုဆွေ,ထနောင်းကုန်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,158,,,,,,,KSHO,ကိုဆွေလှိုင်ဦး,ဒဟတ်ကျင်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,159,,,,,,,MaMK-2,မမာခိုင်-၂,နတ်မြောင်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,160,,,,,,,K MA,ကိုမြင့်အောင်,နန်းတော်ကုန်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,161,,,,,,,TKS,သုခစံ,နန်းတော်ကုန်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,162,,,,,,,UTW,ဦးထွန်းဝေ,နှမ်းကန်,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,163,,,,,,,KZG-2,ကိုဇော်ကြီး,ဖွဲသင်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,164,,,,,,,MAMT,မအေးမြတ်သူ,ဘုန်းတလုတ်,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,165,,,,,,,UTK,ဦးထွန်းကြည်,ဘုန်းတလုတ်,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,166,,,,,,,KoKyawSeint,ကိုကျော်ဆင့်,မကျီးခွ,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,167,,,,,,,UWM(2),ဦးဝင်းမြင့်-၂,မကျီးခွ,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,168,,,,,,,KSNO,ကိုစိုးညွှန့်ဦး,မကျီးရိုး,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,169,,,,,,,KBP,ကိုဘိုဖြူ,မကျီးရိုး,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,170,,,,,,,KWM,ကိုဝင်းမြင့်,မကျီးရိုး,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,171,,,,,,,MaKN,မကြည်ညွှန့်,မကျီးရိုး,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,172,,,,,,,MKTN,မခင်သန်းနု,မကျီးရိုး,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,173,,,,,,,MaMya,မမြ,မကျီးရိုး,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,174,,,,,,,MTN,မသန်းနု,မကျီးရိုး,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,175,,,,,,,M TTS,မသန်းသန်းဆင့်,မကျီးရိုး,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,176,,,,,,,KSL,ကိုစန်းလင်း,မြောင်းဦး,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,177,,,,,,,KZL,ကိုဇော်လွင်,မြောင်းဦး,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,178,,,,,,,KZO,ကိုဇော်ဦး,မြောင်းဦး,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,179,,,,,,,KMSA,ကိုမြတ်စောင်းအောင်,မြောင်းဦး,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,180,,,,,,,KMK,ကိုမိုးကျော်,မြောင်းဦး,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,181,,,,,,,KYZO,ကိုရာဇာဦး,မြောင်းဦး,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,182,,,,,,,KASL,ကိုအောင်ဆန်းလင်း,မြောင်းဦး,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,183,,,,,,,MZMP,မဇင်မာဖြိုး,မြောင်းဦး,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,184,,,,,,,MBMT,မိဘမေတ္တာ,မြောင်းဦး,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,185,,,,,,,STT,ရွှေတောင်တန်း,မြောင်းဦး,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,186,,,,,,,KSY,ကျောင်းဆရာ,မောင်းတိုင်,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,187,,,,,,,KYMA,ကိုရဲမင်းအောင်,မောင်းတိုင်,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,188,,,,,,,MTNLW,မတင်နီလာဝင်း,မောင်းတိုင်,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,189,,,,,,,KTN,ကိုသိန်းငွေ,မောင်းမဆည်,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,190,,,,,,,K TT,ကိုသိန်းတန်,မောင်းမဆည်,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,191,,,,,,,MKMS,မခင်မာစန်း,မောင်းမဆည်,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,192,,,,,,,MSY,မစန်းယု,မောင်းမဆည်,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,193,,,,,,,MPPT,မဖြူဖြူသင်း,မောင်းမဆည်,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,194,,,,,,,MaThinThinMar,မသင်းသင်းမာ,မောင်းမဆည်,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,195,,,,,,,UWB,ဦးဝင်းဗိုလ်,မောင်းမဆည်,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,196,,,,,,,MMW,မမြဝင်း,ရွှေတုတ်ကုန်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,197,,,,,,,MTZN,မသဇင်နွယ်,ရွှေတုတ်ကုန်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,198,,,,,,,KCK,ကိုချစ်ကို,သာစည်,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,199,,,,,,,TTW,တိုးတက်ဝေ,သာစည်,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,200,,,,,,,MSW,မင်းဆုဝေ,သာစည်,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,201,,,,,,,UNWZ,ဦးညီဝင်းဇော်,အလယ်ကန်,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,202,,,,,,,KM,ကိုမြိုင်,အုတ်ကုန်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,203,,,,,,,KoAKL,ကိုအောင်ကိုလတ်,အုတ်ကုန်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,204,,,,,,,MZMW,မဇင်မာဝင်း,အုတ်ကုန်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,205,,,,,,,MMTDK,မမြင့်သန္တာကျော်,အုတ်ကုန်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,206,,,,,,,KoNaing,ကိုနိုင်,အုတ်တွင်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,207,,,,,,,KoYeZaw,ကိုရဲဇော်,အုတ်တွင်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,208,,,,,,,KoYeNaung,ကိုရဲနောင်,အုတ်တွင်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,209,,,,,,,KWH,ကိုဝင်းလှိုင်,အုတ်တွင်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,210,,,,,,,MaKhinSoeWin,မခင်စိုးဝင်း,အုတ်တွင်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,211,,,,,,,MaKhaing,မခိုင်,အုတ်တွင်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,212,,,,,,,MZKK,မဇာခြည်ကျော်,အုတ်တွင်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,213,,,,,,,MTZO,မသင်ဇာဦး,အုတ်တွင်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,214,,,,,,,SNM,ရွှေညီမ,အုတ်တွင်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,215,,,,,,,UTL,ဦးသိန်းလွင်,အုတ်တွင်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,216,,,,,,,UCS,ဦးချစ်ဆွေ,‌တောင်းကောက်ရွာ,Pyawbwe,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,217,,,,,,,PTH,ဖိုးသာထူး,ကျွဲတပ်ဆုံ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,218,,,,,,,DawKhinMyint,ဒေါ်ခင်မြင့်,ကျောက်ကာ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,219,,,,,,,MTM,မသန်းမြင့်,ကျောက်ကာ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,220,,,,,,,USK,ဦးဆွေကျော်,ကျောက်ကာ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,221,,,,,,,KoTheinthanOo,ကိုသိန်းသန်းဦး,ကြာကန်,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,222,,,,,,,MNLZ,မိုနာလီဇာ,ကွက်သစ်,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,223,,,,,,,MaTTM,မတိုးတိုးမြင့်,ကုက္ကိုကုန်း,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,224,,,,,,,MMS,မမြင့်စန်း,ကုက္ကိုကုန်း,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,225,,,,,,,MMMK,မမိုးမိုးခိုင်,ကုက္ကိုကုန်း,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,226,,,,,,,UWM,ဦးဝင်းမြင့်,ကုက္ကိုကုန်း,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,227,,,,,,,MTTM-1,မတင်တင်မြင့်,ကုက္ကုကုန်း,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,228,,,,,,,LH,Liquor House,စက်မှုဇုံ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,229,,,,,,,PTK,PTK,စက်မှုဇုံ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,230,,,,,,,SLP,ရွှေလွန်းပျံ,စက်မှုဇုံ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,231,,,,,,,YMH,ရဲမာန်ဟိန်း,စက်မှုဇုံ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,232,,,,,,,ACT,‌အောင်ချမ်းသာ,စက်မှုဇုံ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,233,,,,,,,MaWar,မဝါ,ညောင်ကိုင်း,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,234,,,,,,,KoHtay,ကိုဌေး,ညောင်အိုင့်,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,235,,,,,,,SeinC,စိန်ခြယ်,ညောင်အိုင့်,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,236,,,,,,,Stop,Super Top,တောမ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,237,,,,,,,KSS,ကောင်းစုစံ,တောမ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,238,,,,,,,PL,ပြည့်လျှံ,တောမ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,239,,,,,,,BB,BB Liquor,ပြည်သာယာ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,240,,,,,,,HP,လှိုင်ဖြိုး,ပြည်သာယာ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,241,,,,,,,HP-2,လှိုင်ဖြိုး-2,ပြည်သာယာ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,242,,,,,,,KoMN,ကိုမျိုးနိုင်,ပေါက်တော,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,243,,,,,,,MaAyeKyu,မအေးကြူ,ပေါက်တော,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,244,,,,,,,ZGS,ဇော်ဂျီစံ,ဖွဲ့သင်း,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,245,,,,,,,S,Smart,ဘူတာဟောင်း,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,246,,,,,,,DNL,ဒီနားလေး,ဘူတာဟောင်း,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,247,,,,,,,RS-525,RS-525,BOC လမ်းထိပ်,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,248,,,,,,,7C,7 Colour,မြို့သစ်,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,249,,,,,,,TK,The King,မြို့သစ်,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,250,,,,,,,SS,စိန်ရွှေ,မြို့သစ်,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,251,,,,,,,UN-3,ယူနန်-၃,မြို့သစ်,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,252,,,,,,,ST-MHL,ရွှေတောင်-၂,မြို့သစ်,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,253,,,,,,,SMM,ရွှေမြင့်မိုရ်,မြို့သစ်,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,254,,,,,,,SSh,ရွှေလျှံ,မြို့သစ်,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,255,,,,,,,ATC,အန်တီရှမ်း,မြို့သစ်,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,256,,,,,,,G9,Galaxy-9,မိတ္ထီလာ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,257,,,,,,,KMH,KMH,မိတ္ထီလာ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,258,,,,,,,KA,ကိုအောင်,မိတ္ထီလာ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,259,,,,,,,KNS,ခိုင်နီဆွေ,မိတ္ထီလာ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,260,,,,,,,STK,စံသုခ,မိတ္ထီလာ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,261,,,,,,,TLan,တက်လမ်း,မိတ္ထီလာ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,262,,,,,,,HH,ထိပ်ထား,မိတ္ထီလာ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,263,,,,,,,Hkyaw,ထူးကျော်,မိတ္ထီလာ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,264,,,,,,,Dmon,ဒိုင်းမွန်း,မိတ္ထီလာ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,265,,,,,,,PTT,ပစ်တိုင်းထောင်,မိတ္ထီလာ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,266,,,,,,,MHP,မင်းထက်ပိုင်,မိတ္ထီလာ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,267,,,,,,,MMMO,မမာမာအုန်း,မိတ္ထီလာ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,268,,,,,,,YN,ရဲနောင်,မိတ္ထီလာ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,269,,,,,,,TZP,သဇင်ဖြူ,မိတ္ထီလာ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,270,,,,,,,FT,အရှေ့တိုင်း,မိတ္ထီလာ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,271,,,,,,,AyeChanMoMo,အေးချမ်းမို့မို့,မိတ္ထီလာ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,272,,,,,,,AG,အောင်ကြီး,မိတ္ထီလာ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,273,,,,,,,SES,ရွှေအိမ်စည်,မိတ္ထီလာ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,274,,,,,,,UMS-2,ဦးမြင့်ဆွေ,မိတ္ထီလာ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,275,,,,,,,UMO,ဦးမြင့်ဦး,မိတ္ထီလာ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,276,,,,,,,Ever Top,Ever Top,ရန်မျိုးအောင်,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,277,,,,,,,Htet,Htet,ရန်မျိုးအောင်,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,278,,,,,,,KHN,ကိုထွန်းနိုင်,အင်:အုံး,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,279,,,,,,,KoThanHtun,ကိုသန်းထွန်း,အင်းပက်လက်,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,280,,,,,,,MaKhing,မခိုင်,အင်းပက်လက်,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,281,,,,,,,MaTTNwe,မတင်သန်းနွယ်,အင်းပက်လက်,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,282,,,,,,,MWMyint,မဝင်းမြင့်,အင်းပက်လက်,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,283,,,,,,,KoTunNaing,ကိုထွန်းနိုင်,အင်းအုံး,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,284,,,,,,,KHM,ကိုထွန်းမြင့်,အင်းအုံး,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,285,,,,,,,MaPhyuSinMoe,မဖြူစင်မိုး,အင်းအုံး,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,286,,,,,,,MPSM,မဖြူစင်မိုး,အင်အုံး,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,287,,,,,,,UHM,ဦးထွေးမြင့်,အင်အုံး,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,288,,,,,,,KoHtwe,ကိုထွေး,အိုင်ကြီးလည်,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,289,,,,,,,KoS,ကိုဆွေ,အုတ်ဖို,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,290,,,,,,,KoAMin,ကိုအေးမင်း,အုတ်ဖို,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,291,,,,,,,MaPhyuPhyuKhing,မဖြူဖြူခိုင်,အုတ်ဖို,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,292,,,,,,,YLN,ရန်လင်းနိုင်,အုတ်ဖို,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,293,,,,,,,MKMW-2,မခင်မာဝင်း,ကူကြီး,Mahlaing,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,294,,,,,,,AM,အမိုး,ကူကြီး,Mahlaing,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,295,,,,,,,KMK-2,ကိုမိုးကျော်-၂,ပန်းအိုင်,Mahlaing,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,296,,,,,,,7-Star,7-Star,မလှိုင်,Mahlaing,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,297,,,,,,,ZayYarMin,ဇေယျာမင်း,မလှိုင်,Mahlaing,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,298,,,,,,,BC,ဘိုရှယ်,မလှိုင်,Mahlaing,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,299,,,,,,,KSMT,ကိုစိုးမင်းထွန်း,အုပ်ဖို,Mahlaing,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,300,,,,,,,M-LC,M Liquar City,,,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,301,,,,,,,KKHL,ကိုကျော်ဌေးလွင်,,,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,302,,,,,,,NKP,ငွေကြယ်ပွင့်,,,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,303,,,,,,,MKKW,မကြည်ကြည်ဝင်း,,,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,304,,,,,,,ASO,အောင်ဆွေဦး,,,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,305,,,,,,,KTT-2,ကိုထွန်းထွန်း-၂,ကံထက်,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,306,,,,,,,DawNT,ဒေါညိုသက်,စျေးကုန်းကြီး,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,307,,,,,,,MTTN,မတင်တင်ညို,စျေးကုန်းကြီး,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,308,,,,,,,KTK,ကိုတုတ်ကြီး,ဇီးကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,309,,,,,,,MHMS,မထူးမွန်စံ,ဇီးကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,310,,,,,,,AKT,အောင်ကောင်းသန့်,ဇီးကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,311,,,,,,,DHK,ဒေါ်လှကြည်,ဈေးကုန်းကြီး,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,312,,,,,,,MCG,အန်ကယ်ကြီး,ညောင်ကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,313,,,,,,,MTTMoe,မသိမ့်သိမ့်မိုး,ထနောင်းကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,314,,,,,,,KoTL,ကိုသူလွင်,ပင်သောင်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,315,,,,,,,MWT,မဝင်းသန်း,ပင်သောင်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,316,,,,,,,MAH,မအေးထိုက်,ပင်သောင်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,317,,,,,,,HKB,ဌေးကမ္ဘာ,ပြတိုက်,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,318,,,,,,,KoTH,ကိုသိန်းထွေး,ဘုရားကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,319,,,,,,,MML-2,မမြလေး-၂,ဘုရားကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,320,,,,,,,MAT,မအေးသင်း,ဘုရားကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,321,,,,,,,MY(2),မိုးယံ(2),ရမည်းသင်း,Yamethin,WholeSales/Contract,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,322,,,,,,,KCP,ကိုချစ်ဖွယ်,ရွှေညောင်ဖူး,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,323,,,,,,,KNN,ကိုညီညီ,ရွှေညောင်ဖူး,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,324,,,,,,,MBMT-2,မိဘမေတ္တာ,ဝကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,325,,,,,,,SYZ,စိုးရာဇာ,ရွှေဒါး,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,326,,,,,,,KMS,ကိုမောင်စိုး,ရွှေမင်းကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,327,,,,,,,KSYZ,ကိုစိုးရာဇာ,လျော်ဖြူကိုင်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,328,,,,,,,WW,ဝမ်ဝမ်း,လျော်ဖြူကိုင်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,329,,,,,,,KTKL,ကိုတင်ကိုလင်း,ဝါတီး,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,330,,,,,,,KTM,ကိုတင်မိုး,ဝါတီး,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,331,,,,,,,MYYH,မယုယုလှိုင်,ဝါတီး,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,332,,,,,,,MaTTN,မသင်းသင်းနွယ်,ဝါတီး,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,333,,,,,,,AyeMT,အေးမေတ္တာ,ရမည်းသင်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,334,,,,,,,KNC,ကိုနန်းချစ်,သက္ကယ်ကျင်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,335,,,,,,,KPP,ကိုဖိုးဖာ,အလယ်ကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,336,,,,,,,KMA,ကိုမြင့်အောင်,အလယ်ကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,337,,,,,,,UMyintAung,ဦးမြင့်အောင်,အလယ်ကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,338,,,,,,,MTK,မေတ္တာကျော်,အုတ်ဆပွင့်,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,339,,,,,,,KZYK,ကိုဇော်ရဲကို,‌အောက်တောက်,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,340,,,,,,,KYTYA,ကိုရဲသူရအောင်,အောက်တောက်,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,341,,,,,,,HtooMonSan,ထူးမွန်စံ,အောက်တောက်,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,342,,,,,,,DawNyoTin,ဒေါညိုတင်,အောက်တောက်,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,343,,,,,,,DawTN,ဒေါတင်ညို,အောက်တောက်,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,344,,,,,,,DPT,‌ဒေါ်ပျိုတင်,‌အောက်တောက်,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,345,,,,,,,MKZM,မခင်ဇာမိုး,အောက်တောက်,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,346,,,,,,,MKN,မခင်ညို,အောက်တောက်,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,347,,,,,,,MTZM,မတင်ဇာမော်,အောက်တောက်,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,348,,,,,,,MHTM,မထူးသက်မွန်,အောက်တောက်,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,349,,,,,,,MPP,မပြုံးပြုံး,‌အောက်တောက်,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,350,,,,,,,MTHS,မသက်ထူးစံ,အောက်တောက်,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,351,,,,,,,MThinZM,မသင်ဇာမိုး,အောက်တောက်,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,352,,,,,,,KMTT,ကိုမြင့်သိန်းထွန်း,အောင်းကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,353,,,,,,,KTC,ကိုသံချောင်း,အောင်းကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,354,,,,,,,KTZO,ကိုသန့်ဇင်ဦး,အောင်းကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,355,,,,,,,ShweS,ရွှေစင်,ရမည်းသင်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,356,,,,,,,MoeTK,မိုးသောက်ကြယ်,ရမည်းသင်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,357,,,,,,,LMAung,လာဘ်မိုးအောင်,ရမည်းသင်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,358,,,,,,,LaP,လပြည့်,ရမည်းသင်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,359,,,,,,,MBMT-2,မိဘမေတ္တာ-2,မြောက်မင်းကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,360,,,,,,,MSS,မစန်းစန်း,တောင်သာ,Taungthar,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,361,,,,,,,MayHinnPhyu,မေနှင်းဖြူ,၇မိုင်,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,362,,,,,,,UTH,ဦးသောင်းလှ,၇မိုင်,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,363,,,,,,,MSTT,မစိုးသီတာ,ကံဦး,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,364,,,,,,,MT(1),မတင့်,ကံဦး,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,365,,,,,,,MPS,မပူစူး,ကံဦး,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,366,,,,,,,MTTT,မသီတာထွန်း,ကံဦး,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,367,,,,,,,LTN,လေးသန်းနွဲ့,ကန်စွယ်,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,368,,,,,,,KTZaw,ကိုသိန်းဇော်,ကန်တဲ,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,369,,,,,,,KKW,ကိုကျော်ဝင်း,ကန်ဦး,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,370,,,,,,,KZM,ကိုဇော်မင်း,ကန်ဦး,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,371,,,,,,,KoTheinLwin,ကိုသိန်းလွင်,ကန်ဦး,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,372,,,,,,,MKMH-2,မခင်မာဌေး-၂,ကန်ဦး,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,373,,,,,,,KoSM,ကိုစံမိုး,ကျီကုန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,374,,,,,,,PTL,ပီတိလျှံ,ကြက်စခန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,375,,,,,,,MTTZ,မသန်းသန်းဇော်,ကြပ်စခန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,376,,,,,,,TS,သွန်းဆက်,ကြပ်စခန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,377,,,,,,,MaSein,မစိန်,ကံဦး,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,378,,,,,,,MJJH,မဂျူးဂျူးလှိုင်,ခံဘူး,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,379,,,,,,,SZP,ရွှေဇီးပင်,ခံဘူး,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,380,,,,,,,MKyiH,မကြည်ထွေး,ခံဘူး,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,381,,,,,,,MaSM,မစိန်မြင့်,ချင်းမကျီး,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,382,,,,,,,KGT,ကိုဂတုံး,ချဉ်ပစ်ကျင်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,383,,,,,,,KMZ,ကိုမျိုးဇော်,စံကျော်နက်,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,384,,,,,,,MKC,မခင်ချိူ,စံကျော်နက်,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,385,,,,,,,MTTS,မသင်းသင်းဆွေ,စံပယ်ကုန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,386,,,,,,,HM,ကိုလှမြိုင်,ခံဘူး,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,387,,,,,,,PK,ပေါကြီး,ဆားတောင်,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,388,,,,,,,MS,မစိုး,တလင်းကုန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,389,,,,,,,MaMoe,မမိုး,တလင်းကုန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,390,,,,,,,MT,မသင်း,တလင်းကုန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,391,,,,,,,MaThu,မသူ,တလင်းကုန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,392,,,,,,,ATM,အန်တီမိုး,တွင်းရွာ,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,393,,,,,,,KNL,ကိုငြိမ်းလွင်,တောင်ကန်ကြီး,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,394,,,,,,,K MN-2,ကိုမောင်နိုင်-၂,တောင်ကန်ကြီး,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,395,,,,,,,PSM,ပူဆူးမ,တောင်ကန်ကြီး,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,396,,,,,,,MaKKM,မကေခိုင်မိုး,တောင်ကန်ကြီး,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,397,,,,,,,MSZM,မရွှေဇင်မြင့်,တောင်ကန်ကြီး,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,398,,,,,,,MaTTA,မသန်းသန်းအေး,တောင်ကန်ကြီး,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,399,,,,,,,MTTO,မသန်းသန်းဦး,တောင်ကန်ကြီး,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,400,,,,,,,KTP,ကိုထင်ပေါ်,တောတွင်းလှ,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,401,,,,,,,MN,မနွဲ့,တောတွင်းလှ,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,402,,,,,,,JJ,ဂျမ်းဂျမ်း,နန့်ပန်တက်,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,403,,,,,,,LPW(2),လပြည့်ဝန်း(2),နန့်ပန်တက်,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,404,,,,,,,MHL,မေနှင်းလွင်,နန့််ပန်တက်,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,405,,,,,,,TTGyi,တောင်တန်းကြီး,နန်ချွန်,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,406,,,,,,,KNWA,နန်းဝင်းအောင်,နန်ချွန်,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,407,,,,,,,YK,YK,ပျော်ဘွယ်,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,408,,,,,,,KoThet,ကိုသက်,ပျော်ဘွယ်,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,409,,,,,,,KTZaw,ကိုသိန်းဇော်,ပျော်ဘွယ်,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,410,,,,,,,Khin,ခင် (ရောင်းဝယ်ရေး),ပျော်ဘွယ်,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,411,,,,,,,SNY,ရွှေနွယ်ရိပ်,ပျော်ဘွယ်,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,412,,,,,,,KoTZ,ကိုသိန်းဇော်,ပဲကန်,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,413,,,,,,,UWT,ဉီးဝင်းတင့်,ဘုရားစု,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,414,,,,,,,KoAM,ကိုအောင်မျိုး,ဖျင်ဇင်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,415,,,,,,,UWS,ဦးဝင်းရွှေ,ဖျင်ဇင်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,416,,,,,,,KTT,ကိုထွန်းထွန်း,ဘိုကုန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,417,,,,,,,KPG,ကိုပါကြီး,ဘိုကုန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,418,,,,,,,MaKMS,မခင်မာဆွေ,ဘိုကုန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,419,,,,,,,MMW,မမိုးဝင်း,ဘိုကုန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,420,,,,,,,MTTW,မသီတာဝင်း,ဘိုကုန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,421,,,,,,,MKS,မခင်စိမ်း,မဒါန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,422,,,,,,,MH,မဌေး,မဒါန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,423,,,,,,,MML,မမြလေး,မဒါန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,424,,,,,,,ATT,အန်တီထွန်း,မဒါန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,425,,,,,,,AMG,အမေကြီး,ယင်းတော်,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,426,,,,,,,PM,ပါရမီ,ယင်းမာပင်,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,427,,,,,,,PP,ဖူးပွင့်,ယင်းမာပင်,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,428,,,,,,,KAKW,ကိုအောင်ကိုဝင်း,ရွှေတောင်ကုန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,429,,,,,,,SC2,စံချိန်-၂,ရွာတန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,430,,,,,,,TL,တက်လူ,ရွာတန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,431,,,,,,,PaingPhyo,ပိုင်ဖြိုး,ရွာတန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,432,,,,,,,SOP,ရွှေအုန်းပင်,ရွာတန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,433,,,,,,,KLL,ကိုလင်းလင်း,ရှမ်းရွာ,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,434,,,,,,,KW,ကိုဝေ,ရှမ်းရွာ,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,435,,,,,,,KTL,ကိုသန်းလွင်,ရှမ်းရွာ,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,436,,,,,,,MaMK,မမာခိုင်,ရှမ်းရွာ,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,437,,,,,,,MaMH,မမာလှိုင်,ရှမ်းရွာ,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,438,,,,,,,MOMH,မဥမ္မာထက်,ရှမ်းရွာ,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,439,,,,,,,ATK,အန်တီခိုင်,ရှမ်းရွာ,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,440,,,,,,,KSLin,ကိုဆန်းလင်း,ရေပေါင်းဆုံ,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,441,,,,,,,KPPH,ကိုပြည်ဖြိုးဟိန်း,ရေပေါင်းဆုံ,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,442,,,,,,,DA,ဒေါ်အေး,ရေပေါင်းဆုံ,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,443,,,,,,,MHH,မဌေးဌေး,ရေပေါင်းဆုံ,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,444,,,,,,,MYA-2,မယဉ်အေး(၂),ရေပေါင်းဆုံ,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,445,,,,,,,MWA,မဝင်းအေး,ရေပေါင်းဆုံ,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,446,,,,,,,MaThidar,မသီတာ,ရေပေါင်းဆုံ,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,447,,,,,,,SND,ရွှေနန်း‌တော်,ရေပေါင်းဆုံ,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,448,,,,,,,Amoe,အမိုး,ရေပေါင်းဆုံ,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,449,,,,,,,Ko Zaw Lwin,ကိုဇော်လွင်,ဝကုန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,450,,,,,,,YLA,ရဲလင်းအောင်,ဝကုန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,451,,,,,,,KKThu,ကိုကျော်သူ,သစ်လှကျင်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,452,,,,,,,MWA-2,မဝင်းအေး-၂,သစ်လှကျင်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,453,,,,,,,MAyeMyint,မအေးမြင့်,သစ်လှကျင်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,454,,,,,,,UST,ဦးစိုးတင့်,သစ်လှကျင်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,455,,,,,,,KNA,ကိုညာဏ်အောင်,သပန်းကျောင်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,456,,,,,,,LSN,လေးစန်းနွှဲ့,သပြေပင်,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,457,,,,,,,TMY,တမာရိပ်,သဖန်းချောင်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,458,,,,,,,UNA,ဦးဥာဏ်အောင်,သဖန်းချောင်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,459,,,,,,,KSN,ကိုစိုးနိုင်,အင်းကုန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,460,,,,,,,KZ,ကိုဇော်ဝင်း,အင်းကုန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,461,,,,,,,KZG,ကိုဇော်ကြီး,အင်းကုန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,462,,,,,,,KLayN,ကိုလေးငယ်,အင်းကုန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,463,,,,,,,MSNW,မစန်းနုဝေ,အင်းကုန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,464,,,,,,,KP,ကိုပေါက်,ဇဂျမ်း,Pakkoku,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,465,,,,,,,ZH,ဇွဲဟိန်း,ပခုက္ကူ,Pakkoku,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,466,,,,,,,NDT,နန်းတော်သစ်,ပခုက္ကူ,Pakkoku,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,467,,,,,,,UYT,ဦးရဲတင့်,ပခုက္ကူ,Pakkoku,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,468,,,,,,,KS,ကောင်းဆက်,မြစ်ခြေ,Pakkoku,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,469,,,,,,,UBL,ဦးဗိုလ်လတ်,မြစ်ခြေ,Pakkoku,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,470,,,,,,,F,Feel,မြင်းခြံ,Myingyan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,471,,,,,,,Friend,Friend,မြင်းခြံ,Myingyan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,472,,,,,,,PG,ပင်ဂွင်း,မြင်းခြံ,Myingyan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,473,,,,,,,MMM,မမွှေးမွှေး,မြင်းခြံ,Myingyan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,474,,,,,,,MY,မိုးယံ,မြင်းခြံ,Myingyan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,475,,,,,,,AT,အားသစ်,မြင်းခြံ,Myingyan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,476,,,,,,,MSDL,မစန္ဒာလွင်,ကံကြီး,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,477,,,,,,,HZT,ဟန်ဇော်ထွန်း,ကံမောက်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,478,,,,,,,MHWY,မလှဝင်းရီ,ကံသာ,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,479,,,,,,,KKKaw,ကိုကျော်ကျော်,ကန်ပတ်လည်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,480,,,,,,,MaSanM,မစန်းမြင့်,ကန်ပတ်လည်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,481,,,,,,,UMZaw,ဦးမင်းဇော်,ကန်ပတ်လည်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,482,,,,,,,UMLwin,ဦးမျိုးလွင်,ကန်ပတ်လည်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,483,,,,,,,KoSanMoe,ကိုစံမိုး,ကျီကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,484,,,,,,,KoMgNying,ကိုမောင်နိုင်,ကျေးသာအိုင့်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,485,,,,,,,MaSanSanWin,မစန်းစန်းဝင်း,ကျေးသာအိုင့်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,486,,,,,,,ZMM,မဇင်မာမျိုး,ကျေးသာအိုင့်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,487,,,,,,,KHA,ကိုဌေးအောင်,ကျောက်စစ်ကန်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,488,,,,,,,KMG,ကိုမတ်ကြီး,ကျောက်စစ်ကန်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,489,,,,,,,KTH,ကိုသန်းထိုက်,ကျောက်စစ်ကန်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,490,,,,,,,4R-2966,4R-2966,ကျောက်ပန်းတောင်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,491,,,,,,,TL-2,တက်လူ-၂,ကျောက်ပန်းတောင်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,492,,,,,,,Ba Chaw,ဘချော,ကျောက်ပန်းတောင်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,493,,,,,,,YTN-2,ရတနာ-၂,ကျောက်ပန်းတောင်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,494,,,,,,,H,လှိုင်,ကျောက်ပန်းတောင်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,495,,,,,,,KoSanOo,ကိုဆန်းဦး,ကျောက်ဖူး,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,496,,,,,,,MaAT,မအေးသန့်,ကြက်ဖြူတဲ့,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,497,,,,,,,Colour,ကာလာ,ကြက်မောက်တောင်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,498,,,,,,,DKMY,ဒေါ်ခင်မာရီ,ကြက်မောက်တောင်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,499,,,,,,,KhonNuWai,ခွန်းနုဝေ,ကိုင်းကျေးရွာ,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,500,,,,,,,KoPS,ကိုဖိုးဆည်,ခပေါင်းကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,501,,,,,,,MaTT,မတာတာ,ခပေါင်းကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,502,,,,,,,MaMyint,မမြင့်,ခပေါင်းကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,503,,,,,,,MMMaw,မမိ‌မော်,ခပေါင်းကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,504,,,,,,,UTC,ဦးသံချောင်း,ခပေါင်းကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,505,,,,,,,KTHtee,ကိုသိန်းထီ,ဂွေးကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,506,,,,,,,MNLMyint,မနီလာမြင့်,ဂွေးကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,507,,,,,,,UAKyaw,ဦးအေးကျော်,ဂွေးကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,508,,,,,,,UAKOo,ဦးအောင်ကျော်ဦး,ဂွေးကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,509,,,,,,,MSSN,မစိုးစိုးနွဲ့,ဂွေးတောက်ပင်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,510,,,,,,,MaAMK,မအေးမိုးခိုင်,ဂွေးတောက်ပင်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,511,,,,,,,MaKHK,မခင်ဌေးကြည်,ငါးမင်းမေး,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,512,,,,,,,KRL,ကိုအာလူး,စည်ကန်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,513,,,,,,,KTZA,ကိုသန့်ဇင်အောင်,စန်းပွင့်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,514,,,,,,,K K,ခိုင်ခိုင်,စိတ်ထိန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,515,,,,,,,KaungThant,ကောင်းသန့်,ဆင်တပ်ကျင်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,516,,,,,,,KoKMH,ကိုခင်မောင်ဌေး,ဆိတ်ကိန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,517,,,,,,,DKMying,ဒေါ်ကြင်မြိုင်,ညောင်တို,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,518,,,,,,,MEMon,မအိမွန်,ညောင်တို,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,519,,,,,,,NLY,နေလ‌ရောင်,ညောင်ပင်ဝိုင်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,520,,,,,,,MaKhinMarSan,မခင်မာစန်း,ညောင်ပင်ဝိုင်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,521,,,,,,,MKMW,မခင်မာဝင်း,ညောင်ပင်ဝိုင်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,522,,,,,,,MaNLay,မညိုလေး,ညောင်ပင်သာ,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,523,,,,,,,AuntyT,အန်တီသန်း,ညောင်ပင်သာ,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,524,,,,,,,MMMNH,မမီမီနိုင်ထွန်း,ညောင်သာ,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,525,,,,,,,KoST,ကိုစိန်သောင်း,တံခွန်တိုင်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,526,,,,,,,MaTY,မသန်းရီ,တံခွန်တိုင်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,527,,,,,,,KKThan,ကိုကျော်သန်း,တလင်းကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,528,,,,,,,DNL-1,ဒေါ်ညိုလေး,တလင်းကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,529,,,,,,,Daw Than,ဒေါ်သန်း,တလင်းကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,530,,,,,,,MAM,မအေးမီ,တာဝါး,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,531,,,,,,,SKS,ရွှေခေတ်စံ,တောင်ဇင်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,532,,,,,,,KKM,ကိုကျော်မင်း,တောင်တော,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,533,,,,,,,KHWZaw,ကိုလှိုင်ဝင်းဇော်,တောင်နောက်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,534,,,,,,,MPPL,မဖြူဖြူလဲ့,တောင်လှ,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,535,,,,,,,MAMYe,မအေးမြင့်ရီ,တောင်လှ,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,536,,,,,,,SPS,တောင်ဦး,တောင်ဦး,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,537,,,,,,,ATN,အန်တီညို,တောင်ဦး,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,538,,,,,,,UKyawH,ဦးကျော်ဌေး,တောင်ဦး,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,539,,,,,,,DKMying,ဒေါ်ကြည်မြိုင်,ဒဟတ်ကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,540,,,,,,,DNNL,‌ဒေါ်နွယ်နွယ်လင်း,ဒဟတ်ကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,541,,,,,,,DJ,ဒေါ်ဂျမ်း,နဘဲတန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,542,,,,,,,MYWin,မရီဝင်း,နဘဲတန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,543,,,,,,,USMT,ဦးစိုးမြင့်သိန်း,နဘဲတန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,544,,,,,,,UMThein,ဦးမြင့်သိန်း,နဘဲတန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,545,,,,,,,MNLB,မနီလာဗိုလ်,ပန်းပဲကြီး,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,546,,,,,,,MWL,မဝါလေး,ပန်းပဲကြီး,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,547,,,,,,,KAM,ကိုအေးမွန်,ပန်းပဲလေး,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,548,,,,,,,KKHtay,ကိုကျော်ဌေး,ဖက်တောရ,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,549,,,,,,,MOMC,မဥမ္မာချို,ဖက်တောရ,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,550,,,,,,,KarKar,ကာကာ,မကျီးတိုင်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,551,,,,,,,KTHtun,ကိုတင်ထွန်း,မန်ကျည်းကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,552,,,,,,,KoTinTun,ကိုတင်ထွန်း,မြောက်တော,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,553,,,,,,,KoTHote,ကိုတင်ဟုတ်,မြောက်တော,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,554,,,,,,,TNO,ကိုသန်းနိုင်ဦး,မိုးနံကျင်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,555,,,,,,,MNN,မငယ်ငယ်,မိုးနံကျင်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,556,,,,,,,May Thu,‌မမေသူ,မိုးနံကျင်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,557,,,,,,,MaHtay,မဌေး,မိုးနံကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,558,,,,,,,KYMin,ကိုရန်မင်း,ရွာသစ်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,559,,,,,,,812,812,ရိုးခြား,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,560,,,,,,,KNZ,ကိုငြိမ်းဇော်,ရိုးခြား,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,561,,,,,,,KoNLin,ကိုဉာဏ်လင်း,ရိုးခြား,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,562,,,,,,,KML,ကိုမာလုံ,ရိုးခြား,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,563,,,,,,,KWC,ကိုဝိုင်းချစ်,ရိုးခြား,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,564,,,,,,,USN,ဦးဆန်းညွှန့်,ရိုးခြား,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,565,,,,,,,KMZaw,ကိုမောင်ဇော်,ရိုးခြား,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,566,,,,,,,KZW,ကိုဇော်ဝင်း,ရေငံ,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,567,,,,,,,KoHMA,ကိုလွှမ်းမိုးအောင်,ဝက်ချုပ်ကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,568,,,,,,,DMMW,ဒေါမူမူဝေ,ရေငံ,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,569,,,,,,,DKM,ဒေါ်ခင်မြင့်,ရေငံ,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,570,,,,,,,DM,ဒေါ်မူ,ရေငံ,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,571,,,,,,,MHM,မဌေးမြင့်,ရေငံ,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,572,,,,,,,MW,မဝင်း,ရေငံ,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,573,,,,,,,MaAyeMyint,မအေးမြင့်,ရေငံ,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,574,,,,,,,SN,မစန်းနွယ်,ရေငံ,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,575,,,,,,,KAKS,ကိုအောင်ကျော်စိုး,လက်ပံပျား,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,576,,,,,,,SeinHinThar,စိန်ဟင်္သာ,လက်ပံပျား,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,577,,,,,,,DawNi,ဒေါ်နီ,လက်ပံပျား,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,578,,,,,,,DMY,ဒေါ်မိုးရီ,လက်ပံပျား,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,579,,,,,,,MKWin,မကြည်ဝင်း,လက်ပံပျား,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,580,,,,,,,YTG,ရွာသားကြီး,လက်ပံပျား,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,581,,,,,,,ATKhing,အန်တီခိုင်,လက်ပံပျား,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,582,,,,,,,KoSoeOo,ကိုစိုးဦး,ဝက်ချုပ်ကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,583,,,,,,,KTZ,ကောင်းသဇင်,ဝက်ချုပ်ကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,584,,,,,,,MTYP,မြသရဖူ,ဝက်ချုပ်ကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,585,,,,,,,UNyintWin,ဦးညွန့်ဝင်း,ဝက်ချုပ်ကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,586,,,,,,,DAYe,ဒေါ်အေးရီ,သက္ကယ်ကျင်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,587,,,,,,,MSKhaing,မစန်းခိုင်,သစ်ဆိပ်ပင်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,588,,,,,,,KTS,ကိုသိန်းစိုး,သန်းကြီးကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,589,,,,,,,DKTM,ဒေါ်ခင်သက်မူ,သရက်တော,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,590,,,,,,,DawPT,ဒေါ်ဖွာသောင်း,သရက်တော,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,591,,,,,,,MSWin,မစန်းဝင်း,သရက်တော,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,592,,,,,,,MHWY-2,မလှဝင်းရီ-၂,သာစည်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,593,,,,,,,KoMyo,ကိုမျိုး,သီးပင်ကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,594,,,,,,,KoMyo,ကိုမျိုး,အင်းကန်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,595,,,,,,,Zaw,ဇော်,အင်းကန်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,596,,,,,,,MaMMW,မမြင့်မြင့်ဝင်း,အင်းကန်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,597,,,,,,,Myo,မျိုး,အင်းကန်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,598,,,,,,,MMHtun,မျိုးမင်းထွန်း,အင်းကန်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,599,,,,,,,STW,ရွှေတော်ဝင်,အင်တော,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,600,,,,,,,KZWS,ကိုဇော်ဝင်းရှိန်,အင်ပင်ရွာ,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,601,,,,,,,KZWShein,ကိုဇော်ဝင်းရှိန်,အင်ပင်ရွာ,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,602,,,,,,,DYThan,ဒေါ်ရီသန်း,အတာရွာမ,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,603,,,,,,,MMMWin,မမြင့်မြင့်ဝင်း,အတာရွာမ,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,604,,,,,,,MKyinM,မကြင်မြိုင်,အိမ်အို,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,605,,,,,,,MKTO,မကေသီဦး,အိမ်အို,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,606,,,,,,,UHMyint,ဦးထွန်းမြင့်,အိမ်အို,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,607,,,,,,,KoThanHtikeAung,ကိုသန်းထိုက်အောင်,အိုင်ကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,608,,,,,,,MKK,မကြူကြူ,အိုင်ကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,609,,,,,,,MKW-2,မခင်ဝင်း-၂,အိုင်ကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,610,,,,,,,MSMA,မစန်းမြင့်အေး,အိုင်ကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,611,,,,,,,DKKMyint,ဒေါ်ကြည်ကြည်မြင့်,အုတ်ရှစ်ကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,612,,,,,,,MKWai,မကြည်ဝေ,အုတ်ရှစ်ကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,613,,,,,,,KT,ကိုသိန်း,အောင်ချမ်းသာ,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,614,,,,,,,KAMT,ကိုအောင်မင်းသိန်း,အောင်ချမ်းသာ,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,615,,,,,,,MYM,မယမင်း,အောင်ချမ်းသာ,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,616,,,,,,,MAKS,မအေးခင်စန်း,အောင်ချမ်းသာ,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,617,,,,,,,DTN,ဒေါ်သန်းနွဲ့,အောင်ပဒေသာ,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,618,,,,,,,DAThan,ဒေါ်အေးသန်း,ဧနောင်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,619,,,,,,,MASH,မအေးစုလှိုင်,ဧနောင်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,620,,,,,,,KMinT,ကိုမင်းသူ,ဖလန်းတောင်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,621,,,,,,,KWinT,ကိုဝင်းသိန်း,ဖလန်းတောင်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,622,,,,,,,KTNT,ကိုတင်နိုင်ထွန်း,ဖလန်းတောင်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,623,,,,,,,PTM,ပန်းတမာ,ထန်းပင်ကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,624,,,,,,,KNLA,ကိုနေလင်းအောင်,ကျောက်ပြင်ကန်,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,625,,,,,,,DSMK,ဒေါ်ရွှေမန်းကြည်,ကိုင်းကျေးရွာ,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,626,,,,,,,MSMG,မစန်းမော်ကြီး,ကိုင်းကျေးရွာ,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,627,,,,,,,KHMH,ကိုဟိန်းမင်းထက်,ခပေါင်းကုန်း,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,628,,,,,,,KTHA,ကိုတင်ထက်အောင်,ဂင်္ဂါ,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,629,,,,,,,KKZN,ကိုကျော်ဇင်ငြိမ်း,ငါးမင်းမေး,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,630,,,,,,,KWH-2,ကိုဝင်းလှိုင်-၂,ငါးမင်းမေး,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,631,,,,,,,USM,ဦးရွှေမန်း,ငါးမင်းမေး,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,632,,,,,,,KZW-2,ကိုဇော်ဝင်း-၂,စပါးတင်,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,633,,,,,,,KoHM,ကိုလှိုင်မင်း,စပါးတင်,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,634,,,,,,,KWZN,ကိုဝင်းဇော်နိုင်,စပါးတင်,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,635,,,,,,,UZM,ဦးဇော်မင်း,စပါးတင်,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,636,,,,,,,UMC,ဦးမြင့်စိုး,စပါးတင်,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,637,,,,,,,UMS,ဦးမြင့်ဆွေ,စပါးတင်,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,638,,,,,,,UMZ,ဦးမြင့်ဇော်,စပါးတင်,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,639,,,,,,,KMO,ကိုမြင့်ဦး,စုတည်,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,640,,,,,,,KoAungHtike,ကိုအောင်ထိုက်,စုတည်,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,641,,,,,,,PZC,ပျံ့ဇင်ချို,ဉယျာဉ်,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,642,,,,,,,KoHT,ကိုဟိန်းသူ,ညောင်ဦး,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,643,,,,,,,NSZ,ညစည်းစိမ်,ညောင်ဦး,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,644,,,,,,,DTT,ဒေါ်သန်းထွား,ညောင်ဦး,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,645,,,,,,,DWK,ဓူဝံကြယ်,ညောင်ဦး,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,646,,,,,,,M S,မိတ်ဆက်,ညောင်ဦး,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,647,,,,,,,SKB-2,ရွှေကမ္ဘာ -၂,ညောင်ဦး,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,648,,,,,,,YPM,ရာပြည့်မိုး,ညောင်ဦး,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,649,,,,,,,HTRP,လှသရဖူ,ညောင်ဦး,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,650,,,,,,,APH,အောင်ပွင့်လှိုင်,ညောင်ဦး,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,651,,,,,,,KMT,ကိုမောင်ထိန်,တံငါးကျင်း,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,652,,,,,,,MSKhaing,မစန်းခိုင်,တက်မ,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,653,,,,,,,MSSM-2,မစန်းစန်းမော်-၂,တက်မ,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,654,,,,,,,MSL,မစန်းလွင်,တက်မ,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,655,,,,,,,MaSS,မစိုးစိုး,တက်မ,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,656,,,,,,,SKS,ရွှေခေတ်စံ,တောင်ဇင်း,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,657,,,,,,,NgweLaMin,ငွေလမင်း,တောင်ပေါ်ရွာ,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,658,,,,,,,NDA,နဒီအောင်,တောင်ပေါ်ရွာ,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,659,,,,,,,MTNgwe,မတင်ငွေ,တောင်ပေါ်ရွာ,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,660,,,,,,,MTTA,မတင်တင်အေး,တောင်ပေါ်ရွာ,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,661,,,,,,,MTHla,မတင်လှ,တောင်ပေါ်ရွာ,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,662,,,,,,,MTA,မတင်အေး,တောင်ပေါ်ရွာ,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,663,,,,,,,MAMM,မအေးမြတ်မွန်,တောင်ပေါ်ရွာ,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,664,,,,,,,ACT(1),အောင်ချမ်းသာ,တောင်ပေါ်ရွာ,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,665,,,,,,,MP,မဖြိုး,တောင်ဘရွာ,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,666,,,,,,,KAH,ကိုအောင်ထိုက်,ထနောင်းဝင်း,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,667,,,,,,,HtweH,ထွေးထွေး,ပုဂံ,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,668,,,,,,,KaungSan,ကောင်းစံ,ပုဂမြို့သစ်,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,669,,,,,,,KoMyintZaw,ကိုမြင့်ဇော်,ပုပ္ပါး,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,670,,,,,,,DSY,ဒေါ်ရွှေရည်,ပုပ္ပါး,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,671,,,,,,,MK,မကြူ,ပုပ္ပါး,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,672,,,,,,,MTT,မသူသူ,ပုပ္ပါး,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,673,,,,,,,HHA,ဟိန်းထက်အောင်,ပုပ္ပါး,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,674,,,,,,,KTNO,ကိုတင်နွယ်ဦး,ပုပ္ပါးလွင်,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,675,,,,,,,KPH,ကိုဖိုးထောင်,ပုပ္ပါးလွင်,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,676,,,,,,,MHN,မထွေးငယ်,ဖျောက်ဆိတ်ပင်,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,677,,,,,,,Brother&Sister,ဒို့မောင်နှမ,မြိုင်သာယာ,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,678,,,,,,,KSNyint,ကိုဆန်းညွန့်,မြေသင်းတွင်းရွာ,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,679,,,,,,,KST,ကိုဆန်းထွန်း,မြေသင်းတွင်းရွာ,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,680,,,,,,,KSO-2,ကိုဆန်းဦး-၂,မြေသင်းတွင်းရွာ,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,681,,,,,,,KPT,ကိုဖိုးသက်,မြေသင်းတွင်းရွာ,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,682,,,,,,,KAMThant,ကိုအောင်မျိုးသန့်,မြေသင်းတွင်းရွာ,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,683,,,,,,,MTN-2,မသန်းနု,မြေသင်းတွင်းရွာ,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,684,,,,,,,UTT,ဦးသန်းထွန်း,မြေသင်းတွင်းရွာ,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,685,,,,,,,KAG,ကိုအောင်ကြီး,မိုးနတ်ကုန်း,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,686,,,,,,,KKP,ကိုကြာပိုက်,မီးလောင်ဖျား,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,687,,,,,,,KoKhinMg,ကိုခင်မောင်,မီးလောင်ဖျား,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,688,,,,,,,KNMoe,ကိုနိုင်မိုး,မီးလောင်ဖျား,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,689,,,,,,,KNO,ကိုနိုင်ဦး,မီးလောင်ဖျား,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,690,,,,,,,KoMyoKyaw,ကိုမျိုးကျော်,မီးလောင်ဖျား,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,691,,,,,,,KMH,ကိုမျိုးထွန်း,မီးလောင်ဖျား,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,692,,,,,,,KoWinKyaw,ကိုဝင်းကျော်,မီးလောင်ဖျား,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,693,,,,,,,KTL-2,ကိုသန်းလွင်,မီးလောင်ဖျား,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,694,,,,,,,KoAMT,ကိုအောင်မြတ်သန်း,မီးလောင်ဖျား,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,695,,,,,,,UTL(2),ဦးသိန်းလွင်-၂,မီးလောင်ဖျား,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,696,,,,,,,UAN,ဦးအောင်‌ငွေ,မီးလောင်ဖျား,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,697,,,,,,,UAM(2),ဦးအောင်မိုး-၂,မီးလောင်ဖျား,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,698,,,,,,,KPSO,ကိုပိုင်စိုးဦး,ရွှေတွင်းရပ်ကွက်,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,699,,,,,,,SYS-2,ရွှေရောင်စင်-၂,ရွာသစ်ကုန်း,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,700,,,,,,,KSMN,ကိုစိုးမင်းနိုင်,ရေထွက်,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,701,,,,,,,KSMoeN,ကိုစိုးမိုးနိုင်,ရေထွက်,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,702,,,,,,,KHK,ကိုလှကြိုင်,ရေထွက်,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,703,,,,,,,KAS,ကိုအောင်ဆန်း,ရေထွက်,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,704,,,,,,,KAT-2,ကိုအောင်သူ-၂,ရေထွက်,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,705,,,,,,,PTA,ပြည်သူအောင်,ရေထွက်,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,706,,,,,,,DT,ဒေါ်ထွန်း,လယ်ဟောင်း,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,707,,,,,,,TTH,သိန်းသန်းဌေး,ဝဲလောင်,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,708,,,,,,,Triple 7,Triple 7,သစ်ထောက်,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,709,,,,,,,KMMO,ကိုမျိုးမင်းဦး,သန်းကြီးကုန်း,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,710,,,,,,,KTS-2,ကိုသိန်းစိုး,သန်းကြီးကုန်း,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,711,,,,,,,MKM,မခင်မှုံ,သန်းကြီးကုန်း,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,712,,,,,,,MaKhinMaw,မခင်မော်,သန်းကြီးကုန်း,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,713,,,,,,,MKW,မခင်ဝင်း,သန်းကြီးကုန်း,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,714,,,,,,,MMiMi,မမီမီ,သန်းကြီးကုန်း,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,715,,,,,,,MTTM,မသိန်းသိန်းမိုး,သန်းကြီးကုန်း,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,716,,,,,,,SHA,စမ်းထက်အောင်,သူကောင်း,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,717,,,,,,,UT,ဦးထိန်,အထက်ဥာဏ်,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,718,,,,,,,KPL,ကိုပေါ်လာ,အရှေ့နောက်ရွာ,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,719,,,,,,,KAT,ကိုအောင်သူ,အရှေ့နောက်ရွာ,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,720,,,,,,,UMN,ဦးမောင်ငယ်,ရမည်းသင်း,Yamethin,Semi WS,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,721,,,,,,,KAY,ကိုဧရာ,တောင်သာ,Taungthar,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,722,,,,,,,PC,ပြည်ချစ်,ပျော်ဘွယ်,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,723,,,,,,,PN,ပျားနက်,ပခုက္ကူ,Pakkoku,Semi WS,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,724,,,,,,,SYS,ရွှေရောင်စင်,ပခုက္ကူ,Pakkoku,Semi WS,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,725,,,,,,,WTY,ဝတိံယံ,ပခုက္ကူ,Pakkoku,Semi WS,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,726,,,,,,,KHHA,ကိုလှဌေးအောင်,မြင်းခြံ,Myingyan,Semi WS,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,727,,,,,,,PPK,ပြည့််ဖြိုးကြွယ်,မြင်းခြံ,Myingyan,Semi WS,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,728,,,,,,,SKB,ရွှေကမ္ဘာ,မိတ္ထီလာ,Meiktila,Semi WS,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,729,,,,,,,SK,ရွှေခေတ်,မလှိုင်,Mahlaing,Semi WS,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,730,,,,,,,HMM,ဟိန်းမြန်မာ,မလှိုင်,Mahlaing,Semi WS,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,731,,,,,,,A1,A1,ညောင်ဦး,Bagan,Semi WS,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,732,,,,,,,ZYM,ဇင်ယော်မေ,ညောင်ဦး,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,733,,,,,,,AMT,‌အောင်မေတ္တာ,သဖန်းချောင်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,734,,,,,,,MSM,မဆန်းမြင့်,သဖန်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,735,,,,,,,KoMoeM,ကိုမိုးမင်း,ဆပ်ခင်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,736,,,,,,,FOC,FOC,,,,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,737,,,,,,,CC,ကားကွဲ,,,,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,738,,,,,,,SR,ကုန်ရောင်းပြန်သွင်း,,,,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,739,,,,,,,OP,ကုန်သည်လက်ဆောင်,,,,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,740,,,,,,,CP,စစ်ဆေးရေးဂိတ်လက်ဆောင်,,,,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,741,,,,,,,Testing,ဖောက်တိုက်,,,,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,742,,,,,,,Present,လက်ဆောင်,,,,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,743,,,,,,,Damange,အကွဲ,,,,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,744,,,,,,,NW,ကမ္ဘာသစ်,မြို့သစ်,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,745,,,,,,,KMThant,မခင်မူသက်,မိုးနံကျင်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,746,,,,,,,TTA,မသီတာအေး,ရှမ်းရွာ,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,747,,,,,,,OMM,မဉမ္မာမြင့်,ရှမ်းရွာ,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,748,,,,,,,UZO,ဦးဇော်ဦး,ညောင်ရမ်း,Tharzi,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,749,,,,,,,NPW,ညောင်ပင်ဝိုင်း,ဝက်ချုပ်ကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,750,,,,,,,YNiOo,ရောင်နီဦး,ဝက်ချုပ်ကုန်း,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,751,,,,,,,SW,ကိုဆွေကျော်,‌တောင်းကောက်ရွာ,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,752,,,,,,,AK,AK,မိတ္ထီလာ,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,753,,,,,,,MAW,မအေဝမ်း,ဆပ်ခင်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,754,,,,,,,KoKyawH,ကိုကျော်ထူး,ဇီးဖြူကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,755,,,,,,,KTTN,ကိုထွန်းထွန်းနိုင်,‌ညောင်အိုင်,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,756,,,,,,,KZG-3,‌ကိုဇော်ကြီး,‌ညောင်အိုင်,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,757,,,,,,,UMT,ဦးမြင့်တင်,စည်းခုံ,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,758,,,,,,,DAK,‌ဒေါ်အေးခိုင်,သရက်ညီနောင်,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,759,,,,,,,UCK,ဦးကံကောင်း,မြို့လှ,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,760,,,,,,,KNO-2,ကိုနိုင်ဦး,မြို့လှ,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,761,,,,,,,MWW,မဝိုင်းဝိုင်း,မြို့လှ,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,762,,,,,,,KTZO,ကိုသိန်းဇော်ဦး,ဝါးရုံ,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,763,,,,,,,MTMK,မတင်မိုးခိုင်,သရက်ပင်,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,764,,,,,,,KTA,ကိုတင်အေး,ကံသာအေး,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,765,,,,,,,KPC,ကိုဖိုးချဥ်,ဗျဉ်းကတ်,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,766,,,,,,,MHHT,မလှလှသင်း,ဗျဉ်းကတ်,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,767,,,,,,,DWT,‌ဒေါ်ဝင်းတင့်,ထူးကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,768,,,,,,,ESZ,အိရွှေဇင်,ဘွတ်ကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,769,,,,,,,KZMN,ကိုဇော်မင်းနိုင်,ညောင်အိုင်,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,770,,,,,,,MaMarH,မမာလှိုင်,ကင်းမွန်ချုံ,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,771,,,,,,,DH,ဒေါ်လှ,ထူးကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,772,,,,,,,MYWin-2,မရီဝင်း-2,ဝါးရုံ,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,773,,,,,,,KZWN,ကိုဇော်ဝင်းနိုင်,ဝါးရုံ,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,774,,,,,,,WYPM,ဝေယံဘုန်းမြတ်,ဝါးရုံ,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,775,,,,,,,MZMW-2,မဇင်မာဝင်း-2,သရက်ညီနောင်,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,776,,,,,,,MSMA-2,မစန်းမြင့်အေး-2,ဂွေးကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,777,,,,,,,MaSawMu,မစောမူ,ဂွေးကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,778,,,,,,,KoWai-2,ကိုဝေ-2,ဂွေးကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,779,,,,,,,KoLinL,ကိုလင်းလက်,ဂွေးကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,780,,,,,,,MaAS,မအေးဆင့်,ဂွေးကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,781,,,,,,,KAKLin,ကိုအောင်ကိုလင်း,ရွှေတုတ်ကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,782,,,,,,,KTAung,ကြံတိုင်းအောင်,အလယ်ကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,783,,,,,,,KoT,ကိုတုတ်,အလယ်ကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,784,,,,,,,MaTTY,မတိုးတိုးယဉ်,ကုက္ကိုကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,785,,,,,,,DKhingG,ဒေါ်ခိုင်ကြီး,ကုက္ကိုကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,786,,,,,,,MBAY,မိဘအရိပ်,ကျီစု,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,787,,,,,,,MZMin,မြေဇင်မင်း,နန်လုံ,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,788,,,,,,,DkyiH,‌ဒေါ်ကြည်ထွေး,ဇီးပင်ကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,789,,,,,,,KTZLin,ကိုတေဇလင်း,နန်လုံ,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,790,,,,,,,KMZL,ကိုမျိုးဇော်လင်း,သီးကုန်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,791,,,,,,,KNLin,ကိုနိုင်လင်း,ဆပ်ခင်း,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,792,,,,,,,MaMaiT,မမိသေး,စျေးကုန်းကြီး,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,793,,,,,,,KTunT,ကိုထွန်းသင်း,တဲစု,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,794,,,,,,,KoSawKN,ကိုစောဂျော်နီ,ဂွေးကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,795,,,,,,,MaAyeMSan,မအေးမြင့်စန်း,ဂွေးကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,796,,,,,,,ShweMHM,‌ရွှေမဟာမိတ်,ရွာတန်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,797,,,,,,,MaYMinT,မယမင်းသူ,ထီးလှိုင်,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,798,,,,,,,KoZWinH,ကိုဇော်ဝင်းလှိုင်,ထီးလှိုင်,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,799,,,,,,,KZNWin,ကိုဇော်နိုင်ဝင်း,ထီးလှိုင်,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,800,,,,,,,MaKhinN,မခင်နွဲ့,သီးကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,801,,,,,,,KZMN-2,ကိုဇော်မင်းနိုင်,အောင်မင်္ဂလာ,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,802,,,,,,,MaWai-2,မဝေ-2,အောင်မင်္ဂလာ,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,803,,,,,,,KoHla,ကိုလှ,အောင်မင်္ဂလာ,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,804,,,,,,,MaChoL,မချိုလေး,ကံသာအေး,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,805,,,,,,,DHanY,ဒေါ်ဟန်ရီ,ကုက္ကိုကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,806,,,,,,,KoTunT-2,ကိုထွန်းသင်း-2,တဲစု,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,807,,,,,,,MaOMl,မဥမ္မာလွင်,ရှမ်းရွာ,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,808,,,,,,,KMMin,ကိုမင်းမင်း,ရှမ်းရွာ,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,809,,,,,,,KoHtetKo,ကိုထက်ကို,ပေါက်တော,Meiktila,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,810,,,,,,,KoPSAung,ကိုပြည့််စုံအောင်,ရွှေကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,811,,,,,,,NSD,ငွေစန္ဒာ,ရွှေကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,812,,,,,,,ShweNP,ရွှေညောင်ပင်,ရွှေကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,813,,,,,,,MNL,မငယ်လေး,ရွှေကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,814,,,,,,,SMPP,ရွှေမန်းပိုင်ပိုင်,ရွှေကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,815,,,,,,,MYK,မရီခိုင်,ရွှေကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,816,,,,,,,KZG-4,ကို‌ဇော်ကြီး,ဆည်ကြီး,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,817,,,,,,,DAye-2,‌ဒေါ်အေး-2,ဖျင်ဇင်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,818,,,,,,,MYLwin,မရီလွင်,ဒိုင်းချောင်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,819,,,,,,,MSanH,မစန်းဌေး,ဒိုင်းချောင်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,820,,,,,,,UTTin,ဦးသိန်းတင့်,ဒိုင်းချောင်း,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,821,,,,,,,Ttan,ထိပ်တန်း,ကံသာအေး,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,822,,,,,,,KSMaung,ကိုဆန်းမောင်,ကန်ဦး,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,823,,,,,,,KMaungT,ကိုမောင်တုတ်,အလယ်ကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,824,,,,,,,KmoeH,ကိုမိုးဟိန်း,ရွှေကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,825,,,,,,,MHM-2,မဌေးမြင့်-2,သရက်ကန်,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,826,,,,,,,MaMiMi,မမီးမီး,သရက်ကန်,Wandwin,Van-2,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,827,,,,,,,DLatP,‌ဒေါ်လက်ပု,ဝါးရုံ,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,828,,,,,,,MTToe,မတိုးတိုး,ဝါးရုံ,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,829,,,,,,,DTYMa,ဒေါ်တရုတ်မ,ထူးကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,830,,,,,,,MF,မ‌ဖော့,ခံဘူး,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,831,,,,,,,KNWin,ကိုနိုင်ဝင်း,ခံဘူး,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,832,,,,,,,AMTar,အောင်မြေသာ,ညောင်ဦး,Bagan,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,833,,,,,,,MaPS,မပေါက်စ,ကန်ဦး,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,834,,,,,,,Ttan-2,ထိပ်တန်း-2,ဖလန်ကန်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,835,,,,,,,MHHtet,မထက်ထက်,ရွှေပန်းတော,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,836,,,,,,,Snew,ဆိုင်သစ်,ရမည်းသင်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,837,,,,,,,MKPhyu,မကြည်ဖြူ,ဝါးရုံ,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,838,,,,,,,MSuN,မစုနိုင်,ထူးကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,839,,,,,,,AKT-2,အောင်ကောင်းသန့်-2,အောက်တောက်,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,840,,,,,,,KTHAyng,ကိုသီဟအောင်,ရွှေကုန်း,Yamethin,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,841,,,,,,,USL,ဦးစိန်လင်း,ဖက်သန်းတော,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,842,,,,,,,MKKA,မခင်ခင်အောင်,ဖက်သန်းတော,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,843,,,,,,,MW-3,မဝေ-3,ဖလံတော,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,844,,,,,,,KPTA,ကိုပြေတီအောင်,ရေထွက်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,845,,,,,,,MAMS,မအေးမြင့်စန်း,ကျောက်ခွက်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,846,,,,,,,DTAye,ဒေါ်သန်းအေး,ဆည်ကြီး,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,847,,,,,,,KZMoe,ကိုဇော်မိုး,ဆည်ကြီး,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,848,,,,,,,Ttan-2,ထိပ်တန်း-2,ဖလံတောင်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,849,,,,,,,KMHLa,ကိုမင်းလှ,ဖက်သန်းတောင်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,850,,,,,,,MNS,မညိုစန်း,ဖက်သန်းတောင်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,851,,,,,,,Mthin,မသင်း-2,ကျေးသာအိုင့်,Kyukpadaung,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,852,,,,,,,KMWin,ကိုမိုးဝင်း,ခံဘူး,Pyawbwe,Van-1,,,,,,,,,,,{}
+7-MTL for Table and DailySales(2026 Jan to Mar).xlsx,Table,853,,,,,,,KTZ-4,ကိုသိန်းဇော်-4,အောက်တောက်,Yamethin,Van-1,,,,,,,,,,,{}
