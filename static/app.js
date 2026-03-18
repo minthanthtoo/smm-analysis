@@ -71,6 +71,8 @@ const MAX_VIEWS_MAIN_RATIO = 0.78;
 const VIEWS_SPLIT_KEY_STEP = 0.03;
 const THEME_PREF_STORAGE_KEY = "smm.themePreference";
 const RIBBON_COLLAPSED_STORAGE_KEY = "smm.ribbonCollapsed";
+const MIN_COLUMN_WIDTH_PX = 56;
+const MAX_COLUMN_WIDTH_PX = 1400;
 const MAX_AUTO_FROZEN_ROWS = 6;
 const AUTO_FROZEN_ROW_RATIO_THRESHOLD = 0.25;
 const GRID_SELECTION_EDGE_CLASSNAMES = [
@@ -99,6 +101,7 @@ const themeMediaQuery =
   typeof window.matchMedia === "function" ? window.matchMedia("(prefers-color-scheme: dark)") : null;
 let floatingMetricsRafId = 0;
 let inMemoryClipboardText = "";
+let activeColumnResize = null;
 
 function readStoredRibbonCollapsed() {
   try {
@@ -1096,21 +1099,54 @@ function cacheKey(canonical) {
   return `${state.viewerRole}::${state.selectedRegion}::${state.selectedMainWorkbook}::${state.selectedReferenceWorkbook}::${version}::${canonical}`;
 }
 
-function populateWorkbookSelect(selectElement, selectedName) {
+function populateWorkbookSelect(selectElement, selectedName, workbookOptions = null) {
+  if (!selectElement) {
+    return;
+  }
+  const options = Array.isArray(workbookOptions) ? workbookOptions : state.workbooks;
   selectElement.innerHTML = "";
-  for (const workbook of state.workbooks) {
+  for (const workbook of options) {
     const option = document.createElement("option");
     option.value = workbook;
     option.textContent = workbook;
     selectElement.appendChild(option);
   }
-  if (selectedName && state.workbooks.includes(selectedName)) {
+  if (selectedName && options.includes(selectedName)) {
     selectElement.value = selectedName;
     return;
   }
-  if (state.workbooks.length) {
-    selectElement.value = state.workbooks[0];
+  if (options.length) {
+    selectElement.value = options[0];
   }
+}
+
+const FILE_VIEW_MODE_OPTIONS = [
+  { value: "auto", label: "Auto" },
+  { value: "main", label: "Main only" },
+  { value: "detail", label: "Detail only" },
+  { value: "both", label: "Main + Detail" },
+];
+
+function normalizeFileViewModeClient(rawMode) {
+  const token = String(rawMode || "")
+    .trim()
+    .toLowerCase();
+  if (token === "main") {
+    return "main";
+  }
+  if (token === "detail" || token === "reference" || token === "ref") {
+    return "detail";
+  }
+  if (token === "both") {
+    return "both";
+  }
+  return "auto";
+}
+
+function fileViewModeLabel(mode) {
+  const normalized = normalizeFileViewModeClient(mode);
+  const option = FILE_VIEW_MODE_OPTIONS.find((item) => item.value === normalized);
+  return option ? option.label : "Auto";
 }
 
 function displayUserOption(user) {
@@ -1238,6 +1274,19 @@ function applyScopePayload(payload) {
   }
   if (Array.isArray(payload.regions)) {
     state.regions = payload.regions;
+  }
+  if (Array.isArray(payload.workbooks)) {
+    state.workbooks = payload.workbooks;
+  }
+  if (Array.isArray(payload.main_workbooks)) {
+    state.mainWorkbooks = payload.main_workbooks;
+  } else if (Array.isArray(payload.workbooks)) {
+    state.mainWorkbooks = payload.workbooks;
+  }
+  if (Array.isArray(payload.reference_workbooks)) {
+    state.referenceWorkbooks = payload.reference_workbooks;
+  } else if (Array.isArray(payload.workbooks)) {
+    state.referenceWorkbooks = payload.workbooks;
   }
   if (Array.isArray(payload.all_regions)) {
     state.allRegions = payload.all_regions;
@@ -1661,7 +1710,7 @@ function renderFilesTable() {
   const files = Array.isArray(state.fileRows) ? state.fileRows : [];
   if (!files.length) {
     el.filesTableBody.innerHTML =
-      '<tr><td colspan="3" class="empty">No files found in this scope.</td></tr>';
+      '<tr><td colspan="4" class="empty">No files found in this scope.</td></tr>';
     return;
   }
 
@@ -1670,7 +1719,34 @@ function renderFilesTable() {
     .map((file) => {
       const nameEscaped = escapeHtml(file.name);
       const regionEscaped = escapeHtml(file.region);
-      let regionControl = regionEscaped;
+      const viewMode = normalizeFileViewModeClient(file.view_mode);
+      const mainEnabled = file.main_enabled !== false;
+      const detailEnabled = file.detail_enabled !== false;
+      const badges = [];
+      if (mainEnabled) {
+        badges.push('<span class="file-view-chip">Main</span>');
+      }
+      if (detailEnabled) {
+        badges.push('<span class="file-view-chip">Detail</span>');
+      }
+      if (!badges.length) {
+        badges.push('<span class="file-view-chip file-view-chip-muted">None</span>');
+      }
+      const modeBadgeHtml = `<div class="file-role-chips">${badges.join("")}</div>`;
+      const uploadBadge = file.uploaded
+        ? '<span class="file-uploaded-chip">Uploaded</span>'
+        : "";
+      const nameMetaHtml = uploadBadge
+        ? `<div class="file-name-meta">${uploadBadge}</div>`
+        : "";
+
+      let regionControl = `<span class="file-region-readonly">${regionEscaped}</span>`;
+      let viewControl = (
+        `<div class="file-view-control-wrap">` +
+        `<span class="file-view-readonly-label">${escapeHtml(fileViewModeLabel(viewMode))}</span>` +
+        `${modeBadgeHtml}` +
+        `</div>`
+      );
       let actions = '<span class="muted-inline">View only</span>';
       if (file.can_update) {
         const selectOptions = regionOptions
@@ -1679,18 +1755,37 @@ function renderFilesTable() {
             return `<option value="${escapeHtml(region)}"${selected}>${escapeHtml(region)}</option>`;
           })
           .join("");
-        regionControl = `<select class="file-region-select" data-file="${nameEscaped}">${selectOptions}</select>`;
+        regionControl = `<select class="file-region-select file-inline-control" data-file="${nameEscaped}">${selectOptions}</select>`;
+        const viewOptions = FILE_VIEW_MODE_OPTIONS
+          .map((option) => {
+            const selected = option.value === viewMode ? ' selected="selected"' : "";
+            return `<option value="${escapeHtml(option.value)}"${selected}>${escapeHtml(option.label)}</option>`;
+          })
+          .join("");
+        viewControl = (
+          `<div class="file-view-control-wrap">` +
+          `<select class="file-view-mode-select file-inline-control" data-file="${nameEscaped}">${viewOptions}</select>` +
+          `${modeBadgeHtml}` +
+          `</div>`
+        );
       }
       if (file.can_update || file.can_delete) {
         actions = "";
         if (file.can_update) {
-          actions += `<button type="button" class="action-btn action-btn-sm file-save-btn" data-file="${nameEscaped}">Save region</button>`;
+          actions += `<button type="button" class="action-btn action-btn-sm file-save-btn" data-file="${nameEscaped}">Save role</button>`;
         }
         if (file.can_delete) {
-          actions += `<button type="button" class="action-btn action-btn-sm action-btn-danger file-delete-btn" data-file="${nameEscaped}">Delete</button>`;
+          actions += `<button type="button" class="action-btn action-btn-sm action-btn-danger file-delete-btn" data-file="${nameEscaped}">Delete file</button>`;
         }
       }
-      return `<tr><td class="left">${nameEscaped}</td><td class="left">${regionControl}</td><td class="left file-action-cell">${actions}</td></tr>`;
+      return (
+        `<tr>` +
+        `<td class="left file-name-cell"><span class="file-name-text" title="${nameEscaped}">${nameEscaped}</span>${nameMetaHtml}</td>` +
+        `<td class="left">${regionControl}</td>` +
+        `<td class="left">${viewControl}</td>` +
+        `<td class="left file-action-cell">${actions}</td>` +
+        `</tr>`
+      );
     })
     .join("");
   el.filesTableBody.innerHTML = rows;
@@ -2172,24 +2267,44 @@ async function loadWorkbookOptions() {
   try {
     const payload = await fetchJson(`/api/workbooks?${scope}`);
     applyScopePayload(payload);
-    state.workbooks = payload.workbooks || [];
+    state.workbooks = Array.isArray(payload.workbooks) ? payload.workbooks : [];
+    state.mainWorkbooks = Array.isArray(payload.main_workbooks) ? payload.main_workbooks : state.workbooks;
+    state.referenceWorkbooks = Array.isArray(payload.reference_workbooks) ? payload.reference_workbooks : state.workbooks;
 
-    if (!state.workbooks.length) {
+    const hasMainChoices = Array.isArray(state.mainWorkbooks) && state.mainWorkbooks.length > 0;
+    const hasReferenceChoices = Array.isArray(state.referenceWorkbooks) && state.referenceWorkbooks.length > 0;
+    if (!hasMainChoices || !hasReferenceChoices) {
       state.selectedMainWorkbook = null;
       state.selectedReferenceWorkbook = null;
-      populateWorkbookSelect(el.mainWorkbookSelect, null);
-      populateWorkbookSelect(el.referenceWorkbookSelect, null);
+      populateWorkbookSelect(el.mainWorkbookSelect, null, []);
+      populateWorkbookSelect(el.referenceWorkbookSelect, null, []);
       updateWorkbookLabels();
-      setEmptyMain("No workbook available in current scope.");
-      setEmptyRef("No workbook available in current scope.");
+      if (!hasMainChoices && !hasReferenceChoices) {
+        setEmptyMain("No workbook available in current scope.");
+        setEmptyRef("No workbook available in current scope.");
+      } else if (!hasMainChoices) {
+        setEmptyMain("No workbook flagged for Main view in current scope.");
+        setEmptyRef("Choose a main-view workbook in Files tab.");
+      } else {
+        setEmptyMain("Choose a detail-view workbook in Files tab.");
+        setEmptyRef("No workbook flagged for Detail view in current scope.");
+      }
       return;
     }
 
-    state.selectedMainWorkbook = payload.default_main || state.workbooks[0];
-    state.selectedReferenceWorkbook = payload.default_reference || state.workbooks[0];
+    state.selectedMainWorkbook = payload.default_main || state.mainWorkbooks[0];
+    state.selectedReferenceWorkbook = payload.default_reference || state.referenceWorkbooks[0];
 
-    populateWorkbookSelect(el.mainWorkbookSelect, state.selectedMainWorkbook);
-    populateWorkbookSelect(el.referenceWorkbookSelect, state.selectedReferenceWorkbook);
+    populateWorkbookSelect(el.mainWorkbookSelect, state.selectedMainWorkbook, state.mainWorkbooks);
+    populateWorkbookSelect(
+      el.referenceWorkbookSelect,
+      state.selectedReferenceWorkbook,
+      state.referenceWorkbooks,
+    );
+    state.selectedMainWorkbook = el.mainWorkbookSelect ? el.mainWorkbookSelect.value || state.selectedMainWorkbook : state.selectedMainWorkbook;
+    state.selectedReferenceWorkbook = el.referenceWorkbookSelect
+      ? el.referenceWorkbookSelect.value || state.selectedReferenceWorkbook
+      : state.selectedReferenceWorkbook;
     updateWorkbookLabels();
   } finally {
     endBusy();
@@ -2245,15 +2360,28 @@ async function uploadSelectedWorkbooks() {
 
     const payload = await res.json();
     applyScopePayload(payload);
-    state.workbooks = payload.workbooks || state.workbooks;
-    state.selectedMainWorkbook = payload.default_main || state.selectedMainWorkbook;
-    state.selectedReferenceWorkbook = payload.default_reference || state.selectedReferenceWorkbook;
+    state.workbooks = Array.isArray(payload.workbooks) ? payload.workbooks : state.workbooks;
+    state.mainWorkbooks = Array.isArray(payload.main_workbooks) ? payload.main_workbooks : state.workbooks;
+    state.referenceWorkbooks = Array.isArray(payload.reference_workbooks)
+      ? payload.reference_workbooks
+      : state.workbooks;
+    state.selectedMainWorkbook = payload.default_main || state.selectedMainWorkbook || state.mainWorkbooks[0] || null;
+    state.selectedReferenceWorkbook =
+      payload.default_reference || state.selectedReferenceWorkbook || state.referenceWorkbooks[0] || null;
     state.cache.clear();
     state.mainStyledRequestKey = null;
     state.mainAvailableMonths.clear();
 
-    populateWorkbookSelect(el.mainWorkbookSelect, state.selectedMainWorkbook);
-    populateWorkbookSelect(el.referenceWorkbookSelect, state.selectedReferenceWorkbook);
+    populateWorkbookSelect(el.mainWorkbookSelect, state.selectedMainWorkbook, state.mainWorkbooks);
+    populateWorkbookSelect(
+      el.referenceWorkbookSelect,
+      state.selectedReferenceWorkbook,
+      state.referenceWorkbooks,
+    );
+    state.selectedMainWorkbook = el.mainWorkbookSelect ? el.mainWorkbookSelect.value || state.selectedMainWorkbook : state.selectedMainWorkbook;
+    state.selectedReferenceWorkbook = el.referenceWorkbookSelect
+      ? el.referenceWorkbookSelect.value || state.selectedReferenceWorkbook
+      : state.selectedReferenceWorkbook;
     updateWorkbookLabels();
     await loadSheets();
     await refreshAccessAndFiles();
@@ -2295,6 +2423,16 @@ function applySheetsPayload(payload) {
   );
   state.pairVersion = payload.version || null;
   state.workbooks = payload.available_workbooks || state.workbooks;
+  state.mainWorkbooks = Array.isArray(payload.main_workbooks)
+    ? payload.main_workbooks
+    : state.mainWorkbooks.length
+      ? state.mainWorkbooks
+      : state.workbooks;
+  state.referenceWorkbooks = Array.isArray(payload.reference_workbooks)
+    ? payload.reference_workbooks
+    : state.referenceWorkbooks.length
+      ? state.referenceWorkbooks
+      : state.workbooks;
 
   if (payload.main_workbook) {
     state.selectedMainWorkbook = payload.main_workbook;
@@ -2303,8 +2441,16 @@ function applySheetsPayload(payload) {
     state.selectedReferenceWorkbook = payload.reference_workbook;
   }
 
-  populateWorkbookSelect(el.mainWorkbookSelect, state.selectedMainWorkbook);
-  populateWorkbookSelect(el.referenceWorkbookSelect, state.selectedReferenceWorkbook);
+  populateWorkbookSelect(el.mainWorkbookSelect, state.selectedMainWorkbook, state.mainWorkbooks);
+  populateWorkbookSelect(
+    el.referenceWorkbookSelect,
+    state.selectedReferenceWorkbook,
+    state.referenceWorkbooks,
+  );
+  state.selectedMainWorkbook = el.mainWorkbookSelect ? el.mainWorkbookSelect.value || state.selectedMainWorkbook : state.selectedMainWorkbook;
+  state.selectedReferenceWorkbook = el.referenceWorkbookSelect
+    ? el.referenceWorkbookSelect.value || state.selectedReferenceWorkbook
+    : state.selectedReferenceWorkbook;
   updateWorkbookLabels();
   const changed = previousVersion !== state.pairVersion;
   if (changed) {
@@ -2476,7 +2622,8 @@ function updateMonthControl(sheetData, view) {
   controls.monthWrapper.classList.remove("hidden");
   controls.monthSelect.multiple = isMultiMode;
   if (isMultiMode) {
-    controls.monthSelect.setAttribute("size", String(Math.min(Math.max(availableMonths.length, 4), 8)));
+    // Keep ribbon month list compact in fixed-height panels.
+    controls.monthSelect.setAttribute("size", String(Math.min(Math.max(availableMonths.length, 3), 4)));
   } else {
     controls.monthSelect.removeAttribute("size");
   }
@@ -2594,6 +2741,66 @@ function annotateCellGrid(table) {
   }
 
   return maxCols;
+}
+
+function tableSelectionColOffset(table) {
+  return Math.max(0, Number.parseInt(String(table && table.dataset ? table.dataset.selectionColOffset || "0" : "0"), 10) || 0);
+}
+
+function ensureColgroupColumns(table, colCount) {
+  if (!table || !Number.isFinite(colCount) || colCount < 1) {
+    return null;
+  }
+  let colgroup = table.querySelector(":scope > colgroup");
+  if (!colgroup) {
+    colgroup = document.createElement("colgroup");
+    table.insertBefore(colgroup, table.firstChild);
+  }
+  const cols = Array.from(colgroup.children || []);
+  if (cols.length > colCount) {
+    for (let idx = cols.length - 1; idx >= colCount; idx -= 1) {
+      cols[idx].remove();
+    }
+  } else if (cols.length < colCount) {
+    for (let idx = cols.length; idx < colCount; idx += 1) {
+      colgroup.appendChild(document.createElement("col"));
+    }
+  }
+  return colgroup;
+}
+
+function applyColumnWidthOverridesToTable(table, scope) {
+  if (!table) {
+    return 0;
+  }
+  const normalizedScope = normalizeViewScope(scope);
+  const viewLayout = viewLayoutForScope(normalizedScope);
+  viewLayout.columnWidths = normalizeColumnWidthMap(viewLayout.columnWidths);
+  const totalCols = annotateCellGrid(table);
+  if (!totalCols) {
+    return 0;
+  }
+
+  const colgroup = ensureColgroupColumns(table, totalCols);
+  if (!colgroup) {
+    return totalCols;
+  }
+  const offset = tableSelectionColOffset(table);
+  const colElements = Array.from(colgroup.children || []);
+  for (let idx = 0; idx < colElements.length; idx += 1) {
+    const globalIndex = offset + idx;
+    const width = normalizeColumnWidthPx(viewLayout.columnWidths[String(globalIndex)]);
+    if (Number.isFinite(width)) {
+      colElements[idx].style.width = `${width}px`;
+      colElements[idx].style.minWidth = `${width}px`;
+      colElements[idx].style.maxWidth = `${width}px`;
+    } else {
+      colElements[idx].style.removeProperty("width");
+      colElements[idx].style.removeProperty("min-width");
+      colElements[idx].style.removeProperty("max-width");
+    }
+  }
+  return totalCols;
 }
 
 function measureColumnWidths(table, totalCols) {
@@ -2973,7 +3180,7 @@ function applySplitViewport(table, frozenCount, totalCols, widths) {
   return true;
 }
 
-function enhanceFrozenViewport(table, frozenCount, frozenRows) {
+function enhanceFrozenViewport(scope, table, frozenCount, frozenRows) {
   if (!table) {
     return;
   }
@@ -2984,6 +3191,7 @@ function enhanceFrozenViewport(table, frozenCount, frozenRows) {
   if (wrap) {
     wrap.classList.remove("table-wrap-split");
   }
+  applyColumnWidthOverridesToTable(normalizedTable, scope);
 
   const hasFrozenCols = Number.isFinite(frozenCount) && frozenCount > 0;
   const hasFrozenRows = Number.isFinite(frozenRows) && frozenRows > 0;
@@ -3330,6 +3538,7 @@ function viewLayoutForScope(scope) {
       frozenRowsOverride: null,
       lastAppliedFrozenCols: 0,
       lastAppliedFrozenRows: 0,
+      columnWidths: {},
       hiddenRows: new Set(),
       hiddenCols: new Set(),
     };
@@ -3347,6 +3556,7 @@ function viewLayoutForScope(scope) {
   if (!(viewLayout.hiddenCols instanceof Set)) {
     viewLayout.hiddenCols = new Set();
   }
+  viewLayout.columnWidths = normalizeColumnWidthMap(viewLayout.columnWidths);
   return viewLayout;
 }
 
@@ -3460,6 +3670,240 @@ function applyScopeVisibilityOverrides(scope) {
   }
 }
 
+function measuredGlobalColumnWidthsForScope(scope) {
+  const normalized = normalizeViewScope(scope);
+  const measured = {};
+  for (const table of tablesForScope(normalized)) {
+    const totalCols = annotateCellGrid(table);
+    if (!totalCols) {
+      continue;
+    }
+    const widths = measureColumnWidths(table, totalCols);
+    const offset = tableSelectionColOffset(table);
+    for (let idx = 0; idx < widths.length; idx += 1) {
+      const globalIndex = offset + idx;
+      const width = normalizeColumnWidthPx(widths[idx]);
+      if (!Number.isFinite(width)) {
+        continue;
+      }
+      measured[String(globalIndex)] = Math.max(width, measured[String(globalIndex)] || 0);
+    }
+  }
+  return measured;
+}
+
+function applyLiveColumnWidthsForScope(scope) {
+  const normalized = normalizeViewScope(scope);
+  const viewLayout = viewLayoutForScope(normalized);
+  for (const table of tablesForScope(normalized)) {
+    applyColumnWidthOverridesToTable(table, normalized);
+  }
+
+  const wrap = tableWrapForScope(normalized);
+  if (!wrap) {
+    return;
+  }
+  const splitView = wrap.querySelector(".split-view");
+  if (splitView) {
+    const frozenCols = Math.max(0, Number.parseInt(String(viewLayout.lastAppliedFrozenCols || 0), 10) || 0);
+    if (frozenCols > 0) {
+      const measured = measuredGlobalColumnWidthsForScope(normalized);
+      let frozenWidth = 0;
+      for (let col = 0; col < frozenCols; col += 1) {
+        const override = normalizeColumnWidthPx(viewLayout.columnWidths[String(col)]);
+        const measuredWidth = normalizeColumnWidthPx(measured[String(col)]);
+        frozenWidth += override || measuredWidth || 96;
+      }
+      splitView.style.setProperty("--split-left-width", `${Math.max(180, Math.ceil(frozenWidth))}px`);
+    }
+    const leftTable = wrap.querySelector(".split-pane-left table");
+    const rightTable = wrap.querySelector(".split-pane-right table");
+    if (leftTable && rightTable) {
+      syncSplitRowHeights(leftTable, rightTable);
+      applySplitHeaderLayering(leftTable, rightTable);
+    }
+    return;
+  }
+
+  const primary = primaryTableForScope(normalized);
+  if (!primary) {
+    return;
+  }
+  if (viewLayout.lastAppliedFrozenCols > 0) {
+    applyFrozenColumns(primary, viewLayout.lastAppliedFrozenCols);
+  }
+  if (viewLayout.lastAppliedFrozenRows > 0) {
+    applyFrozenRows(primary, viewLayout.lastAppliedFrozenRows);
+  }
+}
+
+function collectResizableHeaderCells(table) {
+  const cellsByLocalColumn = new Map();
+  if (!table) {
+    return cellsByLocalColumn;
+  }
+  annotateCellGrid(table);
+  const rows = Array.from(table.rows || []);
+  if (!rows.length) {
+    return cellsByLocalColumn;
+  }
+  const headerRowCount = Math.max(1, detectSplitHeaderRowCount(table));
+  const rowLimit = Math.min(rows.length, headerRowCount);
+  for (let rowIndex = 0; rowIndex < rowLimit; rowIndex += 1) {
+    const row = rows[rowIndex];
+    for (const cell of Array.from(row.cells || [])) {
+      const colStart = Number.parseInt(cell.dataset.colStart || "-1", 10);
+      const colSpan = Math.max(1, Number.parseInt(cell.dataset.colSpan || "1", 10) || 1);
+      if (!Number.isFinite(colStart) || colStart < 0 || colSpan !== 1) {
+        continue;
+      }
+      cellsByLocalColumn.set(colStart, cell);
+    }
+  }
+  return cellsByLocalColumn;
+}
+
+function endColumnResize(event) {
+  if (!activeColumnResize) {
+    return;
+  }
+  const session = activeColumnResize;
+  activeColumnResize = null;
+  document.body.classList.remove("column-resizing");
+  window.removeEventListener("pointermove", onColumnResizeMove, true);
+  window.removeEventListener("pointerup", endColumnResize, true);
+  window.removeEventListener("pointercancel", endColumnResize, true);
+
+  if (
+    session.captureTarget &&
+    Number.isFinite(session.pointerId) &&
+    typeof session.captureTarget.releasePointerCapture === "function"
+  ) {
+    try {
+      if (session.captureTarget.hasPointerCapture(session.pointerId)) {
+        session.captureTarget.releasePointerCapture(session.pointerId);
+      }
+    } catch {
+      // Ignore pointer capture release failures.
+    }
+  }
+
+  const normalized = normalizeViewScope(session.scope);
+  const viewLayout = viewLayoutForScope(normalized);
+  applyScopeLayoutOverrides(
+    normalized,
+    viewLayout.lastAppliedFrozenCols || 0,
+    viewLayout.lastAppliedFrozenRows || 0,
+  );
+  if (event && typeof event.preventDefault === "function") {
+    event.preventDefault();
+  }
+}
+
+function onColumnResizeMove(event) {
+  if (!activeColumnResize) {
+    return;
+  }
+  const session = activeColumnResize;
+  const delta = Number.parseFloat(String(event.clientX || 0)) - session.startClientX;
+  const nextWidth = normalizeColumnWidthPx(session.startWidth + delta);
+  if (!Number.isFinite(nextWidth) || nextWidth === session.currentWidth) {
+    event.preventDefault();
+    return;
+  }
+  session.currentWidth = nextWidth;
+  const normalized = normalizeViewScope(session.scope);
+  const viewLayout = viewLayoutForScope(normalized);
+  viewLayout.columnWidths[String(session.columnIndex)] = nextWidth;
+  applyLiveColumnWidthsForScope(normalized);
+  event.preventDefault();
+}
+
+function beginColumnResize(event, scope, columnIndex) {
+  if (typeof PointerEvent === "undefined") {
+    return;
+  }
+  if (!(event instanceof PointerEvent)) {
+    return;
+  }
+  if (event.button !== 0 && event.pointerType !== "touch") {
+    return;
+  }
+
+  const normalized = normalizeViewScope(scope);
+  const table = primaryTableForScope(normalized);
+  if (!table) {
+    return;
+  }
+  const viewLayout = viewLayoutForScope(normalized);
+  const measured = measuredGlobalColumnWidthsForScope(normalized);
+  const widthFromLayout = normalizeColumnWidthPx(viewLayout.columnWidths[String(columnIndex)]);
+  const widthFromMeasure = normalizeColumnWidthPx(measured[String(columnIndex)]);
+  const initialWidth = widthFromLayout || widthFromMeasure || 96;
+  viewLayout.columnWidths[String(columnIndex)] = initialWidth;
+
+  activeColumnResize = {
+    scope: normalized,
+    columnIndex,
+    startClientX: Number.parseFloat(String(event.clientX || 0)),
+    startWidth: initialWidth,
+    currentWidth: initialWidth,
+    pointerId: Number.isFinite(event.pointerId) ? event.pointerId : null,
+    captureTarget: event.currentTarget instanceof HTMLElement ? event.currentTarget : null,
+  };
+
+  if (
+    activeColumnResize.captureTarget &&
+    Number.isFinite(activeColumnResize.pointerId) &&
+    typeof activeColumnResize.captureTarget.setPointerCapture === "function"
+  ) {
+    try {
+      activeColumnResize.captureTarget.setPointerCapture(activeColumnResize.pointerId);
+    } catch {
+      // Ignore pointer capture failures.
+    }
+  }
+
+  document.body.classList.add("column-resizing");
+  window.addEventListener("pointermove", onColumnResizeMove, true);
+  window.addEventListener("pointerup", endColumnResize, true);
+  window.addEventListener("pointercancel", endColumnResize, true);
+  event.preventDefault();
+  event.stopPropagation();
+}
+
+function bindColumnResizersForScope(scope) {
+  const normalized = normalizeViewScope(scope);
+  for (const table of tablesForScope(normalized)) {
+    for (const handle of Array.from(table.querySelectorAll(".col-resize-handle"))) {
+      handle.remove();
+    }
+    for (const cell of Array.from(table.querySelectorAll(".col-resize-cell"))) {
+      cell.classList.remove("col-resize-cell");
+    }
+
+    const byLocalCol = collectResizableHeaderCells(table);
+    const offset = tableSelectionColOffset(table);
+    for (const [localCol, cell] of byLocalCol.entries()) {
+      if (!(cell instanceof HTMLElement)) {
+        continue;
+      }
+      const globalCol = offset + localCol;
+      const handle = document.createElement("button");
+      handle.type = "button";
+      handle.className = "col-resize-handle";
+      handle.setAttribute("aria-label", `Resize column ${columnToExcelLabel(globalCol)}`);
+      handle.dataset.resizeScope = normalized;
+      handle.dataset.resizeCol = String(globalCol);
+      handle.addEventListener("pointerdown", (event) => {
+        beginColumnResize(event, normalized, globalCol);
+      });
+      cell.classList.add("col-resize-cell");
+      cell.appendChild(handle);
+    }
+  }
+}
+
 function applyScopeLayoutOverrides(scope, defaultFrozenCols = 0, defaultFrozenRows = 0) {
   const normalized = normalizeViewScope(scope);
   const table = primaryTableForScope(normalized);
@@ -3473,7 +3917,7 @@ function applyScopeLayoutOverrides(scope, defaultFrozenCols = 0, defaultFrozenRo
     autoAdjustCols: !Number.isFinite(viewLayout.frozenColsOverride),
     autoAdjustRows: !Number.isFinite(viewLayout.frozenRowsOverride),
   });
-  enhanceFrozenViewport(normalizedTable, freezeNormalized.cols, freezeNormalized.rows);
+  enhanceFrozenViewport(normalized, normalizedTable, freezeNormalized.cols, freezeNormalized.rows);
   viewLayout.lastAppliedFrozenCols = freezeNormalized.cols;
   viewLayout.lastAppliedFrozenRows = freezeNormalized.rows;
   applyScopeVisibilityOverrides(normalized);
@@ -3483,6 +3927,7 @@ function applyScopeLayoutOverrides(scope, defaultFrozenCols = 0, defaultFrozenRo
     annotateSelectionGridForScope(normalized);
     syncRibbonGridControlState();
   }
+  bindColumnResizersForScope(normalized);
   return true;
 }
 
@@ -4957,6 +5402,80 @@ function shiftIndexSetForDelete(indexSet, removedIndices) {
   }
 }
 
+function normalizeColumnWidthPx(value) {
+  const numeric = Number.parseFloat(String(value));
+  if (!Number.isFinite(numeric) || numeric <= 0) {
+    return null;
+  }
+  return Math.max(MIN_COLUMN_WIDTH_PX, Math.min(MAX_COLUMN_WIDTH_PX, Math.round(numeric)));
+}
+
+function normalizeColumnWidthMap(columnWidths) {
+  const next = {};
+  if (!columnWidths || typeof columnWidths !== "object") {
+    return next;
+  }
+  for (const [rawKey, rawWidth] of Object.entries(columnWidths)) {
+    const index = Number.parseInt(String(rawKey), 10);
+    const width = normalizeColumnWidthPx(rawWidth);
+    if (!Number.isFinite(index) || index < 0 || !Number.isFinite(width)) {
+      continue;
+    }
+    next[String(index)] = width;
+  }
+  return next;
+}
+
+function shiftColumnWidthMapForInsert(columnWidths, insertAt, count = 1) {
+  if (!columnWidths || typeof columnWidths !== "object") {
+    return {};
+  }
+  if (!Number.isFinite(insertAt) || !Number.isFinite(count) || count < 1) {
+    return normalizeColumnWidthMap(columnWidths);
+  }
+  const next = {};
+  for (const [rawKey, rawWidth] of Object.entries(columnWidths)) {
+    const index = Number.parseInt(String(rawKey), 10);
+    const width = normalizeColumnWidthPx(rawWidth);
+    if (!Number.isFinite(index) || index < 0 || !Number.isFinite(width)) {
+      continue;
+    }
+    const shifted = index >= insertAt ? index + count : index;
+    next[String(shifted)] = width;
+  }
+  return next;
+}
+
+function shiftColumnWidthMapForDelete(columnWidths, removedIndices) {
+  const sortedRemoved = Array.from(new Set(Array.isArray(removedIndices) ? removedIndices : []))
+    .map((value) => Number.parseInt(String(value), 10))
+    .filter((value) => Number.isFinite(value) && value >= 0)
+    .sort((a, b) => a - b);
+  if (!sortedRemoved.length) {
+    return normalizeColumnWidthMap(columnWidths);
+  }
+
+  const removedSet = new Set(sortedRemoved);
+  const next = {};
+  for (const [rawKey, rawWidth] of Object.entries(columnWidths || {})) {
+    const index = Number.parseInt(String(rawKey), 10);
+    const width = normalizeColumnWidthPx(rawWidth);
+    if (!Number.isFinite(index) || index < 0 || !Number.isFinite(width) || removedSet.has(index)) {
+      continue;
+    }
+    let shift = 0;
+    for (const removed of sortedRemoved) {
+      if (removed < index) {
+        shift += 1;
+      } else {
+        break;
+      }
+    }
+    next[String(Math.max(0, index - shift))] = width;
+  }
+  return next;
+}
+
 function structuralContextState(scope) {
   const normalized = normalizeViewScope(scope);
   const point = contextPointForScope(normalized);
@@ -5306,6 +5825,7 @@ function insertColumnFromContext(side) {
 
   const viewLayout = viewLayoutForScope(scope);
   shiftIndexSetForInsert(viewLayout.hiddenCols, insertAt, 1);
+  viewLayout.columnWidths = shiftColumnWidthMapForInsert(viewLayout.columnWidths, insertAt, 1);
   applyStructuralEditForScope(scope, `Inserted 1 column (${side}) · ${selectionScopeLabel(scope)}`);
 }
 
@@ -5336,6 +5856,7 @@ function deleteColumnsFromContext() {
 
   const viewLayout = viewLayoutForScope(scope);
   shiftIndexSetForDelete(viewLayout.hiddenCols, structure.selectedColumnIndices);
+  viewLayout.columnWidths = shiftColumnWidthMapForDelete(viewLayout.columnWidths, structure.selectedColumnIndices);
   applyStructuralEditForScope(scope, `Deleted ${structure.selectedColumnIndices.length} column(s) · ${selectionScopeLabel(scope)}`);
 }
 
@@ -6568,6 +7089,64 @@ function applyMainRowGrouping(mainHost, sheetName) {
   return groupedRows;
 }
 
+function monthYearFromEntry(monthEntry) {
+  if (!monthEntry || typeof monthEntry !== "object") {
+    return null;
+  }
+  const directYear = Number.parseInt(String(monthEntry.year ?? ""), 10);
+  if (Number.isFinite(directYear) && directYear >= 1900) {
+    return directYear;
+  }
+  const keyMatch = String(monthEntry.key || "").match(/^(20\d{2})-/);
+  if (keyMatch) {
+    const year = Number.parseInt(keyMatch[1], 10);
+    if (Number.isFinite(year)) {
+      return year;
+    }
+  }
+  const labelMatch = String(monthEntry.label || "").match(/(20\d{2})/);
+  if (labelMatch) {
+    const year = Number.parseInt(labelMatch[1], 10);
+    if (Number.isFinite(year)) {
+      return year;
+    }
+  }
+  return null;
+}
+
+function rowMetricValueByMonthKey(row, monthKey, metricName) {
+  if (!row || !row.values || !monthKey || !metricName) {
+    return null;
+  }
+  const monthCell = row.values[monthKey];
+  if (!monthCell || typeof monthCell !== "object") {
+    return null;
+  }
+  const rawValue = monthCell[metricName];
+  if (typeof rawValue === "number" && Number.isFinite(rawValue)) {
+    return rawValue;
+  }
+  const parsed = parseNumericCellValue(rawValue);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function summarizeRowMetricByMonths(row, monthKeys, metricName) {
+  const numericValues = [];
+  for (const monthKey of Array.isArray(monthKeys) ? monthKeys : []) {
+    const value = rowMetricValueByMonthKey(row, monthKey, metricName);
+    if (Number.isFinite(value)) {
+      numericValues.push(value);
+    }
+  }
+  if (!numericValues.length) {
+    return { total: null, avg: null };
+  }
+  const total = numericValues.reduce((sum, value) => sum + value, 0);
+  const avg = total / numericValues.length;
+  const round = (value) => Math.round(value * 10000) / 10000;
+  return { total: round(total), avg: round(avg) };
+}
+
 function renderTable(target, sheetData, selectedMonths, scope = "reference") {
   const metric = el.metricSelect.value;
   const rows = filteredRows(sheetData.rows);
@@ -6575,7 +7154,7 @@ function renderTable(target, sheetData, selectedMonths, scope = "reference") {
   if (!rows.length) {
     target.innerHTML =
       '<tbody><tr><td class="empty">No rows match current filter.</td></tr></tbody>';
-    return;
+    return { yearSummaryColumns: 0, yearSummaryYears: 0 };
   }
 
   const columns = [
@@ -6585,34 +7164,98 @@ function renderTable(target, sheetData, selectedMonths, scope = "reference") {
     { key: "packing", label: "Packing", cls: "left" },
   ];
 
+  const normalizedScope = normalizeViewScope(scope);
+  const selectedMonthNumbers = new Set(
+    selectedMonths
+      .map((month) => Number.parseInt(String(month && month.month !== undefined ? month.month : ""), 10))
+      .filter((monthNum) => Number.isFinite(monthNum) && monthNum >= 1 && monthNum <= 12),
+  );
+  const isReferenceYearSummaryMode =
+    normalizedScope === "reference" &&
+    metric !== "all" &&
+    modeIsMultiMonthYears(el.refModeSelect.value) &&
+    selectedMonths.length >= 2 &&
+    selectedMonthNumbers.size >= 2;
+
   const dynamicColumns = [];
+  const summaryYears = [];
+  let currentYear = null;
+  let currentYearMonthKeys = [];
+  const flushYearSummaryColumns = () => {
+    if (!isReferenceYearSummaryMode) {
+      return;
+    }
+    if (!Number.isFinite(currentYear) || !currentYearMonthKeys.length) {
+      return;
+    }
+    dynamicColumns.push(
+      {
+        kind: "year_total",
+        year: currentYear,
+        metric,
+        monthKeys: [...currentYearMonthKeys],
+        label: `${currentYear} Total`,
+      },
+      {
+        kind: "year_avg",
+        year: currentYear,
+        metric,
+        monthKeys: [...currentYearMonthKeys],
+        label: `${currentYear} Avg`,
+      },
+    );
+    summaryYears.push(currentYear);
+  };
+
   for (const month of selectedMonths) {
+    const monthYear = monthYearFromEntry(month);
+    if (isReferenceYearSummaryMode && Number.isFinite(currentYear) && monthYear !== currentYear) {
+      flushYearSummaryColumns();
+      currentYearMonthKeys = [];
+      currentYear = monthYear;
+    }
+    if (isReferenceYearSummaryMode && !Number.isFinite(currentYear)) {
+      currentYear = monthYear;
+    }
+
     if (metric === "all") {
       dynamicColumns.push(
-        { monthKey: month.key, metric: "pk", label: `${month.label} PK` },
-        { monthKey: month.key, metric: "bottle", label: `${month.label} Bottle` },
-        { monthKey: month.key, metric: "liter", label: `${month.label} Liter` },
+        { kind: "month", monthKey: month.key, metric: "pk", label: `${month.label} PK` },
+        { kind: "month", monthKey: month.key, metric: "bottle", label: `${month.label} Bottle` },
+        { kind: "month", monthKey: month.key, metric: "liter", label: `${month.label} Liter` },
       );
     } else {
       dynamicColumns.push({
+        kind: "month",
         monthKey: month.key,
         metric,
         label: month.label,
       });
+      if (isReferenceYearSummaryMode && Number.isFinite(monthYear)) {
+        currentYearMonthKeys.push(month.key);
+      }
     }
   }
+  flushYearSummaryColumns();
+  const uniqueSummaryYears = [...new Set(summaryYears)];
 
   if (!dynamicColumns.length) {
     target.innerHTML =
       '<tbody><tr><td class="empty">No month columns matched this filter. Adjust ref mode, month, or N value.</td></tr></tbody>';
-    return;
+    return { yearSummaryColumns: 0, yearSummaryYears: 0 };
   }
 
   const thead = `
     <thead>
       <tr>
         ${columns.map((col) => `<th class="${col.cls}">${col.label}</th>`).join("")}
-        ${dynamicColumns.map((col) => `<th class="right">${col.label}</th>`).join("")}
+        ${dynamicColumns
+          .map((col) =>
+            col.kind === "year_total" || col.kind === "year_avg"
+              ? `<th class="right year-summary-col">${col.label}</th>`
+              : `<th class="right">${col.label}</th>`,
+          )
+          .join("")}
       </tr>
     </thead>
   `;
@@ -6668,6 +7311,11 @@ function renderTable(target, sheetData, selectedMonths, scope = "reference") {
 
       const dynamicCells = dynamicColumns
         .map((col) => {
+          if (col.kind === "year_total" || col.kind === "year_avg") {
+            const summary = summarizeRowMetricByMonths(row, col.monthKeys, col.metric);
+            const value = col.kind === "year_total" ? summary.total : summary.avg;
+            return `<td class="right year-summary-cell">${formatValue(value)}</td>`;
+          }
           const monthCell = row.values[col.monthKey] || {};
           return `<td class="right">${formatValue(monthCell[col.metric])}</td>`;
         })
@@ -6683,6 +7331,10 @@ function renderTable(target, sheetData, selectedMonths, scope = "reference") {
   }
 
   target.innerHTML = `${thead}<tbody>${bodyRows.join("")}</tbody>`;
+  return {
+    yearSummaryColumns: uniqueSummaryYears.length * 2,
+    yearSummaryYears: uniqueSummaryYears.length,
+  };
 }
 
 function renderMeta(target, sheetData, selectedMonths) {
@@ -6825,7 +7477,7 @@ function renderReferencePanel(referenceSheet, selectedMonthsRef, referenceTab) {
     return;
   }
 
-  renderTable(el.refTable, referenceSheet, selectedMonthsRef);
+  const renderInfo = renderTable(el.refTable, referenceSheet, selectedMonthsRef);
   const defaultRefFrozenCols = 4;
   const defaultRefFrozenRows = 0;
   applyScopeLayoutOverrides("reference", defaultRefFrozenCols, defaultRefFrozenRows);
@@ -6850,6 +7502,12 @@ function renderReferencePanel(referenceSheet, selectedMonthsRef, referenceTab) {
 
   if (!selectedMonthsRef.length) {
     appendText(el.refMeta, " · no months matched this mode");
+  }
+  if (renderInfo && renderInfo.yearSummaryColumns > 0) {
+    appendText(
+      el.refMeta,
+      ` · yearly summary columns: ${renderInfo.yearSummaryColumns} (${renderInfo.yearSummaryYears} year(s))`,
+    );
   }
 }
 
@@ -8231,19 +8889,27 @@ function bindEvents() {
       if (saveBtn instanceof HTMLElement) {
         const filename = saveBtn.dataset.file || "";
         const row = saveBtn.closest("tr");
-        const select = row ? row.querySelector(".file-region-select") : null;
-        const region = select && "value" in select ? select.value : "";
-        if (!filename || !region) {
+        const regionSelect = row ? row.querySelector(".file-region-select") : null;
+        const viewModeSelect = row ? row.querySelector(".file-view-mode-select") : null;
+        const region = regionSelect && "value" in regionSelect ? regionSelect.value : "";
+        const viewMode = viewModeSelect && "value" in viewModeSelect ? viewModeSelect.value : "";
+        if (!filename || !region || !viewMode) {
           return;
         }
         (async () => {
-          beginBusy("Updating file region...");
+          beginBusy("Updating file settings...");
           try {
-            await patchScopedJson(`/api/files/${encodeURIComponent(filename)}`, { region });
+            await patchScopedJson(`/api/files/${encodeURIComponent(filename)}`, {
+              region,
+              view_mode: viewMode,
+            });
             await loadFiles();
             await loadWorkbookOptions();
             await loadSheets();
-            setText(el.statusText, `Updated region for ${filename}.`);
+            setText(
+              el.statusText,
+              `Updated ${filename} · ${regionLabel(region)} · ${fileViewModeLabel(viewMode)}.`,
+            );
           } finally {
             endBusy();
           }

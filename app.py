@@ -287,19 +287,27 @@ def api_files():
     }
     for entry in visible_entries:
         file_region = normalize_region_token(entry.get("region"))
+        file_view_mode = normalize_file_view_mode(
+            entry.get("view_mode"),
+            default=FILE_VIEW_MODE_AUTO,
+        )
         uploaded = is_uploaded_workbook_entry(entry)
-        can_modify = False
-        if uploaded and role == ROLE_OWNER:
-            can_modify = True
-        elif uploaded and role == ROLE_RSM and file_region in rsm_regions:
-            can_modify = True
+        can_update = False
+        if role == ROLE_OWNER:
+            can_update = True
+        elif role == ROLE_RSM and file_region in rsm_regions:
+            can_update = True
+        can_delete = uploaded and can_update
         files_payload.append(
             {
                 "name": str(entry["name"]),
                 "region": file_region,
+                "view_mode": file_view_mode,
+                "main_enabled": file_mode_enabled_for_view(file_view_mode, "main"),
+                "detail_enabled": file_mode_enabled_for_view(file_view_mode, "reference"),
                 "uploaded": uploaded,
-                "can_update": can_modify,
-                "can_delete": can_modify,
+                "can_update": can_update,
+                "can_delete": can_delete,
             }
         )
 
@@ -320,22 +328,38 @@ def api_file_update_region(filename: str):
     entry = workbook_entry_by_name(entries, filename)
     if not entry:
         return jsonify({"error": f"Unknown workbook: {filename}"}), 404
-    if not is_uploaded_workbook_entry(entry):
-        return jsonify({"error": "Only uploaded files can be updated."}), 403
 
     payload = request_json_payload()
-    target_region = normalize_region_token(payload.get("region") or request.form.get("region"))
-    if not target_region:
-        return jsonify({"error": "Missing required field: region"}), 400
+    target_region_raw = payload.get("region") or request.form.get("region")
+    target_view_mode_raw = payload.get("view_mode") or request.form.get("view_mode")
+    if target_region_raw is None and target_view_mode_raw is None:
+        return jsonify({"error": "Provide at least one field: region or view_mode"}), 400
+
+    source_view_mode = normalize_file_view_mode(
+        entry.get("view_mode"),
+        default=FILE_VIEW_MODE_AUTO,
+    )
+    target_region = (
+        normalize_region_token(target_region_raw)
+        if target_region_raw is not None
+        else normalize_region_token(entry.get("region"))
+    )
+    target_view_mode = normalize_file_view_mode(
+        target_view_mode_raw,
+        default=source_view_mode,
+    )
 
     source_region = normalize_region_token(entry.get("region"))
     if not principal_can_manage_region(principal, source_region):
         return jsonify({"error": "No permission to update this file."}), 403
-    if not principal_can_manage_region(principal, target_region):
+    if target_region_raw is not None and not principal_can_manage_region(principal, target_region):
         return jsonify({"error": "No permission to move file to this region."}), 403
 
     registry = load_workbook_registry()
-    registry[str(entry["name"])] = {"region": target_region}
+    registry[str(entry["name"])] = {
+        "region": target_region,
+        "view_mode": target_view_mode,
+    }
     save_workbook_registry(registry)
     clear_workbook_caches()
 
@@ -343,6 +367,7 @@ def api_file_update_region(filename: str):
         {
             "file": str(entry["name"]),
             "region": target_region,
+            "view_mode": target_view_mode,
             "updated": True,
         }
     )
@@ -447,6 +472,8 @@ def api_workbooks():
             {
                 "error": str(exc),
                 "workbooks": [],
+                "main_workbooks": [],
+                "reference_workbooks": [],
                 "regions": (
                     principal["allowed_regions"]
                     if not principal["allow_all_regions"]
@@ -461,6 +488,8 @@ def api_workbooks():
     return jsonify(
         {
             "workbooks": selection["available"],
+            "main_workbooks": selection.get("available_main", selection["available"]),
+            "reference_workbooks": selection.get("available_reference", selection["available"]),
             "regions": principal["allowed_regions"] if not principal["allow_all_regions"] else principal["regions_universe"],
             "viewer_role": principal["role"],
             "selected_region": selection["selected_region"],
@@ -514,7 +543,10 @@ def api_upload_workbooks():
         file_storage.save(UPLOAD_DIR / output_name)
         saved_files.append(output_name)
         uploaded_regions.append({"file": output_name, "region": region})
-        registry[output_name] = {"region": region}
+        registry[output_name] = {
+            "region": region,
+            "view_mode": FILE_VIEW_MODE_AUTO,
+        }
 
     if not saved_files:
         status_code = 403 if denied_files else 400
@@ -547,6 +579,8 @@ def api_upload_workbooks():
             "skipped_files": skipped_files,
             "denied_files": denied_files,
             "workbooks": selection["available"],
+            "main_workbooks": selection.get("available_main", selection["available"]),
+            "reference_workbooks": selection.get("available_reference", selection["available"]),
             "regions": (
                 refreshed_principal["allowed_regions"]
                 if not refreshed_principal["allow_all_regions"]
@@ -583,6 +617,8 @@ def api_sheets():
             "reference_workbook": data["reference_workbook"],
             "version": data["version"],
             "available_workbooks": selection["available"],
+            "main_workbooks": selection.get("available_main", selection["available"]),
+            "reference_workbooks": selection.get("available_reference", selection["available"]),
             "main_sheet_names": data["main_sheet_names"],
             "reference_sheet_names": data["reference_sheet_names"],
             "regions": (

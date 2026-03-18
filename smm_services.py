@@ -39,6 +39,16 @@ REGION_ALIAS_TO_CANONICAL = {
     "MTL": "MTL",
     "HTL": "MTL",
 }
+FILE_VIEW_MODE_AUTO = "auto"
+FILE_VIEW_MODE_MAIN = "main"
+FILE_VIEW_MODE_DETAIL = "detail"
+FILE_VIEW_MODE_BOTH = "both"
+FILE_VIEW_MODES = {
+    FILE_VIEW_MODE_AUTO,
+    FILE_VIEW_MODE_MAIN,
+    FILE_VIEW_MODE_DETAIL,
+    FILE_VIEW_MODE_BOTH,
+}
 SAMPLE_RSM_PER_REGION = 2
 SAMPLE_ASM_PER_REGION = 3
 SAMPLE_RSM_FRIENDLY_NAMES = (
@@ -64,6 +74,12 @@ SAMPLE_ASM_FRIENDLY_NAMES = (
     "Thandar Aye",
     "Phyo Min",
     "Su Mon",
+)
+DEMO_DEFAULT_MAIN_NAME_TOKENS = (
+    "mhl2026feb",
+)
+DEMO_DEFAULT_REFERENCE_NAME_TOKENS = (
+    "7mtlfortownshipsummary",
 )
 
 MONTH_LOOKUP = {
@@ -537,6 +553,39 @@ def infer_region_from_filename(path: Path) -> str:
     return DEFAULT_REGION_TOKEN
 
 
+def normalize_file_view_mode(raw_mode: Any, default: str = FILE_VIEW_MODE_AUTO) -> str:
+    mode = normalize_token(raw_mode)
+    if not mode:
+        return default
+    if mode in {"main", "overview", "mainonly", "mainview"}:
+        return FILE_VIEW_MODE_MAIN
+    if mode in {"detail", "details", "reference", "ref", "detailonly", "detailview"}:
+        return FILE_VIEW_MODE_DETAIL
+    if mode in {"both", "all", "shared", "mainanddetail", "mainref"}:
+        return FILE_VIEW_MODE_BOTH
+    if mode in {"auto", "default", "smart"}:
+        return FILE_VIEW_MODE_AUTO
+    return default
+
+
+def file_mode_enabled_for_view(view_mode: Any, workbook_role: str) -> bool:
+    mode = normalize_file_view_mode(view_mode, default=FILE_VIEW_MODE_AUTO)
+    role = normalize_token(workbook_role)
+    if role == "main":
+        return mode in {
+            FILE_VIEW_MODE_AUTO,
+            FILE_VIEW_MODE_MAIN,
+            FILE_VIEW_MODE_BOTH,
+        }
+    if role in {"reference", "detail", "ref"}:
+        return mode in {
+            FILE_VIEW_MODE_AUTO,
+            FILE_VIEW_MODE_DETAIL,
+            FILE_VIEW_MODE_BOTH,
+        }
+    return True
+
+
 def load_workbook_registry() -> dict[str, dict[str, str]]:
     if not WORKBOOK_REGISTRY_PATH.exists():
         return {}
@@ -559,7 +608,8 @@ def load_workbook_registry() -> dict[str, dict[str, str]]:
         if not isinstance(meta, dict):
             continue
         region = normalize_region_token(meta.get("region"))
-        normalized[workbook_name] = {"region": region}
+        view_mode = normalize_file_view_mode(meta.get("view_mode"), default=FILE_VIEW_MODE_AUTO)
+        normalized[workbook_name] = {"region": region, "view_mode": view_mode}
     return normalized
 
 
@@ -1129,8 +1179,20 @@ def discover_workbook_entries() -> list[dict[str, Any]]:
                 if meta and isinstance(meta, dict)
                 else infer_region_from_filename(path)
             )
+            view_mode = (
+                normalize_file_view_mode(meta.get("view_mode"), default=FILE_VIEW_MODE_AUTO)
+                if meta and isinstance(meta, dict)
+                else FILE_VIEW_MODE_AUTO
+            )
             seen_names.add(path.name)
-            entries.append({"name": path.name, "path": path, "region": region_token})
+            entries.append(
+                {
+                    "name": path.name,
+                    "path": path,
+                    "region": region_token,
+                    "view_mode": view_mode,
+                }
+            )
 
     entries.sort(key=lambda item: str(item["name"]).lower())
     return entries
@@ -1150,8 +1212,66 @@ def workbook_name_score(path: Path, role: str) -> int:
     return score
 
 
+def demo_default_workbook(
+    workbooks: list[Path],
+    role: str,
+) -> Path | None:
+    if not workbooks:
+        return None
+    patterns = (
+        DEMO_DEFAULT_MAIN_NAME_TOKENS
+        if role == "main"
+        else DEMO_DEFAULT_REFERENCE_NAME_TOKENS
+    )
+    normalized_patterns = [
+        normalize_token(pattern)
+        for pattern in patterns
+        if normalize_token(pattern)
+    ]
+    if not normalized_patterns:
+        return None
+
+    ranked: list[tuple[int, int, int, str, Path]] = []
+    for path in workbooks:
+        token = normalize_token(path.stem)
+        if not token:
+            continue
+        best_score = -1
+        best_pattern_index = len(normalized_patterns)
+        for pattern_index, pattern in enumerate(normalized_patterns):
+            score = -1
+            if token == pattern:
+                score = 300
+            elif token.startswith(pattern):
+                score = 200
+            elif pattern in token:
+                score = 100
+            if score > best_score:
+                best_score = score
+                best_pattern_index = pattern_index
+        if best_score < 0:
+            continue
+        ranked.append(
+            (
+                best_score,
+                -best_pattern_index,
+                path.stat().st_mtime_ns,
+                path.name.lower(),
+                path,
+            )
+        )
+
+    if not ranked:
+        return None
+    ranked.sort(reverse=True)
+    return ranked[0][4]
+
+
 def default_workbook(workbooks: list[Path], role: str, avoid_name: str | None = None) -> Path:
     candidates = [path for path in workbooks if path.name != avoid_name] or workbooks
+    demo_default = demo_default_workbook(candidates, role)
+    if demo_default is not None:
+        return demo_default
     ranked = sorted(
         candidates,
         key=lambda path: (
@@ -1223,25 +1343,68 @@ def resolve_workbook_pair(
             f"No supported Excel files found for region: {selected_region}."
         )
 
-    visible_paths = [entry["path"] for entry in visible_entries]
-    by_name = {str(entry["name"]): entry["path"] for entry in visible_entries}
-    default_main = default_workbook(visible_paths, "main")
+    main_visible_entries = [
+        entry
+        for entry in visible_entries
+        if file_mode_enabled_for_view(entry.get("view_mode"), "main")
+    ]
+    reference_visible_entries = [
+        entry
+        for entry in visible_entries
+        if file_mode_enabled_for_view(entry.get("view_mode"), "reference")
+    ]
+
+    if not main_visible_entries:
+        raise FileNotFoundError(
+            "No workbook is available for Main view in this scope. "
+            "Set file View role to Auto/Main/Both in Files tab."
+        )
+    if not reference_visible_entries:
+        raise FileNotFoundError(
+            "No workbook is available for Detail view in this scope. "
+            "Set file View role to Auto/Detail/Both in Files tab."
+        )
+
+    main_by_name = {
+        str(entry["name"]): entry["path"]
+        for entry in main_visible_entries
+    }
+    reference_by_name = {
+        str(entry["name"]): entry["path"]
+        for entry in reference_visible_entries
+    }
+    main_paths = [entry["path"] for entry in main_visible_entries]
+    reference_paths = [entry["path"] for entry in reference_visible_entries]
+
+    default_main = default_workbook(main_paths, "main")
     default_reference = default_workbook(
-        visible_paths,
+        reference_paths,
         "reference",
-        avoid_name=default_main.name if len(visible_paths) > 1 else None,
+        avoid_name=default_main.name if len(reference_paths) > 1 else None,
     )
 
-    if main_name and main_name not in by_name:
+    if main_name and main_name not in main_by_name:
         raise ValueError(f"Unknown main workbook for current scope: {main_name}")
-    if reference_name and reference_name not in by_name:
-        raise ValueError(f"Unknown reference workbook for current scope: {reference_name}")
+    if reference_name and reference_name not in reference_by_name:
+        raise ValueError(
+            f"Unknown reference workbook for current scope: {reference_name}"
+        )
 
-    main_path = by_name.get(main_name) if main_name else default_main
-    reference_path = by_name.get(reference_name) if reference_name else default_reference
+    main_path = main_by_name.get(main_name) if main_name else default_main
+    reference_path = (
+        reference_by_name.get(reference_name)
+        if reference_name
+        else default_reference
+    )
+
+    available_main = [str(entry["name"]) for entry in main_visible_entries]
+    available_reference = [str(entry["name"]) for entry in reference_visible_entries]
+    available_union = sorted(set(available_main) | set(available_reference))
 
     return {
-        "available": [str(entry["name"]) for entry in visible_entries],
+        "available": available_union,
+        "available_main": available_main,
+        "available_reference": available_reference,
         "regions": available_regions,
         "viewer_role": resolved_role,
         "selected_region": selected_region,

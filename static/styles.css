@@ -1108,7 +1108,146 @@ body.detail-drawer-mode #referenceViewPanel:not(.drawer-expanded) .drawer-body {
 .file-action-cell {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  align-items: center;
+  gap: 6px;
+}
+
+.files-role-help {
+  margin: 2px 0 0;
+  font-size: 0.71rem;
+  color: var(--muted);
+}
+
+.files-table-wrap {
+  margin-top: 6px;
+}
+
+.files-table {
+  width: 100%;
+  min-width: 760px;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.files-table thead th {
+  position: static;
+  top: auto;
+  z-index: auto;
+}
+
+.files-table th,
+.files-table td {
+  padding: 6px 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.files-table .files-col-file {
+  width: 46%;
+}
+
+.files-table .files-col-region {
+  width: 15%;
+}
+
+.files-table .files-col-view {
+  width: 23%;
+}
+
+.files-table .files-col-actions {
+  width: 16%;
+}
+
+.files-table td {
+  vertical-align: middle;
+  line-height: 1.2;
+}
+
+.file-inline-control {
+  width: 100%;
+  min-width: 126px;
+  max-width: 100%;
+}
+
+.file-name-cell {
+  min-width: 0;
+}
+
+.file-name-text {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-name-meta {
+  margin-top: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.file-uploaded-chip {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(255, 176, 85, 0.72);
+  border-radius: 999px;
+  padding: 1px 6px;
+  font-size: 0.64rem;
+  line-height: 1.2;
+  color: rgba(255, 219, 173, 0.96);
+  background: rgba(110, 63, 16, 0.3);
+}
+
+.file-view-control-wrap {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.file-view-readonly-label {
+  font-size: 0.75rem;
+  color: var(--text);
+}
+
+.file-region-readonly {
+  opacity: 0.92;
+}
+
+.file-role-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.file-view-chip {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(130, 183, 210, 0.45);
+  border-radius: 999px;
+  padding: 1px 6px;
+  font-size: 0.64rem;
+  line-height: 1.2;
+  color: rgba(213, 235, 248, 0.95);
+  background: rgba(8, 29, 41, 0.52);
+}
+
+.file-view-chip-muted {
+  opacity: 0.72;
+}
+
+body.excel-window[data-theme="light"] .file-view-chip {
+  color: #27405a;
+  border-color: rgba(143, 170, 200, 0.75);
+  background: rgba(226, 237, 250, 0.88);
+}
+
+body.excel-window[data-theme="light"] .file-uploaded-chip {
+  color: #8b4c0f;
+  border-color: rgba(244, 180, 108, 0.82);
+  background: rgba(255, 236, 207, 0.96);
 }
 
 .muted-inline {
@@ -1328,6 +1467,51 @@ td {
   border: 1px solid rgba(133, 184, 208, 0.22);
   padding: calc(6px * var(--sheet-zoom)) calc(8px * var(--sheet-zoom));
   white-space: nowrap;
+}
+
+th.col-resize-cell,
+td.col-resize-cell {
+  position: relative;
+}
+
+.col-resize-handle {
+  position: absolute;
+  top: 0;
+  right: -5px;
+  width: 10px;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: col-resize;
+  touch-action: none;
+  z-index: 85;
+}
+
+.col-resize-handle::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 4px;
+  width: 1px;
+  background: rgba(72, 173, 122, 0.32);
+}
+
+.col-resize-cell:hover .col-resize-handle::before,
+.col-resize-handle:focus-visible::before {
+  background: rgba(72, 173, 122, 0.85);
+}
+
+body.column-resizing,
+body.column-resizing * {
+  cursor: col-resize !important;
+  user-select: none !important;
+}
+
+th.year-summary-col,
+td.year-summary-cell {
+  font-weight: 600;
 }
 
 .sticky-col {
@@ -3996,22 +4180,138 @@ body.excel-window #ribbonRoot [data-ribbon-panel="roles"] .management-groups inp
   font-size: 0.76rem;
 }
 
+body.excel-window #ribbonRoot [data-ribbon-panel="filters"] {
+  align-items: stretch;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="filters"] .ribbon-group-grid {
+  min-width: 520px;
+  max-width: 920px;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="filters"] .ribbon-grid {
+  align-items: flex-start;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="filters"] .ribbon-grid > label {
+  align-self: flex-start;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="filters"] #ribbonMainMonthSelect[multiple],
+body.excel-window #ribbonRoot [data-ribbon-panel="filters"] #ribbonRefMonthSelect[multiple] {
+  min-height: 90px;
+  max-height: 90px;
+  overflow-y: auto;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="files"] {
+  align-items: stretch;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="files"] .files-upload-group {
+  min-width: 392px;
+  max-width: 450px;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="files"] .files-list-group {
+  flex: 1 1 auto;
+  min-width: 740px;
+  max-width: none;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="files"] .ribbon-grid {
+  display: grid;
+  grid-template-columns: minmax(210px, 1fr) minmax(156px, 1fr);
+  gap: 6px 8px;
+  align-items: end;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="files"] .ribbon-grid > label {
+  min-width: 0;
+  max-width: none;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="files"] .ribbon-grid > label:first-child {
+  min-width: 0;
+  max-width: none;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="files"] .ribbon-grid > .upload-actions {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="files"] .files-table-wrap {
+  margin-top: 4px;
+  max-height: calc(var(--ribbon-panel-fixed-height) - 56px);
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="files"] input[type="file"] {
+  padding: 3px 4px;
+  font-size: 0.72rem;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="files"] input[type="file"]::file-selector-button {
+  margin-right: 7px;
+  border: 1px solid var(--theme-input-border);
+  border-radius: 7px;
+  background: var(--theme-input-bg);
+  color: var(--theme-input-text);
+  padding: 4px 8px;
+  font-size: 0.72rem;
+  font-family: "Segoe UI", "Calibri", sans-serif;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="files"] .files-table .action-btn-sm {
+  min-width: 74px;
+  padding: 5px 8px;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="files"] .file-action-cell {
+  gap: 6px;
+}
+
 body.excel-window #ribbonRoot [data-ribbon-panel="roles"] .management-groups {
   display: flex;
   flex-wrap: nowrap;
   gap: 8px;
+  align-items: stretch;
+  margin-top: 6px;
 }
 
 body.excel-window #ribbonRoot [data-ribbon-panel="roles"] .management-groups .control-group {
   flex: 0 0 auto;
   width: auto;
   min-width: 720px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 body.excel-window #ribbonRoot [data-ribbon-panel="roles"] .management-groups .control-group h3 {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Roles tab uses top-aligned section labels (not bottom-stacked like generic ribbon groups). */
+body.excel-window #ribbonRoot [data-ribbon-panel="roles"] > .ribbon-group {
+  justify-content: flex-start;
+  align-self: stretch;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="roles"] > .ribbon-group > h3 {
+  order: 0;
+  margin: 0 0 6px;
+  text-align: left;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="roles"] > .ribbon-group > :not(h3) {
+  order: 1;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="roles"] .management-groups .control-grid {
+  align-items: flex-start;
 }
 
 body.excel-window #ribbonRoot [data-ribbon-panel="onboarding"] .onboarding {

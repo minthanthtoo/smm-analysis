@@ -393,8 +393,8 @@
           </div>
 
           <div class="ribbon-panel ribbon-panel-stacked" data-ribbon-panel="files" role="tabpanel" hidden>
-            <div class="ribbon-group ribbon-group-grid">
-              <h3>Add / Manage Files</h3>
+            <div class="ribbon-group ribbon-group-grid files-upload-group">
+              <h3>Add Files</h3>
               <div class="control-grid ribbon-grid">
                 <label>
                   Add Excel files
@@ -413,18 +413,20 @@
                 </div>
               </div>
             </div>
-            <div class="ribbon-group ribbon-group-fill">
+            <div class="ribbon-group ribbon-group-fill files-list-group">
               <div class="panel-head">
                 <h2>Regional Files</h2>
                 <button id="refreshFilesBtn" type="button" class="action-btn action-btn-ghost action-btn-sm">Refresh files</button>
               </div>
-              <div class="table-wrap compact-wrap">
-                <table id="filesTable">
+              <p class="files-role-help">Set each workbook role for Main view, Detail view, or both.</p>
+              <div class="table-wrap compact-wrap files-table-wrap">
+                <table id="filesTable" class="files-table">
                   <thead>
                     <tr>
-                      <th class="left">File</th>
-                      <th class="left">Region</th>
-                      <th class="left">Actions</th>
+                      <th class="left files-col-file">File</th>
+                      <th class="left files-col-region">Region</th>
+                      <th class="left files-col-view">Main / Detail role</th>
+                      <th class="left files-col-actions">Actions</th>
                     </tr>
                   </thead>
                   <tbody id="filesTableBody"></tbody>

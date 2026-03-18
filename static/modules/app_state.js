@@ -3,6 +3,8 @@
 
   App.state = {
     workbooks: [],
+    mainWorkbooks: [],
+    referenceWorkbooks: [],
     regions: [],
     allRegions: [],
     users: [],
@@ -70,6 +72,7 @@
         frozenRowsOverride: null,
         lastAppliedFrozenCols: 0,
         lastAppliedFrozenRows: 0,
+        columnWidths: {},
         hiddenRows: new Set(),
         hiddenCols: new Set(),
       },
@@ -78,6 +81,7 @@
         frozenRowsOverride: null,
         lastAppliedFrozenCols: 0,
         lastAppliedFrozenRows: 0,
+        columnWidths: {},
         hiddenRows: new Set(),
         hiddenCols: new Set(),
       },
