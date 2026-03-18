@@ -10,7 +10,7 @@
             Account
           </button>
           <button id="ribbonTabFilters" type="button" class="ribbon-tab" data-ribbon-target="filters" role="tab" aria-selected="false">
-            Filters
+            View
           </button>
           <button id="ribbonTabRoles" type="button" class="ribbon-tab" data-ribbon-target="roles" role="tab" aria-selected="false">
             Roles
@@ -198,6 +198,7 @@
                   <select id="ribbonMainModeSelect">
                     <option value="past_months">Past N months</option>
                     <option value="same_month_years">Same month across past N years</option>
+                    <option value="multi_month_years">Multiple months across past N years</option>
                   </select>
                 </label>
                 <label>
@@ -218,6 +219,7 @@
                   <select id="ribbonRefModeSelect">
                     <option value="past_months">Past N months</option>
                     <option value="same_month_years">Same month across past N years</option>
+                    <option value="multi_month_years">Multiple months across past N years</option>
                   </select>
                 </label>
                 <label>
@@ -242,6 +244,18 @@
                   <input id="ribbonSearchInput" type="text" placeholder="Type product name..." />
                 </label>
               </div>
+            </div>
+            <div class="ribbon-group">
+              <h3>Row Groups</h3>
+              <div class="ribbon-buttons">
+                <button id="ribbonCollapseAllGroupsBtn" type="button" class="action-btn action-btn-sm action-btn-ghost">
+                  Collapse all groups
+                </button>
+                <button id="ribbonExpandAllGroupsBtn" type="button" class="action-btn action-btn-sm action-btn-ghost">
+                  Expand all groups
+                </button>
+              </div>
+              <p class="ribbon-note">Applies to spelling-based product groups in the detail view.</p>
             </div>
           </div>
 

@@ -9,6 +9,7 @@ from smm_styled import build_main_sheet_html_cached, clear_styled_cache, parse_c
 from smm_runtime import resolve_runtime_host_port
 
 app = Flask(__name__)
+MONTH_FILTER_MODES = frozenset({"past_months", "same_month_years", "multi_month_years"})
 
 
 def clear_workbook_caches() -> None:
@@ -25,6 +26,22 @@ def canonical_manageable_role(raw_role: Any) -> str | None:
     if role in {"user", "staff"}:
         return ROLE_USER
     return None
+
+
+def normalize_month_values_csv(raw_value: str | None) -> str:
+    if not raw_value:
+        return ""
+    month_values: set[int] = set()
+    for token in raw_value.split(","):
+        try:
+            month_value = int(token)
+        except (TypeError, ValueError):
+            continue
+        if 1 <= month_value <= 12:
+            month_values.add(month_value)
+    if not month_values:
+        return ""
+    return ",".join(str(month_value) for month_value in sorted(month_values))
 
 
 @app.route("/")
@@ -247,13 +264,16 @@ def api_access_set_asm_townships():
 @app.route("/api/files")
 def api_files():
     principal = principal_from_request()
-    region_scope = principal["selected_region"]
-    allowed_regions = set(principal["allowed_regions"])
+    region_scope = normalize_region_scope(principal["selected_region"])
+    allowed_regions = {
+        normalize_region_token(region)
+        for region in principal["allowed_regions"]
+    }
     role = principal["role"]
 
     visible_entries: list[dict[str, Any]] = []
     for entry in principal["entries"]:
-        region = str(entry["region"])
+        region = normalize_region_token(entry.get("region"))
         if role != ROLE_OWNER and region not in allowed_regions:
             continue
         if region_scope != ALL_REGION_TOKEN and region != region_scope:
@@ -261,9 +281,12 @@ def api_files():
         visible_entries.append(entry)
 
     files_payload = []
-    rsm_regions = set(principal.get("rsm_regions", []))
+    rsm_regions = {
+        normalize_region_token(region)
+        for region in principal.get("rsm_regions", [])
+    }
     for entry in visible_entries:
-        file_region = str(entry["region"])
+        file_region = normalize_region_token(entry.get("region"))
         uploaded = is_uploaded_workbook_entry(entry)
         can_modify = False
         if uploaded and role == ROLE_OWNER:
@@ -305,7 +328,7 @@ def api_file_update_region(filename: str):
     if not target_region:
         return jsonify({"error": "Missing required field: region"}), 400
 
-    source_region = str(entry["region"])
+    source_region = normalize_region_token(entry.get("region"))
     if not principal_can_manage_region(principal, source_region):
         return jsonify({"error": "No permission to update this file."}), 403
     if not principal_can_manage_region(principal, target_region):
@@ -335,7 +358,7 @@ def api_file_delete(filename: str):
     if not is_uploaded_workbook_entry(entry):
         return jsonify({"error": "Only uploaded files can be deleted."}), 403
 
-    file_region = str(entry["region"])
+    file_region = normalize_region_token(entry.get("region"))
     if not principal_can_manage_region(principal, file_region):
         return jsonify({"error": "No permission to delete this file."}), 403
 
@@ -382,7 +405,7 @@ def api_workbook_rename_sheet():
     if not entry:
         return jsonify({"error": f"Unknown workbook entry: {target_path.name}"}), 404
 
-    workbook_region = str(entry.get("region") or "")
+    workbook_region = normalize_region_token(entry.get("region"))
     if not principal_can_manage_region(principal, workbook_region):
         return jsonify({"error": "No permission to edit sheets in this workbook."}), 403
 
@@ -631,10 +654,11 @@ def api_main_styled(canonical: str):
 
     month_keys_csv = request.args.get("month_keys", "")
     mode = request.args.get("mode", "past_months")
-    if mode not in {"past_months", "same_month_years"}:
+    if mode not in MONTH_FILTER_MODES:
         mode = "past_months"
     n_value = parse_clamped_int(request.args.get("n"), default=6, min_value=1, max_value=60)
     month_value = parse_clamped_int(request.args.get("month"), default=0, min_value=0, max_value=12)
+    month_values_csv = normalize_month_values_csv(request.args.get("months"))
     main_stat = selection["main_path"].stat()
     sheet_name = data["main"][canonical]["sheet_name"]
     html_payload = build_main_sheet_html_cached(
@@ -645,6 +669,7 @@ def api_main_styled(canonical: str):
         mode,
         n_value,
         month_value,
+        month_values_csv,
     )
     return jsonify(
         {
@@ -697,10 +722,11 @@ def api_main_styled_sheet():
 
     month_keys_csv = request.args.get("month_keys", "")
     mode = request.args.get("mode", "past_months")
-    if mode not in {"past_months", "same_month_years"}:
+    if mode not in MONTH_FILTER_MODES:
         mode = "past_months"
     n_value = parse_clamped_int(request.args.get("n"), default=6, min_value=1, max_value=60)
     month_value = parse_clamped_int(request.args.get("month"), default=0, min_value=0, max_value=12)
+    month_values_csv = normalize_month_values_csv(request.args.get("months"))
     main_stat = selection["main_path"].stat()
     html_payload = build_main_sheet_html_cached(
         str(selection["main_path"]),
@@ -710,6 +736,7 @@ def api_main_styled_sheet():
         mode,
         n_value,
         month_value,
+        month_values_csv,
     )
     return jsonify(
         {

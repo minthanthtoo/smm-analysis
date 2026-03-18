@@ -19,6 +19,8 @@ const requiredUtils = [
   "regionLabel",
   "escapeHtml",
   "modeIsSameMonthYears",
+  "modeIsMultiMonthYears",
+  "modeUsesMonthSelector",
   "currentN",
   "hasAnyMetricValue",
   "monthCoverageMap",
@@ -45,6 +47,8 @@ const {
   regionLabel,
   escapeHtml,
   modeIsSameMonthYears,
+  modeIsMultiMonthYears,
+  modeUsesMonthSelector,
   currentN,
   hasAnyMetricValue,
   monthCoverageMap,
@@ -200,6 +204,89 @@ function syncUploadRegionInputs(source) {
   if (el.uploadRegionInput && source !== el.uploadRegionInput) {
     el.uploadRegionInput.value = value;
   }
+}
+
+function fullscreenElementActive() {
+  return (
+    document.fullscreenElement ||
+    document.webkitFullscreenElement ||
+    document.mozFullScreenElement ||
+    document.msFullscreenElement ||
+    null
+  );
+}
+
+function isFullscreenSupported() {
+  return Boolean(
+    document.fullscreenEnabled ||
+    document.webkitFullscreenEnabled ||
+    document.mozFullScreenEnabled ||
+    document.msFullscreenEnabled,
+  );
+}
+
+function requestFullscreenCompat(target) {
+  if (!target) {
+    return Promise.reject(new Error("Fullscreen target is unavailable."));
+  }
+  if (typeof target.requestFullscreen === "function") {
+    return Promise.resolve(target.requestFullscreen());
+  }
+  if (typeof target.webkitRequestFullscreen === "function") {
+    return Promise.resolve(target.webkitRequestFullscreen());
+  }
+  if (typeof target.mozRequestFullScreen === "function") {
+    return Promise.resolve(target.mozRequestFullScreen());
+  }
+  if (typeof target.msRequestFullscreen === "function") {
+    return Promise.resolve(target.msRequestFullscreen());
+  }
+  return Promise.reject(new Error("Fullscreen is not supported by this browser."));
+}
+
+function exitFullscreenCompat() {
+  if (typeof document.exitFullscreen === "function") {
+    return Promise.resolve(document.exitFullscreen());
+  }
+  if (typeof document.webkitExitFullscreen === "function") {
+    return Promise.resolve(document.webkitExitFullscreen());
+  }
+  if (typeof document.mozCancelFullScreen === "function") {
+    return Promise.resolve(document.mozCancelFullScreen());
+  }
+  if (typeof document.msExitFullscreen === "function") {
+    return Promise.resolve(document.msExitFullscreen());
+  }
+  return Promise.resolve();
+}
+
+function syncFullscreenToggleButton() {
+  const active = Boolean(fullscreenElementActive());
+  document.body.classList.toggle("app-fullscreen-active", active);
+  if (!el.fullscreenToggleBtn) {
+    return;
+  }
+  const supported = isFullscreenSupported() || active;
+  el.fullscreenToggleBtn.disabled = !supported;
+  el.fullscreenToggleBtn.setAttribute("aria-pressed", active ? "true" : "false");
+  setText(el.fullscreenToggleBtn, active ? "Exit full screen" : "Full screen");
+  el.fullscreenToggleBtn.title = active ? "Exit full screen (Esc)" : "Enter full screen";
+}
+
+async function toggleFullscreenMode() {
+  if (!isFullscreenSupported() && !fullscreenElementActive()) {
+    setText(el.statusText, "Fullscreen is not supported in this browser.");
+    syncFullscreenToggleButton();
+    return;
+  }
+  if (fullscreenElementActive()) {
+    await exitFullscreenCompat();
+    setText(el.statusText, "Exited full screen.");
+    return;
+  }
+  const target = document.documentElement || document.body;
+  await requestFullscreenCompat(target);
+  setText(el.statusText, "Entered full screen.");
 }
 
 function syncRibbonFromCore() {
@@ -623,18 +710,42 @@ function isDetailPanelVisible() {
 }
 
 function syncSheetTabsDockVisibility() {
-  if (!el.sheetTabsDock || !el.referenceSheetTabs) {
+  if (!el.sheetTabsDock || !el.referenceSheetTabs || !el.mainSheetTabs) {
     return;
   }
 
   const referenceLane = el.referenceSheetTabs.closest(".sheet-tabs-dock-lane");
   const mainLane = el.mainSheetTabs ? el.mainSheetTabs.closest(".sheet-tabs-dock-lane") : null;
-  const showDetailTabs = isDetailPanelVisible();
+  const drawerMode = document.body.classList.contains("detail-drawer-mode");
+  const collapsedDesktop =
+    document.body.classList.contains("desktop-detail-collapsed") || Boolean(state.desktopDetailCollapsed);
+  const drawerExpanded = drawerMode
+    ? Boolean(
+        el.referenceViewPanel instanceof HTMLElement
+          ? el.referenceViewPanel.classList.contains("drawer-expanded")
+          : state.referenceDrawerExpanded,
+      )
+    : true;
+
+  let panelVisibleByLayout = !collapsedDesktop;
+  if (el.referenceViewPanel instanceof HTMLElement) {
+    const style = window.getComputedStyle(el.referenceViewPanel);
+    const rect = el.referenceViewPanel.getBoundingClientRect();
+    panelVisibleByLayout =
+      style.display !== "none" &&
+      style.visibility !== "hidden" &&
+      rect.width > 2 &&
+      rect.height > 2;
+  }
+
+  const showDetailTabs = drawerMode ? drawerExpanded : !collapsedDesktop && panelVisibleByLayout;
 
   if (referenceLane instanceof HTMLElement) {
     referenceLane.hidden = !showDetailTabs;
     referenceLane.setAttribute("aria-hidden", showDetailTabs ? "false" : "true");
+    referenceLane.style.display = showDetailTabs ? "" : "none";
   }
+  el.sheetTabsDock.classList.toggle("single-lane", !showDetailTabs);
   document.body.classList.toggle("detail-tabs-hidden", !showDetailTabs);
 
   if (showDetailTabs) {
@@ -825,6 +936,9 @@ function setInteractiveControlsDisabled(disabled) {
     el.onboardingToggleBtn,
     el.roleInfoBtn,
     el.roleInfoInlineBtn,
+    el.fullscreenToggleBtn,
+    el.titleUserSelect,
+    el.logoutCurrentUserBtn,
     el.themeSelect,
     el.assignRsmUsernameInput,
     el.assignRsmDisplayInput,
@@ -865,6 +979,8 @@ function setInteractiveControlsDisabled(disabled) {
     el.ribbonRefMonthSelect,
     el.ribbonMetricSelect,
     el.ribbonSearchInput,
+    el.ribbonCollapseAllGroupsBtn,
+    el.ribbonExpandAllGroupsBtn,
     el.ribbonOpenRoleGuideBtn,
     el.ribbonJumpAssignRsmBtn,
     el.ribbonJumpMapUserBtn,
@@ -1001,35 +1117,60 @@ function displayUserOption(user) {
   const username = user && typeof user.username === "string" ? user.username : "";
   const displayName = user && typeof user.display_name === "string" ? user.display_name : "";
   const role = user && typeof user.role === "string" ? roleLabel(user.role) : "";
-  if (displayName && displayName !== username) {
-    return `${displayName} (${username}) · ${role}`;
+  if (displayName) {
+    return role ? `${displayName} · ${role}` : displayName;
   }
-  return `${username || "-"} · ${role}`;
+  return role ? `${username || "-"} · ${role}` : username || "-";
 }
 
 function populateUserSelect() {
-  if (!el.userSelect) {
+  const users = Array.isArray(state.loginUsers) && state.loginUsers.length ? state.loginUsers : Array.isArray(state.users) ? state.users : [];
+  if (!el.userSelect && !el.titleUserSelect) {
     return;
   }
-  const users = Array.isArray(state.users) ? state.users : [];
-  el.userSelect.innerHTML = "";
+  if (el.userSelect) {
+    el.userSelect.innerHTML = "";
+  }
+  if (el.titleUserSelect) {
+    el.titleUserSelect.innerHTML = "";
+  }
 
   for (const user of users) {
     if (!user || typeof user !== "object" || !user.username) {
       continue;
     }
-    const option = document.createElement("option");
-    option.value = user.username;
-    option.textContent = displayUserOption(user);
-    el.userSelect.appendChild(option);
+    const label = displayUserOption(user);
+    if (el.userSelect) {
+      const option = document.createElement("option");
+      option.value = user.username;
+      option.textContent = label;
+      option.title = user.username;
+      el.userSelect.appendChild(option);
+    }
+    if (el.titleUserSelect) {
+      const option = document.createElement("option");
+      option.value = user.username;
+      option.textContent = label;
+      option.title = user.username;
+      el.titleUserSelect.appendChild(option);
+    }
   }
 
   if (!users.some((user) => user.username === state.currentUser)) {
     const fallback = users[0];
     state.currentUser = fallback && fallback.username ? fallback.username : state.currentUser;
   }
-  if (state.currentUser) {
+  if (state.currentUser && el.userSelect) {
     el.userSelect.value = state.currentUser;
+  }
+  if (state.currentUser && el.titleUserSelect) {
+    el.titleUserSelect.value = state.currentUser;
+  }
+  if (el.titleUserSelect) {
+    el.titleUserSelect.disabled = users.length <= 1;
+  }
+  if (el.logoutCurrentUserBtn) {
+    el.logoutCurrentUserBtn.disabled = users.length < 1;
   }
   syncRibbonFromCore();
 }
@@ -1049,7 +1190,7 @@ function populateRegionSelect() {
   for (const region of regions) {
     const option = document.createElement("option");
     option.value = region;
-    option.textContent = region;
+    option.textContent = regionLabel(region);
     el.regionSelect.appendChild(option);
   }
 
@@ -1089,6 +1230,11 @@ function applyScopePayload(payload) {
   }
   if (Array.isArray(payload.users)) {
     state.users = payload.users;
+  }
+  if (Array.isArray(payload.login_users)) {
+    state.loginUsers = payload.login_users;
+  } else {
+    state.loginUsers = Array.isArray(payload.users) ? payload.users : state.loginUsers;
   }
   if (Array.isArray(payload.regions)) {
     state.regions = payload.regions;
@@ -1150,7 +1296,7 @@ function setSelectOptions(selectElement, values, selectedValue = null) {
   for (const value of values) {
     const option = document.createElement("option");
     option.value = String(value);
-    option.textContent = String(value);
+    option.textContent = regionLabel(String(value));
     selectElement.appendChild(option);
   }
   if (selectedValue !== null && values.includes(selectedValue)) {
@@ -1469,6 +1615,16 @@ async function refreshAccessContext() {
           asm_regions: [],
         },
       ],
+      login_users: [
+        {
+          username: fallbackUser,
+          display_name: fallbackUser,
+          role: fallbackRole,
+          assigned_rsm: null,
+          rsm_regions: [],
+          asm_regions: [],
+        },
+      ],
       permissions: {
         can_upload: fallbackRole === "owner" || fallbackRole === "rsm",
         can_manage_rsm: false,
@@ -1743,6 +1899,7 @@ async function renameWorkbookSheet(view, oldSheetName, nextSheetName) {
     state.cache.clear();
     state.mainStyledRequestKey = null;
     state.mainAvailableMonths.clear();
+    state.collapsedRowGroups.clear();
     if (view === "main") {
       if (state.selectedMainSheetName === oldName) {
         state.selectedMainSheetName = payload.new_sheet_name || newName;
@@ -1892,11 +2049,14 @@ function rebuildMainTabs(preferredSheetName) {
     button.type = "button";
     button.className = `sheet-tab-btn${tab.sheet_name === validSheet ? " active" : ""}`;
     button.textContent = tab.sheet_name;
+    button.dataset.sheetName = tab.sheet_name;
+    const titleParts = [tab.sheet_name];
     if (!tab.filterable) {
-      button.title = "Rendered as full sheet (non-month layout)";
+      titleParts.push("Rendered as full sheet (non-month layout)");
     } else if (canEditWorkbookTabs()) {
-      button.title = "Right-click or long-press to rename this sheet";
+      titleParts.push("Right-click or long-press to rename this sheet");
     }
+    button.title = titleParts.join(" · ");
     button.addEventListener("click", (event) => {
       if (state.sheetTabLongPressTriggered) {
         state.sheetTabLongPressTriggered = false;
@@ -1975,11 +2135,14 @@ function rebuildReferenceTabs(preferredSheetName) {
     button.type = "button";
     button.className = `sheet-tab-btn${tab.sheet_name === validSheet ? " active" : ""}`;
     button.textContent = tab.sheet_name;
+    button.dataset.sheetName = tab.sheet_name;
+    const titleParts = [tab.sheet_name];
     if (!tab.filterable) {
-      button.title = "Detail parser not available for this sheet.";
+      titleParts.push("Detail parser not available for this sheet.");
     } else if (canEditWorkbookTabs()) {
-      button.title = "Right-click or long-press to rename this sheet";
+      titleParts.push("Right-click or long-press to rename this sheet");
     }
+    button.title = titleParts.join(" · ");
     button.addEventListener("click", (event) => {
       if (state.sheetTabLongPressTriggered) {
         state.sheetTabLongPressTriggered = false;
@@ -2147,6 +2310,7 @@ function applySheetsPayload(payload) {
   if (changed) {
     state.mainStyledRequestKey = null;
     state.mainAvailableMonths.clear();
+    state.collapsedRowGroups.clear();
   }
   state.lastLoadAt = new Date();
   updateLoadHealth();
@@ -2220,13 +2384,63 @@ function filterElementsForView(view) {
   };
 }
 
+function readSelectedMonthValues(monthSelect) {
+  if (!monthSelect) {
+    return [];
+  }
+  const selectedValues = Array.from(monthSelect.selectedOptions || [])
+    .map((option) => Number.parseInt(option.value, 10))
+    .filter((value) => Number.isFinite(value) && value >= 1 && value <= 12);
+  return [...new Set(selectedValues)].sort((a, b) => a - b);
+}
+
+function writeSelectedMonthValues(monthSelect, monthValues) {
+  if (!monthSelect) {
+    return [];
+  }
+  const normalized = [...new Set((Array.isArray(monthValues) ? monthValues : [])
+    .map((value) => Number.parseInt(String(value), 10))
+    .filter((value) => Number.isFinite(value) && value >= 1 && value <= 12))].sort((a, b) => a - b);
+  const selectedSet = new Set(normalized.map((value) => String(value)));
+  for (const option of Array.from(monthSelect.options || [])) {
+    option.selected = selectedSet.has(option.value);
+  }
+  return normalized;
+}
+
+function monthSelectionSignature(modeValue, monthSelect) {
+  if (modeIsSameMonthYears(modeValue)) {
+    return monthSelect ? monthSelect.value || "auto" : "auto";
+  }
+  if (modeIsMultiMonthYears(modeValue)) {
+    return readSelectedMonthValues(monthSelect).join(",") || "auto";
+  }
+  return "none";
+}
+
+function selectedMonthsForMode(modeValue, monthSelect) {
+  if (!monthSelect) {
+    return [];
+  }
+  if (modeIsSameMonthYears(modeValue)) {
+    const monthValue = Number.parseInt(monthSelect.value, 10);
+    return Number.isFinite(monthValue) && monthValue >= 1 && monthValue <= 12 ? [monthValue] : [];
+  }
+  if (modeIsMultiMonthYears(modeValue)) {
+    return readSelectedMonthValues(monthSelect);
+  }
+  return [];
+}
+
 function updateMonthControl(sheetData, view) {
   const controls = filterElementsForView(view);
-  const previousValue = controls.monthSelect.value;
+  const modeValue = controls.modeSelect.value;
+  const previousSignature = monthSelectionSignature(modeValue, controls.monthSelect);
 
-  if (!modeIsSameMonthYears(controls.modeSelect.value)) {
+  if (!modeUsesMonthSelector(modeValue)) {
     controls.monthWrapper.classList.add("hidden");
-    controls.monthSelect.innerHTML = "";
+    controls.monthSelect.multiple = false;
+    controls.monthSelect.removeAttribute("size");
     syncRibbonFromCore();
     return false;
   }
@@ -2247,12 +2461,25 @@ function updateMonthControl(sheetData, view) {
 
   if (!availableMonths.length) {
     controls.monthWrapper.classList.add("hidden");
-    controls.monthSelect.innerHTML = "";
+    controls.monthSelect.multiple = false;
+    controls.monthSelect.removeAttribute("size");
     syncRibbonFromCore();
     return false;
   }
 
+  const isMultiMode = modeIsMultiMonthYears(modeValue);
+  const previousMultiValues = readSelectedMonthValues(controls.monthSelect);
+  const storedMultiValues = String(controls.monthSelect.dataset.multi || "")
+    .split(",")
+    .map((token) => Number.parseInt(token, 10))
+    .filter((value) => Number.isFinite(value) && value >= 1 && value <= 12);
   controls.monthWrapper.classList.remove("hidden");
+  controls.monthSelect.multiple = isMultiMode;
+  if (isMultiMode) {
+    controls.monthSelect.setAttribute("size", String(Math.min(Math.max(availableMonths.length, 4), 8)));
+  } else {
+    controls.monthSelect.removeAttribute("size");
+  }
   controls.monthSelect.innerHTML = "";
 
   for (const monthIndex of availableMonths) {
@@ -2262,13 +2489,32 @@ function updateMonthControl(sheetData, view) {
     controls.monthSelect.appendChild(option);
   }
 
-  const current = Number.parseInt(controls.monthSelect.dataset.current || "", 10);
-  const preferred = availableMonths.includes(current)
-    ? current
-    : availableMonths[availableMonths.length - 1];
-  controls.monthSelect.value = String(preferred);
+  if (isMultiMode) {
+    const preferredMulti = [...new Set([...previousMultiValues, ...storedMultiValues])].filter((monthValue) =>
+      availableMonths.includes(monthValue),
+    );
+    const fallbackMonth = availableMonths[availableMonths.length - 1];
+    const normalizedMulti = writeSelectedMonthValues(
+      controls.monthSelect,
+      preferredMulti.length ? preferredMulti : [fallbackMonth],
+    );
+    controls.monthSelect.dataset.multi = normalizedMulti.join(",");
+    controls.monthSelect.dataset.current = normalizedMulti.length ? String(normalizedMulti[normalizedMulti.length - 1]) : "";
+  } else {
+    const current = Number.parseInt(controls.monthSelect.dataset.current || "", 10);
+    const preferred = availableMonths.includes(current)
+      ? current
+      : availableMonths[availableMonths.length - 1];
+    controls.monthSelect.value = String(preferred);
+    controls.monthSelect.dataset.current = String(preferred);
+    controls.monthSelect.dataset.multi = String(preferred);
+  }
+
+  controls.monthSelect.title = isMultiMode
+    ? "Select one or more months. Hold Ctrl/Cmd for non-adjacent selections."
+    : "";
   syncRibbonFromCore();
-  return controls.monthSelect.value !== previousValue;
+  return monthSelectionSignature(modeValue, controls.monthSelect) !== previousSignature;
 }
 
 function pickMonths(sheetData, view) {
@@ -2277,17 +2523,36 @@ function pickMonths(sheetData, view) {
   const n = currentN(controls.nInput);
   const coverage = monthCoverageMap(sheetData);
   const minRowsForPopulated = Math.max(2, Math.ceil(sheetData.rows.length * 0.05));
+  const modeValue = controls.modeSelect.value;
 
-  if (!modeIsSameMonthYears(controls.modeSelect.value)) {
+  if (!modeUsesMonthSelector(modeValue)) {
     const populated = sorted.filter((month) => (coverage.get(month.key) || 0) >= minRowsForPopulated);
     const fallback = sorted.filter((month) => (coverage.get(month.key) || 0) > 0);
     const source = populated.length ? populated : fallback.length ? fallback : sorted;
     return source.slice(-n);
   }
 
-  const selectedMonth = Number.parseInt(controls.monthSelect.value, 10);
-  const filtered = sorted.filter((item) => item.month === selectedMonth);
-  return filtered.slice(-n);
+  const monthSelections = selectedMonthsForMode(modeValue, controls.monthSelect);
+  if (!monthSelections.length) {
+    return sorted.slice(-n);
+  }
+
+  if (modeIsSameMonthYears(modeValue)) {
+    const selectedMonth = monthSelections[monthSelections.length - 1];
+    const filtered = sorted.filter((item) => item.month === selectedMonth);
+    return filtered.slice(-n);
+  }
+
+  const picked = [];
+  for (const monthSelection of monthSelections) {
+    const filtered = sorted.filter((item) => item.month === monthSelection);
+    picked.push(...filtered.slice(-n));
+  }
+  const byKey = new Map();
+  for (const item of picked) {
+    byKey.set(item.key, item);
+  }
+  return [...byKey.values()].sort((a, b) => a.key.localeCompare(b.key));
 }
 
 function annotateCellGrid(table) {
@@ -4788,6 +5053,8 @@ function syncRibbonGridControlState() {
   const structure = structuralContextState(scope);
   const rowIndexes = collectContextRowIndices(scope);
   const colIndexes = collectContextColumnIndices(scope);
+  const activeGroupCount = collectRowGroupContexts(scope).length;
+  const groupScopeLabel = scope === "reference" ? "Detail view" : "Main view";
 
   if (el.ribbonGridScopeLabel) {
     const scopeName = scope === "reference" ? "Detail view" : "Main view";
@@ -4859,6 +5126,22 @@ function syncRibbonGridControlState() {
     const hiddenColsCount = viewLayout.hiddenCols.size;
     setText(el.ribbonUnhideColsBtn, hiddenColsCount > 0 ? `Unhide columns (${hiddenColsCount})` : "Unhide columns");
     el.ribbonUnhideColsBtn.disabled = hiddenColsCount < 1;
+  }
+  if (el.ribbonCollapseAllGroupsBtn) {
+    setText(
+      el.ribbonCollapseAllGroupsBtn,
+      activeGroupCount > 0 ? `Collapse all groups (${activeGroupCount})` : "Collapse all groups",
+    );
+    el.ribbonCollapseAllGroupsBtn.disabled = activeGroupCount < 1;
+    el.ribbonCollapseAllGroupsBtn.title = `Spelling-based groups in ${groupScopeLabel}`;
+  }
+  if (el.ribbonExpandAllGroupsBtn) {
+    setText(
+      el.ribbonExpandAllGroupsBtn,
+      activeGroupCount > 0 ? `Expand all groups (${activeGroupCount})` : "Expand all groups",
+    );
+    el.ribbonExpandAllGroupsBtn.disabled = activeGroupCount < 1;
+    el.ribbonExpandAllGroupsBtn.title = `Spelling-based groups in ${groupScopeLabel}`;
   }
 }
 
@@ -5850,6 +6133,9 @@ function startGridSelection(event) {
   if (event.button !== 0) {
     return;
   }
+  if (event.target instanceof HTMLElement && event.target.closest(".row-group-toggle")) {
+    return;
+  }
   const cell = event.target instanceof HTMLElement ? event.target.closest("th, td") : null;
   if (!cell) {
     return;
@@ -5910,10 +6196,379 @@ function filteredRows(rows) {
   if (!q) {
     return rows;
   }
-  return rows.filter((row) => row.product_name.toLowerCase().includes(q));
+  return rows.filter((row) => String(row.product_name || "").toLowerCase().includes(q));
 }
 
-function renderTable(target, sheetData, selectedMonths) {
+const PRODUCT_GROUP_STOPWORDS = new Set([
+  "vodka",
+  "whisky",
+  "whiskey",
+  "beer",
+  "rum",
+  "gin",
+  "wine",
+  "brandy",
+  "bottle",
+  "liter",
+  "litre",
+  "liters",
+  "litres",
+  "ml",
+  "pk",
+]);
+const PRODUCT_GROUP_PUNCT_RE = /["'`’“”()[\]{}<>.,:;!?/\\|_*+=~-]+/g;
+const PRODUCT_GROUP_UNIT_RE = /\b\d+(?:\.\d+)?\s*(?:ml|l|liter|litre|liters|litres|cc)\b/gi;
+const PRODUCT_GROUP_NUMBER_RE = /\b\d+(?:\.\d+)?\b/g;
+
+function productTokensForGrouping(value) {
+  const normalized = String(value || "")
+    .toLowerCase()
+    .replace(PRODUCT_GROUP_PUNCT_RE, " ")
+    .replace(PRODUCT_GROUP_UNIT_RE, " ")
+    .replace(PRODUCT_GROUP_NUMBER_RE, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!normalized) {
+    return [];
+  }
+  const filteredTokens = normalized
+    .split(" ")
+    .map((token) => token.trim())
+    .filter((token) => token.length > 1 && !PRODUCT_GROUP_STOPWORDS.has(token));
+  if (filteredTokens.length) {
+    return filteredTokens;
+  }
+  return normalized
+    .split(" ")
+    .map((token) => token.trim())
+    .filter(Boolean);
+}
+
+function productGroupKey(value) {
+  const tokens = productTokensForGrouping(value);
+  return tokens.length ? tokens[0] : "";
+}
+
+function productGroupLabel(value, fallback) {
+  const source = String(value || "").replace(PRODUCT_GROUP_PUNCT_RE, " ").trim();
+  if (!source) {
+    return fallback || "Group";
+  }
+  const firstToken = source.split(/\s+/).find(Boolean);
+  return firstToken || fallback || "Group";
+}
+
+function groupedReferenceRows(rows) {
+  const groups = [];
+  const groupByKey = new Map();
+  let looseCounter = 0;
+  for (const row of rows) {
+    const rootKey = productGroupKey(row.product_name);
+    const groupKey = rootKey || `row-${looseCounter++}`;
+    let group = groupByKey.get(groupKey);
+    if (!group) {
+      group = {
+        key: groupKey,
+        label: productGroupLabel(row.product_name, groupKey),
+        rows: [],
+      };
+      groupByKey.set(groupKey, group);
+      groups.push(group);
+    }
+    group.rows.push(row);
+  }
+  return groups;
+}
+
+function rowGroupStateKey(scope, sheetName, groupKey) {
+  return `${scope || "reference"}::${sheetName || "-"}::${groupKey || "-"}`;
+}
+
+function isRowGroupCollapsed(scope, sheetName, groupKey) {
+  if (!state.collapsedRowGroups || !(state.collapsedRowGroups instanceof Set)) {
+    return false;
+  }
+  return state.collapsedRowGroups.has(rowGroupStateKey(scope, sheetName, groupKey));
+}
+
+function setRowGroupCollapsed(scope, sheetName, groupKey, collapsed) {
+  if (!state.collapsedRowGroups || !(state.collapsedRowGroups instanceof Set)) {
+    state.collapsedRowGroups = new Set();
+  }
+  const key = rowGroupStateKey(scope, sheetName, groupKey);
+  if (collapsed) {
+    state.collapsedRowGroups.add(key);
+    return;
+  }
+  state.collapsedRowGroups.delete(key);
+}
+
+function applyRowGroupVisibility(table, groupKey, collapsed) {
+  if (!table || !groupKey) {
+    return;
+  }
+  const rows = table.tBodies.length ? Array.from(table.tBodies[0].rows) : Array.from(table.rows || []);
+  for (const row of rows) {
+    if (!(row instanceof HTMLElement)) {
+      continue;
+    }
+    if ((row.dataset.groupKey || "") !== groupKey) {
+      continue;
+    }
+    if ((row.dataset.groupPrimary || "") === "1") {
+      continue;
+    }
+    row.classList.toggle("row-group-hidden", collapsed);
+  }
+}
+
+function syncRowGroupToggleVisual(toggleBtn, collapsed) {
+  if (!(toggleBtn instanceof HTMLElement)) {
+    return;
+  }
+  toggleBtn.setAttribute("aria-expanded", collapsed ? "false" : "true");
+  const caret = toggleBtn.querySelector(".row-group-caret");
+  if (caret) {
+    setText(caret, collapsed ? "▸" : "▾");
+  }
+}
+
+function applyRowGroupStateForScope(scope, groupKey, collapsed) {
+  const normalizedScope = normalizeViewScope(scope);
+  for (const table of tablesForScope(normalizedScope)) {
+    applyRowGroupVisibility(table, groupKey, collapsed);
+    const toggleButtons = table.querySelectorAll(".row-group-toggle");
+    for (const button of Array.from(toggleButtons)) {
+      if (!(button instanceof HTMLElement)) {
+        continue;
+      }
+      if ((button.dataset.groupKey || "") !== groupKey) {
+        continue;
+      }
+      syncRowGroupToggleVisual(button, collapsed);
+    }
+  }
+}
+
+function collectRowGroupContexts(scope = "reference") {
+  const normalizedScope = normalizeViewScope(scope);
+  const contexts = [];
+  const seen = new Set();
+  for (const table of tablesForScope(normalizedScope)) {
+    const toggleButtons = table.querySelectorAll(".row-group-toggle");
+    for (const button of Array.from(toggleButtons)) {
+      if (!(button instanceof HTMLElement)) {
+        continue;
+      }
+      const groupKey = String(button.dataset.groupKey || "").trim();
+      if (!groupKey) {
+        continue;
+      }
+      const groupScope = normalizeViewScope(String(button.dataset.groupScope || normalizedScope).trim() || normalizedScope);
+      const fallbackSheet = groupScope === "reference" ? state.selectedReferenceSheetName : state.selectedMainSheetName;
+      const sheetName = String(button.dataset.groupSheet || fallbackSheet || "").trim();
+      const contextKey = rowGroupStateKey(groupScope, sheetName, groupKey);
+      if (seen.has(contextKey)) {
+        continue;
+      }
+      seen.add(contextKey);
+      contexts.push({ scope: groupScope, sheetName, groupKey });
+    }
+  }
+  return contexts;
+}
+
+function setAllRowGroupsCollapsed(scope = "reference", collapsed = true) {
+  const groupContexts = collectRowGroupContexts(scope);
+  for (const context of groupContexts) {
+    setRowGroupCollapsed(context.scope, context.sheetName, context.groupKey, collapsed);
+    applyRowGroupStateForScope(context.scope, context.groupKey, collapsed);
+  }
+  return groupContexts.length;
+}
+
+function normalizeGroupingHeaderText(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "");
+}
+
+function findRowCellAtGridColumn(row, gridCol) {
+  if (!row || !Number.isFinite(Number(gridCol))) {
+    return null;
+  }
+  for (const cell of Array.from(row.cells || [])) {
+    const colStart = Number.parseInt(cell.dataset.gridColStart || "", 10);
+    const colEnd = Number.parseInt(cell.dataset.gridColEnd || "", 10);
+    if (!Number.isFinite(colStart) || !Number.isFinite(colEnd)) {
+      continue;
+    }
+    if (gridCol >= colStart && gridCol <= colEnd) {
+      return cell;
+    }
+  }
+  return null;
+}
+
+function detectMainProductColumn(mainTable) {
+  if (!(mainTable instanceof HTMLElement)) {
+    return null;
+  }
+  annotateSelectionGridForTable(mainTable);
+  const rows = Array.from(mainTable.rows || []);
+  if (!rows.length) {
+    return null;
+  }
+
+  let bestMatch = null;
+  const scanLimit = Math.min(rows.length, 18);
+  for (let rowIndex = 0; rowIndex < scanLimit; rowIndex += 1) {
+    const row = rows[rowIndex];
+    for (const cell of Array.from(row.cells || [])) {
+      const token = normalizeGroupingHeaderText(cell.textContent || "");
+      if (!token) {
+        continue;
+      }
+      let score = 0;
+      if (token.includes("productname")) {
+        score = 5;
+      } else if (token.includes("product")) {
+        score = 2;
+      }
+      if (score < 1) {
+        continue;
+      }
+      const colStart = Number.parseInt(cell.dataset.gridColStart || "", 10);
+      const gridRow = Number.parseInt(cell.dataset.gridRow || "", 10);
+      const gridRowEnd = Number.parseInt(cell.dataset.gridRowEnd || "", 10);
+      if (!Number.isFinite(colStart) || !Number.isFinite(gridRow)) {
+        continue;
+      }
+      const headerRowEnd = Number.isFinite(gridRowEnd) ? gridRowEnd : gridRow;
+      const candidate = {
+        score,
+        col: colStart,
+        dataStartRow: headerRowEnd + 1,
+        headerRow: gridRow,
+      };
+      if (
+        !bestMatch ||
+        candidate.score > bestMatch.score ||
+        (candidate.score === bestMatch.score && candidate.headerRow < bestMatch.headerRow)
+      ) {
+        bestMatch = candidate;
+      }
+    }
+  }
+
+  if (!bestMatch || !Number.isFinite(bestMatch.col)) {
+    return null;
+  }
+  return {
+    col: Math.max(0, bestMatch.col),
+    dataStartRow: Math.max(0, Number.parseInt(String(bestMatch.dataStartRow || 0), 10) || 0),
+  };
+}
+
+function applyMainRowGrouping(mainHost, sheetName) {
+  const mainTable =
+    mainHost instanceof HTMLElement ? mainHost.querySelector("table.main-source-table") : null;
+  if (!(mainTable instanceof HTMLTableElement)) {
+    return 0;
+  }
+
+  const productColumn = detectMainProductColumn(mainTable);
+  if (!productColumn) {
+    return 0;
+  }
+
+  const allRows = Array.from(mainTable.rows || []);
+  if (!allRows.length) {
+    return 0;
+  }
+
+  const groups = [];
+  const groupsByKey = new Map();
+  let looseCounter = 0;
+  for (let rowIndex = productColumn.dataStartRow; rowIndex < allRows.length; rowIndex += 1) {
+    const row = allRows[rowIndex];
+    if (!(row instanceof HTMLTableRowElement)) {
+      continue;
+    }
+    const productCell = findRowCellAtGridColumn(row, productColumn.col);
+    if (!productCell) {
+      continue;
+    }
+    const productText = String(productCell.textContent || "")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (!productText) {
+      continue;
+    }
+    const rootKey = productGroupKey(productText);
+    const groupKey = rootKey || `main-row-${looseCounter++}`;
+    let group = groupsByKey.get(groupKey);
+    if (!group) {
+      group = {
+        key: groupKey,
+        label: productGroupLabel(productText, groupKey),
+        members: [],
+      };
+      groupsByKey.set(groupKey, group);
+      groups.push(group);
+    }
+    group.members.push({
+      row,
+      productCell,
+      productText,
+      productHtml: productCell.innerHTML,
+    });
+  }
+
+  let groupedRows = 0;
+  for (const group of groups) {
+    if (!group || !Array.isArray(group.members) || group.members.length < 2) {
+      continue;
+    }
+    const collapsed = isRowGroupCollapsed("main", sheetName, group.key);
+    const groupKeyEscaped = escapeHtml(group.key);
+    const groupLabelEscaped = escapeHtml(group.label);
+    for (let idx = 0; idx < group.members.length; idx += 1) {
+      const member = group.members[idx];
+      if (!member || !(member.row instanceof HTMLElement) || !(member.productCell instanceof HTMLElement)) {
+        continue;
+      }
+      const isPrimary = idx === 0;
+      member.row.classList.add("row-group-member");
+      member.row.dataset.groupKey = group.key;
+      member.row.dataset.groupPrimary = isPrimary ? "1" : "0";
+      member.productCell.classList.add("row-group-product-cell");
+      const productTitle = escapeHtml(member.productText);
+      if (isPrimary) {
+        const arrow = collapsed ? "▸" : "▾";
+        member.productCell.innerHTML =
+          `<div class="row-group-cell">` +
+          `<button type="button" class="row-group-toggle" data-group-key="${groupKeyEscaped}" data-group-scope="main" data-group-sheet="${escapeHtml(sheetName || "")}" aria-expanded="${collapsed ? "false" : "true"}">` +
+          `<span class="row-group-caret">${arrow}</span>` +
+          `<span class="row-group-title">${groupLabelEscaped}</span>` +
+          `<span class="row-group-count">(${group.members.length})</span>` +
+          `</button>` +
+          `<span class="row-group-product" title="${productTitle}">${member.productHtml}</span>` +
+          `</div>`;
+      } else {
+        member.row.classList.add("row-group-child");
+        if (collapsed) {
+          member.row.classList.add("row-group-hidden");
+        }
+        member.productCell.innerHTML = `<span class="row-group-product row-group-product-child" title="${productTitle}">${member.productHtml}</span>`;
+      }
+      groupedRows += 1;
+    }
+  }
+  return groupedRows;
+}
+
+function renderTable(target, sheetData, selectedMonths, scope = "reference") {
   const metric = el.metricSelect.value;
   const rows = filteredRows(sheetData.rows);
 
@@ -5962,20 +6617,70 @@ function renderTable(target, sheetData, selectedMonths) {
     </thead>
   `;
 
-  const bodyRows = rows.map((row) => {
-    const staticCells = columns
-      .map((col) => `<td class="${col.cls}">${formatValue(row[col.key])}</td>`)
-      .join("");
+  const groups = groupedReferenceRows(rows);
+  const sheetName = String(sheetData.sheet_name || "");
+  const bodyRows = [];
+  for (const group of groups) {
+    const groupSize = group.rows.length;
+    const collapsed = groupSize > 1 && isRowGroupCollapsed(scope, sheetName, group.key);
+    const groupKeyEscaped = escapeHtml(group.key);
+    const groupLabelEscaped = escapeHtml(group.label);
 
-    const dynamicCells = dynamicColumns
-      .map((col) => {
-        const monthCell = row.values[col.monthKey] || {};
-        return `<td class="right">${formatValue(monthCell[col.metric])}</td>`;
-      })
-      .join("");
+    for (let idx = 0; idx < group.rows.length; idx += 1) {
+      const row = group.rows[idx];
+      const isPrimary = idx === 0;
+      const rowClasses = [];
+      if (groupSize > 1) {
+        rowClasses.push("row-group-member");
+        if (!isPrimary) {
+          rowClasses.push("row-group-child");
+          if (collapsed) {
+            rowClasses.push("row-group-hidden");
+          }
+        }
+      }
 
-    return `<tr>${staticCells}${dynamicCells}</tr>`;
-  });
+      const productValue = escapeHtml(formatValue(row.product_name));
+      let productCellContent = productValue;
+      if (groupSize > 1) {
+        if (isPrimary) {
+          const arrow = collapsed ? "▸" : "▾";
+          productCellContent =
+            `<div class="row-group-cell">` +
+            `<button type="button" class="row-group-toggle" data-group-key="${groupKeyEscaped}" data-group-scope="${escapeHtml(scope)}" data-group-sheet="${escapeHtml(sheetName)}" aria-expanded="${collapsed ? "false" : "true"}">` +
+            `<span class="row-group-caret">${arrow}</span>` +
+            `<span class="row-group-title">${groupLabelEscaped}</span>` +
+            `<span class="row-group-count">(${groupSize})</span>` +
+            `</button>` +
+            `<span class="row-group-product" title="${productValue}">${productValue}</span>` +
+            `</div>`;
+        } else {
+          productCellContent = `<span class="row-group-product row-group-product-child" title="${productValue}">${productValue}</span>`;
+        }
+      }
+
+      const staticCells = [
+        `<td class="right">${formatValue(row.sr)}</td>`,
+        `<td class="left row-group-product-cell">${productCellContent}</td>`,
+        `<td class="right">${formatValue(row.ml)}</td>`,
+        `<td class="left">${formatValue(row.packing)}</td>`,
+      ].join("");
+
+      const dynamicCells = dynamicColumns
+        .map((col) => {
+          const monthCell = row.values[col.monthKey] || {};
+          return `<td class="right">${formatValue(monthCell[col.metric])}</td>`;
+        })
+        .join("");
+
+      const rowClassAttr = rowClasses.length ? ` class="${rowClasses.join(" ")}"` : "";
+      const rowDataAttr =
+        groupSize > 1
+          ? ` data-group-key="${groupKeyEscaped}" data-group-primary="${isPrimary ? "1" : "0"}"`
+          : "";
+      bodyRows.push(`<tr${rowClassAttr}${rowDataAttr}>${staticCells}${dynamicCells}</tr>`);
+    }
+  }
 
   target.innerHTML = `${thead}<tbody>${bodyRows.join("")}</tbody>`;
 }
@@ -5988,7 +6693,7 @@ function mainStyledKey(selectedMonths) {
   const monthsPart = selectedMonths.map((item) => item.key).join(",");
   const mode = el.mainModeSelect.value;
   const nValue = currentN(el.mainNInput);
-  const monthValue = modeIsSameMonthYears(mode) ? el.mainMonthSelect.value || "auto" : "none";
+  const monthValue = monthSelectionSignature(mode, el.mainMonthSelect);
   return `${state.viewerRole}::${state.selectedRegion}::${state.selectedMainWorkbook}::${state.selectedReferenceWorkbook}::${state.pairVersion}::${state.selectedMainSheetName}::${mode}::${nValue}::${monthValue}::${monthsPart}`;
 }
 
@@ -6008,14 +6713,19 @@ async function renderMainStyled(selectedMonths) {
   const monthKeys = selectedMonths.map((item) => item.key).join(",");
   const mode = el.mainModeSelect.value;
   const nValue = currentN(el.mainNInput);
-  const selectedMonth = Number.parseInt(el.mainMonthSelect.value, 10);
+  const selectedMonthsByMode = selectedMonthsForMode(mode, el.mainMonthSelect);
+  const selectedMonth = selectedMonthsByMode.length
+    ? selectedMonthsByMode[selectedMonthsByMode.length - 1]
+    : Number.NaN;
+  const selectedMonthsCsv = selectedMonthsByMode.join(",");
   const url =
     `/api/main-styled-sheet?${query}` +
     `&sheet=${encodeURIComponent(state.selectedMainSheetName)}` +
     `&month_keys=${encodeURIComponent(monthKeys)}` +
     `&mode=${encodeURIComponent(mode)}` +
     `&n=${encodeURIComponent(String(nValue))}` +
-    (Number.isFinite(selectedMonth) ? `&month=${encodeURIComponent(String(selectedMonth))}` : "");
+    (Number.isFinite(selectedMonth) ? `&month=${encodeURIComponent(String(selectedMonth))}` : "") +
+    (selectedMonthsCsv ? `&months=${encodeURIComponent(selectedMonthsCsv)}` : "");
 
   const payload = await fetchJson(url);
   if (state.mainStyledRequestKey !== requestKey) {
@@ -6035,14 +6745,22 @@ async function renderMainStyled(selectedMonths) {
   }
 
   const monthAdjusted = updateMonthControl(null, "main");
-  if (monthAdjusted && modeIsSameMonthYears(el.mainModeSelect.value)) {
-    el.mainMonthSelect.dataset.current = el.mainMonthSelect.value;
+  if (monthAdjusted && modeUsesMonthSelector(el.mainModeSelect.value)) {
+    if (modeIsMultiMonthYears(el.mainModeSelect.value)) {
+      el.mainMonthSelect.dataset.multi = readSelectedMonthValues(el.mainMonthSelect).join(",");
+    } else {
+      el.mainMonthSelect.dataset.current = el.mainMonthSelect.value;
+    }
     state.mainStyledRequestKey = null;
     await render();
     return;
   }
 
   el.mainTable.innerHTML = payload.html;
+  const groupedMainRows = applyMainRowGrouping(
+    el.mainTable,
+    String(payload.sheet_name || state.selectedMainSheetName || ""),
+  );
   const payloadFrozenCols = Number.parseInt(String(payload.frozen_columns ?? payload.frozen_count ?? 0), 10) || 0;
   const payloadFrozenRows = Number.parseInt(String(payload.frozen_rows ?? 0), 10) || 0;
   applyScopeLayoutOverrides("main", payloadFrozenCols, payloadFrozenRows);
@@ -6062,6 +6780,9 @@ async function renderMainStyled(selectedMonths) {
   }
   if (effectiveMainFreeze.rows > 0 || effectiveMainFreeze.cols > 0) {
     metaExtras.push(`freeze ${effectiveMainFreeze.rows} row(s), ${effectiveMainFreeze.cols} column(s)`);
+  }
+  if (groupedMainRows > 1) {
+    metaExtras.push(`grouped ${groupedMainRows} row(s)`);
   }
   if (hiddenRowsSkipped > 0 || hiddenColsSkipped > 0) {
     metaExtras.push(`hidden skipped ${hiddenRowsSkipped} row(s), ${hiddenColsSkipped} column(s)`);
@@ -6156,13 +6877,21 @@ async function render() {
   renderReferencePanel(refSheetData, selectedMonthsRef, referenceTab);
   clearGridSelectionModel();
 
+  const mainSelectedMonthValues = selectedMonthsForMode(el.mainModeSelect.value, el.mainMonthSelect);
+  const mainSelectedMonthLabels = mainSelectedMonthValues.map((monthValue) => monthLabels[monthValue - 1]).filter(Boolean);
   const mainModeText = modeIsSameMonthYears(el.mainModeSelect.value)
     ? `Main: same month over past ${currentN(el.mainNInput)} year(s)`
-    : `Main: past ${currentN(el.mainNInput)} month group(s)`;
+    : modeIsMultiMonthYears(el.mainModeSelect.value)
+      ? `Main: ${mainSelectedMonthLabels.join(", ") || "selected months"} over past ${currentN(el.mainNInput)} year(s)`
+      : `Main: past ${currentN(el.mainNInput)} month group(s)`;
 
+  const refSelectedMonthValues = selectedMonthsForMode(el.refModeSelect.value, el.refMonthSelect);
+  const refSelectedMonthLabels = refSelectedMonthValues.map((monthValue) => monthLabels[monthValue - 1]).filter(Boolean);
   const refModeText = modeIsSameMonthYears(el.refModeSelect.value)
     ? `Ref: same month over past ${currentN(el.refNInput)} year(s)`
-    : `Ref: past ${currentN(el.refNInput)} populated month(s)`;
+    : modeIsMultiMonthYears(el.refModeSelect.value)
+      ? `Ref: ${refSelectedMonthLabels.join(", ") || "selected months"} over past ${currentN(el.refNInput)} year(s)`
+      : `Ref: past ${currentN(el.refNInput)} populated month(s)`;
 
   const scopeText = `Scope: ${state.currentUser || "-"} (${roleLabel(state.viewerRole)}) / ${regionLabel(state.selectedRegion)}`;
   setText(el.statusText, `Live refresh every ${POLL_INTERVAL_MS / 1000}s · ${scopeText} · ${mainModeText} · ${refModeText}`);
@@ -6218,6 +6947,94 @@ function startRealtimePolling() {
   }, POLL_INTERVAL_MS);
 }
 
+function loginUsersForSwitch() {
+  if (Array.isArray(state.loginUsers) && state.loginUsers.length) {
+    return state.loginUsers;
+  }
+  return Array.isArray(state.users) ? state.users : [];
+}
+
+function userSummaryByUsername(username) {
+  const normalizedUsername = String(username || "");
+  const users = loginUsersForSwitch();
+  return users.find((user) => user && user.username === normalizedUsername) || null;
+}
+
+function userLabelByUsername(username) {
+  const user = userSummaryByUsername(username);
+  if (user) {
+    return user.display_name || user.username || String(username || "-");
+  }
+  return String(username || "-");
+}
+
+function logoutRankForRole(role) {
+  if (role === "user") {
+    return 0;
+  }
+  if (role === "asm") {
+    return 1;
+  }
+  if (role === "rsm") {
+    return 2;
+  }
+  return 3;
+}
+
+function bestLogoutTargetUsername(currentUsername) {
+  const users = loginUsersForSwitch()
+    .filter((user) => user && typeof user.username === "string" && user.username)
+    .slice()
+    .sort((a, b) => {
+      const rankDiff = logoutRankForRole(a.role) - logoutRankForRole(b.role);
+      if (rankDiff !== 0) {
+        return rankDiff;
+      }
+      const nameA = String(a.display_name || a.username || "").toLowerCase();
+      const nameB = String(b.display_name || b.username || "").toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  if (!users.length) {
+    return null;
+  }
+  const preferred = users.find((user) => user.username !== currentUsername);
+  return (preferred || users[0]).username || null;
+}
+
+async function logoutCurrentUser() {
+  const previousUser = state.currentUser;
+  const nextUser = bestLogoutTargetUsername(previousUser);
+  if (!nextUser) {
+    setText(el.statusText, "No available user to switch.");
+    return;
+  }
+  if (nextUser === previousUser && loginUsersForSwitch().length <= 1) {
+    setText(el.statusText, "No alternate user available to switch.");
+    return;
+  }
+
+  if (el.userSelect) {
+    el.userSelect.value = nextUser;
+  }
+  if (el.titleUserSelect) {
+    el.titleUserSelect.value = nextUser;
+  }
+  if (el.regionSelect) {
+    const hasAllRegion = Array.from(el.regionSelect.options || []).some((option) => option.value === "ALL");
+    if (hasAllRegion) {
+      el.regionSelect.value = "ALL";
+    } else if (el.regionSelect.options.length) {
+      el.regionSelect.value = el.regionSelect.options[0].value;
+    }
+  }
+
+  await onScopeChange();
+  setText(
+    el.statusText,
+    `Logged out ${userLabelByUsername(previousUser)}. Current user: ${userLabelByUsername(state.currentUser)}.`,
+  );
+}
+
 async function onScopeChange() {
   state.currentUser = el.userSelect ? el.userSelect.value || state.currentUser || "owner" : state.currentUser;
   state.selectedRegion = el.regionSelect ? el.regionSelect.value || state.selectedRegion || "ALL" : state.selectedRegion;
@@ -6229,6 +7046,7 @@ async function onScopeChange() {
   state.cache.clear();
   state.mainStyledRequestKey = null;
   state.mainAvailableMonths.clear();
+  state.collapsedRowGroups.clear();
   state.fileRows = [];
   await refreshAccessContext();
   await loadWorkbookOptions();
@@ -6240,6 +7058,7 @@ async function onWorkbookChange() {
   state.selectedMainWorkbook = el.mainWorkbookSelect.value;
   state.selectedReferenceWorkbook = el.referenceWorkbookSelect.value;
   state.mainStyledRequestKey = null;
+  state.collapsedRowGroups.clear();
   updateWorkbookLabels();
   await loadSheets();
 }
@@ -6521,6 +7340,34 @@ function bindEvents() {
       });
     });
   }
+  if (el.ribbonCollapseAllGroupsBtn) {
+    el.ribbonCollapseAllGroupsBtn.addEventListener("click", () => {
+      const scope = activeGridScopeForCommands();
+      const scopeLabel = scope === "reference" ? "Detail view" : "Main view";
+      const changed = setAllRowGroupsCollapsed(scope, true);
+      setText(
+        el.statusText,
+        changed > 0
+          ? `Collapsed ${changed} spelling-based row group(s) · ${scopeLabel}`
+          : `No row groups available in ${scopeLabel.toLowerCase()}.`,
+      );
+      syncRibbonGridControlState();
+    });
+  }
+  if (el.ribbonExpandAllGroupsBtn) {
+    el.ribbonExpandAllGroupsBtn.addEventListener("click", () => {
+      const scope = activeGridScopeForCommands();
+      const scopeLabel = scope === "reference" ? "Detail view" : "Main view";
+      const changed = setAllRowGroupsCollapsed(scope, false);
+      setText(
+        el.statusText,
+        changed > 0
+          ? `Expanded ${changed} spelling-based row group(s) · ${scopeLabel}`
+          : `No row groups available in ${scopeLabel.toLowerCase()}.`,
+      );
+      syncRibbonGridControlState();
+    });
+  }
 
   if (el.ribbonJumpAssignRsmBtn) {
     el.ribbonJumpAssignRsmBtn.addEventListener("click", () => {
@@ -6737,6 +7584,43 @@ function bindEvents() {
 
   bindSelectionArea(el.mainTableWrap);
   bindSelectionArea(el.referenceTableWrap);
+
+  const bindRowGroupToggleEvents = (wrap, fallbackScope) => {
+    if (!wrap) {
+      return;
+    }
+    wrap.addEventListener("mousedown", (event) => {
+      const toggleBtn = event.target instanceof HTMLElement ? event.target.closest(".row-group-toggle") : null;
+      if (!toggleBtn) {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+    });
+    wrap.addEventListener("click", (event) => {
+      const toggleBtn = event.target instanceof HTMLElement ? event.target.closest(".row-group-toggle") : null;
+      if (!toggleBtn || !(toggleBtn instanceof HTMLElement)) {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      const groupKey = String(toggleBtn.dataset.groupKey || "").trim();
+      const scope = normalizeViewScope(String(toggleBtn.dataset.groupScope || fallbackScope).trim() || fallbackScope);
+      const defaultSheet = scope === "reference" ? state.selectedReferenceSheetName : state.selectedMainSheetName;
+      const sheetName = String(toggleBtn.dataset.groupSheet || defaultSheet || "").trim();
+      if (!groupKey) {
+        return;
+      }
+      const expanded = toggleBtn.getAttribute("aria-expanded") === "true";
+      const collapsed = expanded;
+      setRowGroupCollapsed(scope, sheetName, groupKey, collapsed);
+      applyRowGroupStateForScope(scope, groupKey, collapsed);
+      syncRibbonGridControlState();
+    });
+  };
+
+  bindRowGroupToggleEvents(el.mainTableWrap, "main");
+  bindRowGroupToggleEvents(el.referenceTableWrap, "reference");
 
   if (el.ctxCopyBtn) {
     el.ctxCopyBtn.addEventListener("click", () => {
@@ -6996,6 +7880,25 @@ function bindEvents() {
       setModalOpen(true, event.currentTarget);
     });
   }
+  if (el.fullscreenToggleBtn) {
+    el.fullscreenToggleBtn.addEventListener("click", () => {
+      toggleFullscreenMode()
+        .catch((err) => {
+          setStatusError(err);
+        })
+        .finally(() => {
+          syncFullscreenToggleButton();
+        });
+    });
+  }
+  document.addEventListener("fullscreenchange", () => {
+    syncFullscreenToggleButton();
+    scheduleFloatingLayoutMetricsSync();
+  });
+  document.addEventListener("webkitfullscreenchange", () => {
+    syncFullscreenToggleButton();
+    scheduleFloatingLayoutMetricsSync();
+  });
   if (el.roleInfoCloseBtn) {
     el.roleInfoCloseBtn.addEventListener("click", () => {
       setModalOpen(false);
@@ -7087,6 +7990,23 @@ function bindEvents() {
   if (el.userSelect) {
     el.userSelect.addEventListener("change", () => {
       onScopeChange().catch((err) => {
+        setStatusError(err);
+      });
+    });
+  }
+  if (el.titleUserSelect) {
+    el.titleUserSelect.addEventListener("change", () => {
+      if (el.userSelect && el.userSelect.value !== el.titleUserSelect.value) {
+        el.userSelect.value = el.titleUserSelect.value;
+      }
+      onScopeChange().catch((err) => {
+        setStatusError(err);
+      });
+    });
+  }
+  if (el.logoutCurrentUserBtn) {
+    el.logoutCurrentUserBtn.addEventListener("click", () => {
+      logoutCurrentUser().catch((err) => {
         setStatusError(err);
       });
     });
@@ -7399,7 +8319,11 @@ function bindEvents() {
   });
 
   el.mainMonthSelect.addEventListener("change", () => {
-    el.mainMonthSelect.dataset.current = el.mainMonthSelect.value;
+    if (modeIsMultiMonthYears(el.mainModeSelect.value)) {
+      el.mainMonthSelect.dataset.multi = readSelectedMonthValues(el.mainMonthSelect).join(",");
+    } else {
+      el.mainMonthSelect.dataset.current = el.mainMonthSelect.value;
+    }
     state.mainStyledRequestKey = null;
     render().catch((err) => {
       setStatusError(err);
@@ -7419,7 +8343,11 @@ function bindEvents() {
   });
 
   el.refMonthSelect.addEventListener("change", () => {
-    el.refMonthSelect.dataset.current = el.refMonthSelect.value;
+    if (modeIsMultiMonthYears(el.refModeSelect.value)) {
+      el.refMonthSelect.dataset.multi = readSelectedMonthValues(el.refMonthSelect).join(",");
+    } else {
+      el.refMonthSelect.dataset.current = el.refMonthSelect.value;
+    }
     render().catch((err) => {
       setStatusError(err);
     });
@@ -7452,6 +8380,7 @@ function bindEvents() {
     syncReferenceDrawerMode();
     updateLoadHealth();
     bindEvents();
+    syncFullscreenToggleButton();
     syncFloatingLayoutMetrics();
     syncRibbonFromCore();
     syncRibbonGridControlState();

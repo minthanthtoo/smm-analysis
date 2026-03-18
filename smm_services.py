@@ -33,6 +33,38 @@ ALLOWED_USER_ROLES = {ROLE_OWNER, ROLE_RSM, ROLE_ASM, ROLE_USER}
 ALLOWED_VIEWER_ROLES = {"owner", "regional_manager", "rsm", "asm", "user"}
 ALL_REGION_TOKEN = "ALL"
 DEFAULT_REGION_TOKEN = "GLOBAL"
+REGION_ALIAS_TO_CANONICAL = {
+    # Treat MHL/MTL (and HTL legacy typo) as a shared scope bucket.
+    "MHL": "MTL",
+    "MTL": "MTL",
+    "HTL": "MTL",
+}
+SAMPLE_RSM_PER_REGION = 2
+SAMPLE_ASM_PER_REGION = 3
+SAMPLE_RSM_FRIENDLY_NAMES = (
+    "Aung Min",
+    "Thiri Win",
+    "Ko Ko Naing",
+    "Nandar Hla",
+    "Zin Mar",
+    "Ye Lin",
+    "Hnin Pwint",
+    "Soe Moe",
+)
+SAMPLE_ASM_FRIENDLY_NAMES = (
+    "May Thu",
+    "Kyaw Zin Tun",
+    "Ei Mon",
+    "Lin Htet Aung",
+    "Hsu Hlaing",
+    "Chan Myae",
+    "Moe Sat",
+    "Nyein Thu",
+    "Wai Yan",
+    "Thandar Aye",
+    "Phyo Min",
+    "Su Mon",
+)
 
 MONTH_LOOKUP = {
     name.lower(): idx
@@ -96,7 +128,12 @@ def normalize_token(value: Any) -> str:
 
 
 def canonical_sheet_name(sheet_name: str) -> str:
-    token = normalize_token(sheet_name)
+    raw_text = str(sheet_name or "").strip().lower()
+    # Treat MHL and MTL as interchangeable labels for canonical matching.
+    raw_text = re.sub(r"\bmhl\b", "mtl", raw_text)
+    token = normalize_token(raw_text)
+    if token.startswith("mhl"):
+        token = f"mtl{token[3:]}"
     return TOWNSHIP_ALIAS.get(token, token)
 
 
@@ -459,11 +496,18 @@ def normalize_display_name(raw_display_name: Any, fallback_username: str) -> str
     return re.sub(r"\s+", " ", display_name)
 
 
+def canonical_region_alias(token: str) -> str:
+    normalized = str(token or "").strip().upper()
+    if not normalized:
+        return ""
+    return REGION_ALIAS_TO_CANONICAL.get(normalized, normalized)
+
+
 def normalize_region_scope(raw_region: str | None) -> str:
     token = normalize_token(raw_region).upper()
     if not token or token in {"ALL", "ANY"}:
         return ALL_REGION_TOKEN
-    return token
+    return canonical_region_alias(token)
 
 
 def normalize_region_token(raw_region: Any) -> str:
@@ -472,7 +516,7 @@ def normalize_region_token(raw_region: Any) -> str:
         return DEFAULT_REGION_TOKEN
     if token in {"ALL", "ANY"}:
         return DEFAULT_REGION_TOKEN
-    return token
+    return canonical_region_alias(token)
 
 
 def infer_region_from_filename(path: Path) -> str:
@@ -489,7 +533,7 @@ def infer_region_from_filename(path: Path) -> str:
         cleaned = re.sub(r"[^A-Za-z0-9]+", "", token)
         if len(cleaned) < 2:
             continue
-        return cleaned.upper()
+        return canonical_region_alias(cleaned.upper())
     return DEFAULT_REGION_TOKEN
 
 
@@ -582,6 +626,104 @@ def default_access_control() -> dict[str, Any]:
         "user_to_rsm": {},
         "asm_townships": {},
     }
+
+
+def region_slug(region: str) -> str:
+    token = normalize_region_token(region)
+    slug = re.sub(r"[^a-z0-9]+", "", token.lower())
+    return slug or DEFAULT_REGION_TOKEN.lower()
+
+
+def ensure_sample_access_users(
+    access: dict[str, Any],
+    regions_universe: list[str],
+    region_townships: dict[str, list[str]],
+) -> bool:
+    changed = False
+    users = access.setdefault("users", {})
+    rsm_regions = access.setdefault("rsm_regions", {})
+    user_to_rsm = access.setdefault("user_to_rsm", {})
+    asm_townships = access.setdefault("asm_townships", {})
+
+    owner_record = ensure_access_user(access, "owner", role=ROLE_OWNER, display_name="Owner")
+    if owner_record.get("role") != ROLE_OWNER:
+        owner_record["role"] = ROLE_OWNER
+        changed = True
+
+    normalized_regions = [
+        normalize_region_token(region)
+        for region in (regions_universe or [])
+        if normalize_region_token(region) != ALL_REGION_TOKEN
+    ]
+    normalized_regions = [region for region in normalized_regions if region]
+    if not normalized_regions:
+        normalized_regions = [DEFAULT_REGION_TOKEN]
+
+    fallback_townships = normalize_township_list(
+        [
+            township
+            for townships in (region_townships or {}).values()
+            for township in (townships or [])
+        ]
+    )
+
+    for region in sorted(set(normalized_regions)):
+        slug = region_slug(region)
+        rsm_usernames: list[str] = []
+        for idx in range(1, SAMPLE_RSM_PER_REGION + 1):
+            username = f"sample_rsm_{slug}_{idx}"
+            friendly_name = SAMPLE_RSM_FRIENDLY_NAMES[(idx - 1) % len(SAMPLE_RSM_FRIENDLY_NAMES)]
+            display_name = f"{friendly_name} ({region} RSM {idx})"
+            existing = users.get(username)
+            ensure_access_user(access, username, role=ROLE_RSM, display_name=display_name)
+            users[username]["role"] = ROLE_RSM
+            if not isinstance(existing, dict) or existing.get("role") != ROLE_RSM:
+                changed = True
+            if users[username].get("display_name") != display_name:
+                users[username]["display_name"] = display_name
+                changed = True
+
+            assigned_regions = normalize_region_list(rsm_regions.get(username, []))
+            if region not in assigned_regions:
+                assigned_regions.append(region)
+                changed = True
+            if rsm_regions.get(username) != assigned_regions:
+                rsm_regions[username] = assigned_regions
+                changed = True
+            rsm_usernames.append(username)
+
+        if not rsm_usernames:
+            continue
+
+        canonical_townships = normalize_township_list(region_townships.get(region, []))
+        if not canonical_townships:
+            canonical_townships = fallback_townships
+        for idx in range(1, SAMPLE_ASM_PER_REGION + 1):
+            username = f"sample_asm_{slug}_{idx}"
+            friendly_name = SAMPLE_ASM_FRIENDLY_NAMES[(idx - 1) % len(SAMPLE_ASM_FRIENDLY_NAMES)]
+            display_name = f"{friendly_name} ({region} ASM {idx})"
+            manager_rsm = rsm_usernames[(idx - 1) % len(rsm_usernames)]
+            existing = users.get(username)
+            ensure_access_user(access, username, role=ROLE_ASM, display_name=display_name)
+            users[username]["role"] = ROLE_ASM
+            if not isinstance(existing, dict) or existing.get("role") != ROLE_ASM:
+                changed = True
+            if users[username].get("display_name") != display_name:
+                users[username]["display_name"] = display_name
+                changed = True
+
+            if user_to_rsm.get(username) != manager_rsm:
+                user_to_rsm[username] = manager_rsm
+                changed = True
+
+            if canonical_townships:
+                region_map = asm_townships.setdefault(username, {})
+                previous = normalize_township_list(region_map.get(region, []))
+                if previous != canonical_townships:
+                    region_map[region] = canonical_townships
+                    changed = True
+
+    return changed
 
 
 def load_access_control() -> dict[str, Any]:
@@ -716,7 +858,11 @@ def ensure_access_user(
 
 
 def all_known_regions(access: dict[str, Any], entries: list[dict[str, Any]]) -> list[str]:
-    regions = {str(entry["region"]) for entry in entries}
+    regions = {
+        normalize_region_token(entry.get("region"))
+        for entry in entries
+        if isinstance(entry, dict)
+    }
     for values in access.get("rsm_regions", {}).values():
         for region in values:
             regions.add(normalize_region_token(region))
@@ -765,13 +911,22 @@ def resolve_selected_region(
     allowed_regions: list[str],
     allow_all_regions: bool,
 ) -> str:
+    normalized_allowed: list[str] = []
+    seen: set[str] = set()
+    for region in allowed_regions or []:
+        token = normalize_region_token(region)
+        if not token or token in seen:
+            continue
+        seen.add(token)
+        normalized_allowed.append(token)
+
     requested = normalize_region_scope(requested_region)
     if allow_all_regions and requested == ALL_REGION_TOKEN:
         return ALL_REGION_TOKEN
-    if requested in allowed_regions:
+    if requested in normalized_allowed:
         return requested
-    if allowed_regions:
-        return allowed_regions[0]
+    if normalized_allowed:
+        return normalized_allowed[0]
     return ALL_REGION_TOKEN
 
 
@@ -800,6 +955,14 @@ def resolve_principal(
     requested_region: str | None = None,
 ) -> dict[str, Any]:
     access = load_access_control()
+    entries = discover_workbook_entries()
+    region_townships_all = collect_region_townships(entries)
+    regions_universe = all_known_regions(access, entries)
+    seeded = ensure_sample_access_users(access, regions_universe, region_townships_all)
+    if seeded:
+        save_access_control(access)
+        regions_universe = all_known_regions(access, entries)
+
     requested_username = normalize_username(requested_user) or "owner"
     users = access.get("users", {})
     if requested_username not in users:
@@ -807,8 +970,6 @@ def resolve_principal(
     user_record = users.get(requested_username, {})
     role = normalize_user_role(user_record.get("role"), default=ROLE_USER)
 
-    entries = discover_workbook_entries()
-    regions_universe = all_known_regions(access, entries)
     allowed_regions = derive_allowed_regions(access, requested_username, role, regions_universe)
     allow_all_regions = role == ROLE_OWNER
     selected_region = resolve_selected_region(
@@ -836,6 +997,7 @@ def resolve_principal(
         ),
         "access": access,
         "entries": entries,
+        "region_townships_all": region_townships_all,
         "regions_universe": regions_universe,
         "allowed_regions": allowed_regions,
         "selected_region": selected_region,
@@ -857,10 +1019,14 @@ def principal_from_request() -> dict[str, Any]:
 
 def principal_can_upload_to_region(principal: dict[str, Any], region: str) -> bool:
     role = principal["role"]
+    target_region = normalize_region_token(region)
     if role == ROLE_OWNER:
         return True
     if role == ROLE_RSM:
-        return region in set(principal.get("rsm_regions", []))
+        return target_region in {
+            normalize_region_token(item)
+            for item in principal.get("rsm_regions", [])
+        }
     return False
 
 
@@ -873,10 +1039,14 @@ def principal_can_manage_asm(principal: dict[str, Any]) -> bool:
 
 
 def principal_can_manage_region(principal: dict[str, Any], region: str) -> bool:
+    target_region = normalize_region_token(region)
     if principal["role"] == ROLE_OWNER:
         return True
     if principal["role"] == ROLE_RSM:
-        return region in set(principal.get("rsm_regions", []))
+        return target_region in {
+            normalize_region_token(item)
+            for item in principal.get("rsm_regions", [])
+        }
     return False
 
 
@@ -1020,10 +1190,17 @@ def resolve_workbook_pair(
             if region is not None
         }
         scoped_entries = [
-            entry for entry in entries if entry["region"] in allowed_region_set
+            entry
+            for entry in entries
+            if normalize_region_token(entry.get("region")) in allowed_region_set
         ]
 
-    available_regions = sorted({str(entry["region"]) for entry in scoped_entries})
+    available_regions = sorted(
+        {
+            normalize_region_token(entry.get("region"))
+            for entry in scoped_entries
+        }
+    )
     selected_region = resolve_selected_region(
         requested_region,
         available_regions,
@@ -1034,7 +1211,9 @@ def resolve_workbook_pair(
         visible_entries = scoped_entries
     else:
         visible_entries = [
-            entry for entry in scoped_entries if entry["region"] == selected_region
+            entry
+            for entry in scoped_entries
+            if normalize_region_token(entry.get("region")) == selected_region
         ]
 
     if not visible_entries:
@@ -1223,7 +1402,7 @@ def collect_region_townships(entries: list[dict[str, Any]]) -> dict[str, list[st
     region_map: dict[str, set[str]] = {}
     for entry in entries:
         path = entry["path"]
-        region = str(entry["region"])
+        region = normalize_region_token(entry.get("region"))
         try:
             stat = path.stat()
             parsed = parse_workbook_cached(str(path), stat.st_mtime_ns)
@@ -1281,6 +1460,11 @@ def users_visible_to_principal(principal: dict[str, Any]) -> list[dict[str, Any]
     return [user_summary(access, username)]
 
 
+def users_available_for_login(access: dict[str, Any]) -> list[dict[str, Any]]:
+    user_names = sorted(access.get("users", {}).keys())
+    return [user_summary(access, user_name) for user_name in user_names]
+
+
 def access_context_payload(principal: dict[str, Any]) -> dict[str, Any]:
     access = principal["access"]
     users = users_visible_to_principal(principal)
@@ -1301,7 +1485,9 @@ def access_context_payload(principal: dict[str, Any]) -> dict[str, Any]:
             allow_all_regions=False,
         )
 
-    region_townships_all = collect_region_townships(entries)
+    region_townships_all = principal.get("region_townships_all")
+    if not isinstance(region_townships_all, dict):
+        region_townships_all = collect_region_townships(entries)
     visible_region_townships = {
         region: region_townships_all.get(region, [])
         for region in region_options
@@ -1357,6 +1543,7 @@ def access_context_payload(principal: dict[str, Any]) -> dict[str, Any]:
     return {
         "current_user": user_summary(access, principal["username"]),
         "users": users,
+        "login_users": users_available_for_login(access),
         "regions": region_options,
         "all_regions": principal["regions_universe"],
         "selected_region": selected_region,

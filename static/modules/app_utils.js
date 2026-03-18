@@ -26,34 +26,44 @@
   }
 
   function sanitizeSheetTabs(tabs, allowedNames) {
-    const nameSet = new Set(
-      Array.isArray(allowedNames)
-        ? allowedNames.map((item) => normalizeSheetName(item)).filter(Boolean)
-        : [],
-    );
-    const useAllowedNames = nameSet.size > 0;
-    const normalized = [];
-    const seen = new Set();
+    const tabByName = new Map();
+    const fallbackOrder = [];
     for (const rawTab of Array.isArray(tabs) ? tabs : []) {
       if (!rawTab || typeof rawTab !== "object") {
         continue;
       }
       const sheetName = normalizeSheetName(rawTab.sheet_name);
-      if (!sheetName || seen.has(sheetName)) {
+      if (!sheetName || tabByName.has(sheetName)) {
         continue;
       }
-      if (useAllowedNames && !nameSet.has(sheetName)) {
+      tabByName.set(sheetName, rawTab);
+      fallbackOrder.push(sheetName);
+    }
+
+    const orderedAllowedNames = [];
+    const seenAllowed = new Set();
+    for (const item of Array.isArray(allowedNames) ? allowedNames : []) {
+      const sheetName = normalizeSheetName(item);
+      if (!sheetName || seenAllowed.has(sheetName)) {
         continue;
       }
-      seen.add(sheetName);
+      seenAllowed.add(sheetName);
+      orderedAllowedNames.push(sheetName);
+    }
+
+    const namesToRender = orderedAllowedNames.length ? orderedAllowedNames : fallbackOrder;
+    const normalized = [];
+    for (const sheetName of namesToRender) {
+      const rawTab = tabByName.get(sheetName);
       normalized.push({
         sheet_name: sheetName,
-        canonical: typeof rawTab.canonical === "string" && rawTab.canonical ? rawTab.canonical : null,
-        filterable: Boolean(rawTab.filterable),
-        has_reference: Boolean(rawTab.has_reference),
-        has_main: Boolean(rawTab.has_main),
+        canonical: rawTab && typeof rawTab.canonical === "string" && rawTab.canonical ? rawTab.canonical : null,
+        filterable: Boolean(rawTab && rawTab.filterable),
+        has_reference: Boolean(rawTab && rawTab.has_reference),
+        has_main: Boolean(rawTab && rawTab.has_main),
       });
     }
+
     return normalized;
   }
 
@@ -84,7 +94,16 @@
   }
 
   function regionLabel(region) {
-    return region === "ALL" ? "All regions" : region || "-";
+    const token = String(region || "")
+      .trim()
+      .toUpperCase();
+    if (token === "ALL") {
+      return "All regions";
+    }
+    if (token === "MHL" || token === "MTL" || token === "HTL") {
+      return "MHL / MTL";
+    }
+    return region || "-";
   }
 
   function escapeHtml(value) {
@@ -98,6 +117,14 @@
 
   function modeIsSameMonthYears(modeValue) {
     return modeValue === "same_month_years";
+  }
+
+  function modeIsMultiMonthYears(modeValue) {
+    return modeValue === "multi_month_years";
+  }
+
+  function modeUsesMonthSelector(modeValue) {
+    return modeIsSameMonthYears(modeValue) || modeIsMultiMonthYears(modeValue);
   }
 
   function currentN(inputElement) {
@@ -216,6 +243,8 @@
     regionLabel,
     escapeHtml,
     modeIsSameMonthYears,
+    modeIsMultiMonthYears,
+    modeUsesMonthSelector,
     currentN,
     hasAnyMetricValue,
     monthCoverageMap,

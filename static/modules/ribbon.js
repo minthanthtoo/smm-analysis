@@ -11,18 +11,34 @@
     if (!source || !target) {
       return;
     }
-    const selected = source.value;
+    const selectedValues = new Set(
+      Array.from(source.selectedOptions || [])
+        .map((option) => option.value)
+        .filter((value) => value !== ""),
+    );
+    const isMultiple = Boolean(source.multiple);
+    const sourceSize = Number.parseInt(source.getAttribute("size") || "", 10);
     target.innerHTML = "";
+    target.multiple = isMultiple;
+    if (Number.isFinite(sourceSize) && sourceSize > 1) {
+      target.setAttribute("size", String(sourceSize));
+    } else {
+      target.removeAttribute("size");
+    }
     for (const option of Array.from(source.options || [])) {
       const next = document.createElement("option");
       next.value = option.value;
       next.textContent = option.textContent;
+      next.selected = selectedValues.has(option.value);
       target.appendChild(next);
     }
-    if (selected && Array.from(target.options).some((option) => option.value === selected)) {
-      target.value = selected;
-    } else if (target.options.length) {
-      target.value = target.options[0].value;
+    if (!isMultiple) {
+      const selected = source.value;
+      if (selected && Array.from(target.options).some((option) => option.value === selected)) {
+        target.value = selected;
+      } else if (target.options.length) {
+        target.value = target.options[0].value;
+      }
     }
   }
 
@@ -456,6 +472,22 @@
         return;
       }
       ribbonControl.addEventListener("change", () => {
+        if (ribbonControl.multiple || coreControl.multiple) {
+          const selectedValues = new Set(Array.from(ribbonControl.selectedOptions || []).map((option) => option.value));
+          let changed = false;
+          for (const option of Array.from(coreControl.options || [])) {
+            const selected = selectedValues.has(option.value);
+            if (option.selected !== selected) {
+              option.selected = selected;
+              changed = true;
+            }
+          }
+          if (!changed) {
+            return;
+          }
+          triggerChange(coreControl);
+          return;
+        }
         if (coreControl.value === ribbonControl.value) {
           return;
         }

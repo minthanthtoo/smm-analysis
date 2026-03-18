@@ -239,6 +239,22 @@ def parse_clamped_int(raw_value: str | None, default: int, min_value: int, max_v
     return max(min_value, min(max_value, parsed))
 
 
+def parse_month_values_csv(month_values_csv: str | None) -> tuple[int, ...]:
+    if not month_values_csv:
+        return ()
+    month_values: set[int] = set()
+    for token in str(month_values_csv).split(","):
+        try:
+            month_value = int(token)
+        except (TypeError, ValueError):
+            continue
+        if 1 <= month_value <= 12:
+            month_values.add(month_value)
+    if not month_values:
+        return ()
+    return tuple(sorted(month_values))
+
+
 def points_to_css_px(points_value: Any, fallback_px: int | None = None) -> int | None:
     try:
         points = float(points_value)
@@ -376,6 +392,7 @@ def pick_month_keys_for_mode(
     mode: str,
     n_value: int,
     month_value: int | None,
+    month_values: tuple[int, ...] | None = None,
 ) -> list[str]:
     if not month_groups:
         return []
@@ -388,9 +405,27 @@ def pick_month_keys_for_mode(
         if month_value is None or month_value < 1 or month_value > 12:
             month_value = int(sorted_groups[-1]["month"])
         selected = [group for group in sorted_groups if int(group["month"]) == month_value]
+    elif mode == "multi_month_years":
+        valid_months = [
+            int(value)
+            for value in (month_values or ())
+            if isinstance(value, int) and 1 <= int(value) <= 12
+        ]
+        if not valid_months:
+            valid_months = [int(sorted_groups[-1]["month"])]
+
+        picked: list[dict[str, Any]] = []
+        for month in valid_months:
+            month_groups_for_value = [
+                group for group in sorted_groups if int(group["month"]) == month
+            ]
+            picked.extend(month_groups_for_value[-n_value:])
+        selected = sorted(picked, key=lambda item: item["key"])
 
     if not selected:
         return []
+    if mode == "multi_month_years":
+        return [item["key"] for item in selected]
     return [item["key"] for item in selected[-n_value:]]
 
 
@@ -403,6 +438,7 @@ def build_main_sheet_html_cached(
     mode: str,
     n_value: int,
     month_value: int,
+    month_values_csv: str = "",
 ) -> dict[str, Any]:
     workbook = load_workbook_cached(path_str, mtime_ns)
     worksheet = workbook[sheet_name]
@@ -428,6 +464,7 @@ def build_main_sheet_html_cached(
                 mode,
                 n_value,
                 month_value if month_value > 0 else None,
+                parse_month_values_csv(month_values_csv),
             )
 
         if not selected_month_keys:

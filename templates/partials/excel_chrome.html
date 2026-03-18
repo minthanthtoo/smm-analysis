@@ -21,6 +21,27 @@
               >
                 Expand detail pane
               </button>
+              <button
+                id="fullscreenToggleBtn"
+                type="button"
+                class="inline-help-btn fullscreen-toggle-btn"
+                aria-pressed="false"
+                title="Enter full screen"
+              >
+                Full screen
+              </button>
+              <label class="title-user-switch-wrap" for="titleUserSelect">
+                User
+                <select id="titleUserSelect" class="title-user-select" aria-label="Switch current user"></select>
+              </label>
+              <button
+                id="logoutCurrentUserBtn"
+                type="button"
+                class="inline-help-btn logout-current-user-btn"
+                title="Log out current user and switch to a lower-privilege user when available"
+              >
+                Log out
+              </button>
               <span class="excel-window-context">
                 Role: <strong id="viewerRoleName">Owner</strong> · Region: <strong id="regionName">All regions</strong>
               </span>
