@@ -1,5 +1,18 @@
 __pycache__/
 *.py[cod]
-uploads/
 ~$*.xlsx
 .DS_Store
+
+# Track Excel only in data/ and uploads/; ignore everywhere else.
+**/*.xlsx
+**/*.xlsm
+**/*.xltx
+**/*.xltm
+!data/**/*.xlsx
+!data/**/*.xlsm
+!data/**/*.xltx
+!data/**/*.xltm
+!uploads/**/*.xlsx
+!uploads/**/*.xlsm
+!uploads/**/*.xltx
+!uploads/**/*.xltm
