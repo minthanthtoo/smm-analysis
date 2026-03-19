@@ -308,10 +308,17 @@ function scrollToNode(node) {
     ribbonApi.scrollToNode(node);
     return;
   }
-  if (!node || typeof node.scrollIntoView !== "function") {
+  if (!node || !(node instanceof HTMLElement)) {
     return;
   }
-  node.scrollIntoView({ behavior: "smooth", block: "start" });
+  const cssValue = window.getComputedStyle(document.documentElement).getPropertyValue("--floating-top-total");
+  const fixedOffset = Number.parseFloat(String(cssValue || "").trim());
+  const topOffset = Number.isFinite(fixedOffset) && fixedOffset > 0 ? fixedOffset : 0;
+  const top = window.scrollY + node.getBoundingClientRect().top - topOffset - 10;
+  window.scrollTo({
+    top: Math.max(0, top),
+    behavior: "smooth",
+  });
 }
 
 async function refreshAllCommandData() {
@@ -843,6 +850,18 @@ function syncReferenceDrawerMode() {
   }
   syncSheetTabsDockVisibility();
   syncFloatingLayoutMetrics();
+}
+
+function ensureViewScopeVisible(scope) {
+  const normalized = normalizeViewScope(scope);
+  const drawerMode = document.body.classList.contains("detail-drawer-mode");
+  if (drawerMode) {
+    setReferenceDrawerExpanded(normalized === "reference");
+    return;
+  }
+  if (normalized === "reference" && state.desktopDetailCollapsed) {
+    setDesktopDetailCollapsed(false);
+  }
 }
 
 function resizeViewsSplitFromClientX(clientX) {
@@ -1957,6 +1976,7 @@ function unwrapSplitViewport(table) {
 
 async function onMainTabChange(sheetName) {
   setActiveViewScope("main");
+  ensureViewScopeVisible("main");
   state.selectedMainSheetName = sheetName;
   state.mainStyledRequestKey = null;
 
@@ -2177,11 +2197,7 @@ function rebuildMainTabs(preferredSheetName) {
 
 async function onReferenceTabChange(sheetName) {
   setActiveViewScope("reference");
-  if (document.body.classList.contains("detail-drawer-mode")) {
-    setReferenceDrawerExpanded(true);
-  } else if (state.desktopDetailCollapsed) {
-    setDesktopDetailCollapsed(false);
-  }
+  ensureViewScopeVisible("reference");
   state.selectedReferenceSheetName = sheetName;
   const tabMeta = getReferenceTabMeta(sheetName);
   state.selectedRefCanonical = tabMeta ? tabMeta.canonical : null;
@@ -3570,6 +3586,42 @@ function effectiveFreezeForScope(scope, defaultFrozenCols = 0, defaultFrozenRows
   };
 }
 
+function normalizeFreezeBoundariesAgainstMergedCells(table, requestedCols, requestedRows) {
+  let cols = Math.max(0, Number.parseInt(String(requestedCols || 0), 10) || 0);
+  let rows = Math.max(0, Number.parseInt(String(requestedRows || 0), 10) || 0);
+  if (!table || (cols < 1 && rows < 1)) {
+    return { cols, rows };
+  }
+
+  annotateSelectionGridForTable(table);
+  const cells = Array.from(table.querySelectorAll("th, td"));
+
+  const boundaryCrossesMergedCell = (boundary, axis) => {
+    for (const cell of cells) {
+      const startKey = axis === "col" ? "gridColStart" : "gridRow";
+      const endKey = axis === "col" ? "gridColEnd" : "gridRowEnd";
+      const start = Number.parseInt(cell.dataset[startKey] || "", 10);
+      const end = Number.parseInt(cell.dataset[endKey] || "", 10);
+      if (!Number.isFinite(start) || !Number.isFinite(end)) {
+        continue;
+      }
+      if (start < boundary && end >= boundary) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  while (cols > 0 && boundaryCrossesMergedCell(cols, "col")) {
+    cols -= 1;
+  }
+  while (rows > 0 && boundaryCrossesMergedCell(rows, "row")) {
+    rows -= 1;
+  }
+
+  return { cols, rows };
+}
+
 function normalizedFreezeForTable(table, requestedCols, requestedRows, options = {}) {
   const totalCols = annotateCellGrid(table);
   const totalRows = Array.from(table.rows || []).length;
@@ -3604,6 +3656,10 @@ function normalizedFreezeForTable(table, requestedCols, requestedRows, options =
       cols = softMaxCols;
     }
   }
+
+  const safeFreeze = normalizeFreezeBoundariesAgainstMergedCells(table, cols, rows);
+  cols = safeFreeze.cols;
+  rows = safeFreeze.rows;
 
   return { cols, rows };
 }

@@ -18,6 +18,7 @@ from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
 
 ROOT_DIR = Path(__file__).resolve().parent
+DATA_DIR = ROOT_DIR / "data"
 UPLOAD_DIR = ROOT_DIR / "uploads"
 WORKBOOK_REGISTRY_PATH = UPLOAD_DIR / "workbook_registry.json"
 ACCESS_CONTROL_PATH = UPLOAD_DIR / "access_control.json"
@@ -49,8 +50,9 @@ FILE_VIEW_MODES = {
     FILE_VIEW_MODE_DETAIL,
     FILE_VIEW_MODE_BOTH,
 }
-SAMPLE_RSM_PER_REGION = 2
-SAMPLE_ASM_PER_REGION = 3
+SAMPLE_RSM_PER_REGION = 1
+SAMPLE_ASM_MIN_PER_RSM = 2
+SAMPLE_ASM_MAX_PER_RSM = 3
 SAMPLE_RSM_FRIENDLY_NAMES = (
     "Aung Min",
     "Thiri Win",
@@ -684,6 +686,59 @@ def region_slug(region: str) -> str:
     return slug or DEFAULT_REGION_TOKEN.lower()
 
 
+def sample_asm_count_for_region(townships: list[str]) -> int:
+    # Keep 2-3 ASMs per RSM; larger township sets receive 3.
+    total = len(normalize_township_list(townships))
+    if total >= 6:
+        return SAMPLE_ASM_MAX_PER_RSM
+    return SAMPLE_ASM_MIN_PER_RSM
+
+
+def distribute_sample_townships_to_asms(
+    townships: list[str],
+    asm_count: int,
+) -> list[list[str]]:
+    canonical = normalize_township_list(townships)
+    target_count = max(0, int(asm_count or 0))
+    if target_count < 1:
+        return []
+    if not canonical:
+        return [[] for _ in range(target_count)]
+
+    total = len(canonical)
+    if total == 1:
+        return [canonical[:] for _ in range(target_count)]
+
+    if total >= target_count * 2:
+        # Prefer disjoint contiguous chunks when enough townships exist.
+        base = total // target_count
+        remainder = total % target_count
+        assignments: list[list[str]] = []
+        cursor = 0
+        for idx in range(target_count):
+            width = base + (1 if idx < remainder else 0)
+            width = max(2, width)
+            chunk = canonical[cursor : cursor + width]
+            cursor += width
+            if not chunk:
+                chunk = canonical[-2:]
+            assignments.append(normalize_township_list(chunk))
+        return assignments
+
+    # Not enough distinct townships for fully disjoint groups: create overlapping windows
+    # so each ASM still handles multiple townships.
+    window_size = min(total, max(2, (total + target_count - 1) // target_count))
+    assignments = []
+    for idx in range(target_count):
+        start = (idx * total) // target_count
+        chunk = [
+            canonical[(start + offset) % total]
+            for offset in range(window_size)
+        ]
+        assignments.append(normalize_township_list(chunk))
+    return assignments
+
+
 def ensure_sample_access_users(
     access: dict[str, Any],
     regions_universe: list[str],
@@ -699,6 +754,30 @@ def ensure_sample_access_users(
     if owner_record.get("role") != ROLE_OWNER:
         owner_record["role"] = ROLE_OWNER
         changed = True
+
+    def remove_access_user(username: str) -> None:
+        nonlocal changed
+        normalized_username = normalize_username(username)
+        if not normalized_username or normalized_username == "owner":
+            return
+
+        if normalized_username in users:
+            users.pop(normalized_username, None)
+            changed = True
+        if normalized_username in rsm_regions:
+            rsm_regions.pop(normalized_username, None)
+            changed = True
+        if normalized_username in asm_townships:
+            asm_townships.pop(normalized_username, None)
+            changed = True
+        if normalized_username in user_to_rsm:
+            user_to_rsm.pop(normalized_username, None)
+            changed = True
+
+        for candidate, manager in list(user_to_rsm.items()):
+            if normalize_username(manager) == normalized_username:
+                user_to_rsm.pop(candidate, None)
+                changed = True
 
     normalized_regions = [
         normalize_region_token(region)
@@ -717,9 +796,42 @@ def ensure_sample_access_users(
         ]
     )
 
+    expected_region_slugs = {
+        region_slug(region)
+        for region in set(normalized_regions)
+    }
+    candidate_usernames = (
+        set(users.keys())
+        | set(rsm_regions.keys())
+        | set(user_to_rsm.keys())
+        | set(asm_townships.keys())
+    )
+    sample_username_re = re.compile(r"^sample_(?:rsm|asm)_([a-z0-9]+)_(\d+)$")
+    for candidate in list(candidate_usernames):
+        match = sample_username_re.match(candidate)
+        if not match:
+            continue
+        if match.group(1) not in expected_region_slugs:
+            remove_access_user(candidate)
+
     for region in sorted(set(normalized_regions)):
         slug = region_slug(region)
         rsm_usernames: list[str] = []
+
+        rsm_prefix = f"sample_rsm_{slug}_"
+        candidate_usernames = (
+            set(users.keys())
+            | set(rsm_regions.keys())
+            | set(user_to_rsm.keys())
+            | set(asm_townships.keys())
+        )
+        for candidate in list(candidate_usernames):
+            if not candidate.startswith(rsm_prefix):
+                continue
+            suffix = candidate[len(rsm_prefix) :]
+            if suffix.isdigit() and int(suffix) > SAMPLE_RSM_PER_REGION:
+                remove_access_user(candidate)
+
         for idx in range(1, SAMPLE_RSM_PER_REGION + 1):
             username = f"sample_rsm_{slug}_{idx}"
             friendly_name = SAMPLE_RSM_FRIENDLY_NAMES[(idx - 1) % len(SAMPLE_RSM_FRIENDLY_NAMES)]
@@ -733,12 +845,12 @@ def ensure_sample_access_users(
                 users[username]["display_name"] = display_name
                 changed = True
 
-            assigned_regions = normalize_region_list(rsm_regions.get(username, []))
-            if region not in assigned_regions:
-                assigned_regions.append(region)
-                changed = True
+            assigned_regions = [region]
             if rsm_regions.get(username) != assigned_regions:
                 rsm_regions[username] = assigned_regions
+                changed = True
+            if username in user_to_rsm:
+                user_to_rsm.pop(username, None)
                 changed = True
             rsm_usernames.append(username)
 
@@ -748,7 +860,28 @@ def ensure_sample_access_users(
         canonical_townships = normalize_township_list(region_townships.get(region, []))
         if not canonical_townships:
             canonical_townships = fallback_townships
-        for idx in range(1, SAMPLE_ASM_PER_REGION + 1):
+
+        asm_target_count = sample_asm_count_for_region(canonical_townships)
+        asm_prefix = f"sample_asm_{slug}_"
+        candidate_usernames = (
+            set(users.keys())
+            | set(rsm_regions.keys())
+            | set(user_to_rsm.keys())
+            | set(asm_townships.keys())
+        )
+        for candidate in list(candidate_usernames):
+            if not candidate.startswith(asm_prefix):
+                continue
+            suffix = candidate[len(asm_prefix) :]
+            if suffix.isdigit() and int(suffix) > asm_target_count:
+                remove_access_user(candidate)
+
+        asm_township_groups = distribute_sample_townships_to_asms(
+            canonical_townships,
+            asm_target_count,
+        )
+
+        for idx in range(1, asm_target_count + 1):
             username = f"sample_asm_{slug}_{idx}"
             friendly_name = SAMPLE_ASM_FRIENDLY_NAMES[(idx - 1) % len(SAMPLE_ASM_FRIENDLY_NAMES)]
             display_name = f"{friendly_name} ({region} ASM {idx})"
@@ -766,12 +899,23 @@ def ensure_sample_access_users(
                 user_to_rsm[username] = manager_rsm
                 changed = True
 
-            if canonical_townships:
-                region_map = asm_townships.setdefault(username, {})
-                previous = normalize_township_list(region_map.get(region, []))
-                if previous != canonical_townships:
-                    region_map[region] = canonical_townships
-                    changed = True
+            assigned_townships = (
+                asm_township_groups[idx - 1]
+                if idx - 1 < len(asm_township_groups)
+                else canonical_townships
+            )
+            normalized_region_map = {
+                region: normalize_township_list(assigned_townships)
+            }
+            previous_region_map = asm_townships.get(username, {})
+            if (
+                not isinstance(previous_region_map, dict)
+                or previous_region_map.keys() != normalized_region_map.keys()
+                or normalize_township_list(previous_region_map.get(region, []))
+                != normalized_region_map[region]
+            ):
+                asm_townships[username] = normalized_region_map
+                changed = True
 
     return changed
 
@@ -1157,9 +1301,13 @@ def discover_workbook_entries() -> list[dict[str, Any]]:
     registry = load_workbook_registry()
     entries: list[dict[str, Any]] = []
     seen_names: set[str] = set()
-    search_dirs = [ROOT_DIR]
+    # Prefer data/ as the canonical workbook source, then uploads/, then legacy root files.
+    search_dirs: list[Path] = []
+    if DATA_DIR.exists():
+        search_dirs.append(DATA_DIR)
     if UPLOAD_DIR.exists():
         search_dirs.append(UPLOAD_DIR)
+    search_dirs.append(ROOT_DIR)
 
     for folder in search_dirs:
         for path in folder.iterdir():

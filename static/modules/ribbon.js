@@ -420,11 +420,55 @@
     queueRibbonPanelScrollerSync(el);
   }
 
-  function scrollToNode(node) {
-    if (!node || typeof node.scrollIntoView !== "function") {
+  function floatingTopOffset() {
+    const root = document.documentElement;
+    if (!root) {
+      return 0;
+    }
+    const cssValue = window.getComputedStyle(root).getPropertyValue("--floating-top-total");
+    const numeric = Number.parseFloat(String(cssValue || "").trim());
+    return Number.isFinite(numeric) && numeric > 0 ? numeric : 0;
+  }
+
+  function scrollRibbonPanelToNode(panel, node) {
+    if (!panel || !node) {
       return;
     }
-    node.scrollIntoView({ behavior: "smooth", block: "start" });
+    const panelRect = panel.getBoundingClientRect();
+    const nodeRect = node.getBoundingClientRect();
+    const currentLeft = panel.scrollLeft;
+    const targetLeft = currentLeft + (nodeRect.left - panelRect.left) - 16;
+    const maxLeft = Math.max(0, panel.scrollWidth - panel.clientWidth);
+    const clampedLeft = Math.min(maxLeft, Math.max(0, targetLeft));
+    panel.scrollTo({
+      left: clampedLeft,
+      behavior: "smooth",
+    });
+  }
+
+  function scrollWindowToNode(node) {
+    if (!node) {
+      return;
+    }
+    const fixedOffset = floatingTopOffset();
+    const rect = node.getBoundingClientRect();
+    const top = window.scrollY + rect.top - fixedOffset - 10;
+    window.scrollTo({
+      top: Math.max(0, top),
+      behavior: "smooth",
+    });
+  }
+
+  function scrollToNode(node) {
+    if (!node || !(node instanceof HTMLElement)) {
+      return;
+    }
+    const ribbonPanel = node.closest(".ribbon-panel");
+    if (ribbonPanel instanceof HTMLElement) {
+      scrollRibbonPanelToNode(ribbonPanel, node);
+      return;
+    }
+    scrollWindowToNode(node);
   }
 
   function bindRibbonTabEvents({ el, state, setRibbonTab, setRibbonCollapsed }) {
