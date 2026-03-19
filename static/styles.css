@@ -1118,8 +1118,84 @@ body.detail-drawer-mode #referenceViewPanel:not(.drawer-expanded) .drawer-body {
   color: var(--muted);
 }
 
+.files-manager-launch-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.files-manager-launch-head h2 {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.2;
+}
+
+.files-manager-summary {
+  margin: 2px 0 0;
+  font-size: 0.74rem;
+  line-height: 1.35;
+  color: var(--muted);
+  font-family: "IBM Plex Mono", monospace;
+}
+
 .files-table-wrap {
   margin-top: 6px;
+}
+
+.files-manager-modal-card {
+  width: min(1100px, 96vw);
+  max-height: min(88vh, 860px);
+  padding: 12px;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 10px;
+}
+
+.files-manager-modal-head {
+  align-items: flex-start;
+}
+
+.files-manager-head-content {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.files-manager-modal-description {
+  margin: 0;
+  font-size: 0.79rem;
+  color: var(--muted);
+}
+
+.files-manager-head-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.files-manager-modal-body {
+  margin-top: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.files-manager-table-wrap {
+  margin-top: 0;
+  max-height: none;
+  height: 100%;
+  border-radius: 10px;
+}
+
+.files-manager-table-wrap .files-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.files-manager-modal-actions {
+  margin-top: 0;
 }
 
 .files-table {
@@ -1162,6 +1238,27 @@ body.detail-drawer-mode #referenceViewPanel:not(.drawer-expanded) .drawer-body {
 .files-table td {
   vertical-align: middle;
   line-height: 1.2;
+}
+
+@media (max-width: 900px) {
+  .files-manager-modal-card {
+    width: min(98vw, 98vw);
+    max-height: min(92vh, 92vh);
+    padding: 10px;
+  }
+
+  .files-manager-modal-head {
+    flex-wrap: wrap;
+  }
+
+  .files-manager-head-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .files-manager-table-wrap .files-table {
+    min-width: 700px;
+  }
 }
 
 .file-inline-control {
@@ -3355,6 +3452,42 @@ body.excel-window .modal-close {
   color: var(--theme-modal-close-text);
 }
 
+body.excel-window .files-manager-modal-head {
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--theme-modal-border);
+}
+
+body.excel-window .files-manager-modal-description {
+  color: var(--theme-modal-text);
+  opacity: 0.86;
+}
+
+body.excel-window .files-manager-table-wrap {
+  border-color: var(--theme-table-border);
+  background: var(--theme-table-wrap-bg);
+}
+
+body.excel-window .files-manager-table-wrap .files-table {
+  background: var(--theme-table-bg);
+}
+
+body.excel-window .files-manager-table-wrap .files-table th,
+body.excel-window .files-manager-table-wrap .files-table td {
+  border-color: var(--theme-table-border);
+  color: var(--theme-table-text);
+}
+
+body.excel-window .files-manager-table-wrap .files-table thead th {
+  background: var(--theme-table-head-bg);
+  color: var(--theme-table-head-text);
+  border-color: var(--theme-table-head-border);
+}
+
+body.excel-window .files-manager-modal-actions {
+  border-top: 1px solid var(--theme-modal-border);
+  padding-top: 8px;
+}
+
 body.excel-window .permission-table-wrap {
   border-color: var(--theme-modal-border);
 }
@@ -4165,10 +4298,26 @@ body.excel-window #ribbonRoot [data-ribbon-panel="files"] .files-upload-group {
   max-width: 450px;
 }
 
-body.excel-window #ribbonRoot [data-ribbon-panel="files"] .files-list-group {
+body.excel-window #ribbonRoot [data-ribbon-panel="files"] .files-manager-launch-group {
   flex: 1 1 auto;
-  min-width: 740px;
+  min-width: 420px;
   max-width: none;
+  justify-content: flex-start;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="files"] .files-manager-launch-head h2 {
+  color: var(--theme-ribbon-button-text);
+  font-family: "Segoe UI", "Calibri", sans-serif;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="files"] .files-manager-launch-group .action-btn {
+  min-width: 120px;
+}
+
+body.excel-window #ribbonRoot [data-ribbon-panel="files"] .files-manager-summary {
+  color: var(--theme-ribbon-group-label);
 }
 
 body.excel-window #ribbonRoot [data-ribbon-panel="files"] .ribbon-grid {
@@ -4193,11 +4342,6 @@ body.excel-window #ribbonRoot [data-ribbon-panel="files"] .ribbon-grid > .upload
   min-width: 0;
 }
 
-body.excel-window #ribbonRoot [data-ribbon-panel="files"] .files-table-wrap {
-  margin-top: 4px;
-  max-height: calc(var(--ribbon-panel-fixed-height) - 56px);
-}
-
 body.excel-window #ribbonRoot [data-ribbon-panel="files"] input[type="file"] {
   padding: 3px 4px;
   font-size: 0.72rem;
@@ -4214,12 +4358,12 @@ body.excel-window #ribbonRoot [data-ribbon-panel="files"] input[type="file"]::fi
   font-family: "Segoe UI", "Calibri", sans-serif;
 }
 
-body.excel-window #ribbonRoot [data-ribbon-panel="files"] .files-table .action-btn-sm {
+body.excel-window .files-manager-table-wrap .files-table .action-btn-sm {
   min-width: 74px;
   padding: 5px 8px;
 }
 
-body.excel-window #ribbonRoot [data-ribbon-panel="files"] .file-action-cell {
+body.excel-window .files-manager-table-wrap .file-action-cell {
   gap: 6px;
 }
 

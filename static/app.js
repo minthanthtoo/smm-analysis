@@ -531,6 +531,16 @@ function setRoleInfoTriggerExpanded(expanded) {
   }
 }
 
+function setFilesManagerTriggerExpanded(expanded) {
+  const value = expanded ? "true" : "false";
+  if (el.openFilesManagerBtn) {
+    el.openFilesManagerBtn.setAttribute("aria-expanded", value);
+  }
+  if (el.ribbonGoFilesBtn) {
+    el.ribbonGoFilesBtn.setAttribute("aria-expanded", value);
+  }
+}
+
 function getRoleInfoModalFocusables() {
   if (!el.roleInfoModal) {
     return [];
@@ -540,6 +550,23 @@ function getRoleInfoModalFocusables() {
       "button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])",
     ),
   ).filter((node) => !node.hasAttribute("disabled") && node.getAttribute("aria-hidden") !== "true");
+}
+
+function getFilesManagerModalFocusables() {
+  if (!el.filesManagerModal) {
+    return [];
+  }
+  return Array.from(
+    el.filesManagerModal.querySelectorAll(
+      "button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])",
+    ),
+  ).filter((node) => !node.hasAttribute("disabled") && node.getAttribute("aria-hidden") !== "true");
+}
+
+function syncModalOpenState() {
+  const roleInfoOpen = Boolean(el.roleInfoModal && !el.roleInfoModal.hidden);
+  const filesManagerOpen = Boolean(el.filesManagerModal && !el.filesManagerModal.hidden);
+  document.body.classList.toggle("modal-open", roleInfoOpen || filesManagerOpen);
 }
 
 function setModalOpen(open, triggerElement = null) {
@@ -553,7 +580,7 @@ function setModalOpen(open, triggerElement = null) {
     el.roleInfoModal.hidden = false;
     el.roleInfoModal.setAttribute("aria-hidden", "false");
     setRoleInfoTriggerExpanded(true);
-    document.body.classList.add("modal-open");
+    syncModalOpenState();
     const focusTarget =
       el.roleInfoCloseBtn ||
       el.roleInfoDoneBtn ||
@@ -568,9 +595,47 @@ function setModalOpen(open, triggerElement = null) {
   el.roleInfoModal.hidden = true;
   el.roleInfoModal.setAttribute("aria-hidden", "true");
   setRoleInfoTriggerExpanded(false);
-  document.body.classList.remove("modal-open");
+  syncModalOpenState();
   const returnTarget = state.modalReturnFocus;
   state.modalReturnFocus = null;
+  if (returnTarget && document.contains(returnTarget)) {
+    window.requestAnimationFrame(() => {
+      returnTarget.focus();
+    });
+  }
+}
+
+function setFilesManagerModalOpen(open, triggerElement = null) {
+  if (!el.filesManagerModal) {
+    return;
+  }
+  if (open) {
+    const activeElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    state.filesManagerModalReturnFocus =
+      triggerElement instanceof HTMLElement
+        ? triggerElement
+        : activeElement || state.filesManagerModalReturnFocus;
+    el.filesManagerModal.hidden = false;
+    el.filesManagerModal.setAttribute("aria-hidden", "false");
+    setFilesManagerTriggerExpanded(true);
+    syncModalOpenState();
+    const focusTarget =
+      el.filesManagerCloseBtn ||
+      el.filesManagerDoneBtn ||
+      el.filesManagerModal.querySelector(".modal-card");
+    if (focusTarget && typeof focusTarget.focus === "function") {
+      window.requestAnimationFrame(() => {
+        focusTarget.focus();
+      });
+    }
+    return;
+  }
+  el.filesManagerModal.hidden = true;
+  el.filesManagerModal.setAttribute("aria-hidden", "true");
+  setFilesManagerTriggerExpanded(false);
+  syncModalOpenState();
+  const returnTarget = state.filesManagerModalReturnFocus;
+  state.filesManagerModalReturnFocus = null;
   if (returnTarget && document.contains(returnTarget)) {
     window.requestAnimationFrame(() => {
       returnTarget.focus();
@@ -1011,6 +1076,7 @@ function setInteractiveControlsDisabled(disabled) {
     el.ribbonUploadInput,
     el.ribbonUploadRegionInput,
     el.ribbonUploadBtn,
+    el.openFilesManagerBtn,
     el.ribbonFreezePanesBtn,
     el.ribbonFreezeTopRowBtn,
     el.ribbonFreezeFirstColBtn,
@@ -1722,11 +1788,30 @@ function filesEditableRegionOptions() {
   return state.regions;
 }
 
+function updateFilesManagerSummary(files = state.fileRows) {
+  if (!el.filesManagerSummary) {
+    return;
+  }
+  const rows = Array.isArray(files) ? files : [];
+  if (!rows.length) {
+    setText(el.filesManagerSummary, "No files loaded.");
+    return;
+  }
+  const mainCount = rows.reduce((count, file) => count + (file.main_enabled !== false ? 1 : 0), 0);
+  const detailCount = rows.reduce((count, file) => count + (file.detail_enabled !== false ? 1 : 0), 0);
+  const editableCount = rows.reduce((count, file) => count + (file.can_update || file.can_delete ? 1 : 0), 0);
+  setText(
+    el.filesManagerSummary,
+    `${rows.length} file(s) loaded · Main ${mainCount} · Detail ${detailCount} · Editable ${editableCount}`,
+  );
+}
+
 function renderFilesTable() {
+  const files = Array.isArray(state.fileRows) ? state.fileRows : [];
+  updateFilesManagerSummary(files);
   if (!el.filesTableBody) {
     return;
   }
-  const files = Array.isArray(state.fileRows) ? state.fileRows : [];
   if (!files.length) {
     el.filesTableBody.innerHTML =
       '<tr><td colspan="4" class="empty">No files found in this scope.</td></tr>';
@@ -2471,6 +2556,7 @@ function applySheetsPayload(payload) {
   const changed = previousVersion !== state.pairVersion;
   if (changed) {
     state.mainStyledRequestKey = null;
+    state.referenceStyledRequestKey = null;
     state.mainAvailableMonths.clear();
     state.collapsedRowGroups.clear();
   }
@@ -3201,6 +3287,7 @@ function enhanceFrozenViewport(scope, table, frozenCount, frozenRows) {
     return;
   }
 
+  const normalizedScope = normalizeViewScope(scope);
   const normalizedTable = unwrapSplitViewport(table);
   normalizedTable.dataset.selectionColOffset = "0";
   const wrap = tableWrapFor(normalizedTable);
@@ -3226,7 +3313,9 @@ function enhanceFrozenViewport(scope, table, frozenCount, frozenRows) {
   const clampedFrozenCols = hasFrozenCols ? Math.min(Math.max(1, frozenCount), totalCols) : 0;
   const clampedFrozenRows = hasFrozenRows ? Math.min(Math.max(1, frozenRows), totalRows) : 0;
   const widths = measureColumnWidths(normalizedTable, totalCols);
-  if (shouldSplitFrozenViewport(normalizedTable, clampedFrozenCols, widths, totalCols, clampedFrozenRows)) {
+  // Detail view is more stable with single-table sticky freeze than split panes.
+  const canUseSplitViewport = normalizedScope === "main";
+  if (canUseSplitViewport && shouldSplitFrozenViewport(normalizedTable, clampedFrozenCols, widths, totalCols, clampedFrozenRows)) {
     const applied = applySplitViewport(normalizedTable, clampedFrozenCols, totalCols, widths);
     if (applied) {
       return;
@@ -3557,6 +3646,8 @@ function viewLayoutForScope(scope) {
       columnWidths: {},
       hiddenRows: new Set(),
       hiddenCols: new Set(),
+      freezeViewportRowStart: null,
+      freezeViewportColStart: null,
     };
   }
   const viewLayout = state.viewLayoutOverrides[normalized];
@@ -3572,6 +3663,12 @@ function viewLayoutForScope(scope) {
   if (!(viewLayout.hiddenCols instanceof Set)) {
     viewLayout.hiddenCols = new Set();
   }
+  const freezeViewportRowStart = Number.parseInt(String(viewLayout.freezeViewportRowStart ?? ""), 10);
+  viewLayout.freezeViewportRowStart =
+    Number.isFinite(freezeViewportRowStart) && freezeViewportRowStart > 0 ? freezeViewportRowStart : null;
+  const freezeViewportColStart = Number.parseInt(String(viewLayout.freezeViewportColStart ?? ""), 10);
+  viewLayout.freezeViewportColStart =
+    Number.isFinite(freezeViewportColStart) && freezeViewportColStart > 0 ? freezeViewportColStart : null;
   viewLayout.columnWidths = normalizeColumnWidthMap(viewLayout.columnWidths);
   return viewLayout;
 }
@@ -3676,12 +3773,17 @@ function primaryTableForScope(scope) {
   return wrap.querySelector("table");
 }
 
-function isColumnRangeFullyHidden(hiddenCols, startCol, endCol) {
-  if (!(hiddenCols instanceof Set) || hiddenCols.size === 0) {
+function isColumnRangeFullyHidden(hiddenCols, startCol, endCol, freezeViewportColStart = null) {
+  const hasManualHiddenCols = hiddenCols instanceof Set && hiddenCols.size > 0;
+  const freezeColStart = Number.parseInt(String(freezeViewportColStart ?? ""), 10);
+  const hasFreezeWindowCols = Number.isFinite(freezeColStart) && freezeColStart > 0;
+  if (!hasManualHiddenCols && !hasFreezeWindowCols) {
     return false;
   }
   for (let col = startCol; col <= endCol; col += 1) {
-    if (!hiddenCols.has(col)) {
+    const manuallyHidden = hasManualHiddenCols && hiddenCols.has(col);
+    const frozenWindowHidden = hasFreezeWindowCols && col < freezeColStart;
+    if (!manuallyHidden && !frozenWindowHidden) {
       return false;
     }
   }
@@ -3693,6 +3795,10 @@ function applyScopeVisibilityOverrides(scope) {
   const viewLayout = viewLayoutForScope(normalized);
   const hiddenRows = viewLayout.hiddenRows;
   const hiddenCols = viewLayout.hiddenCols;
+  const freezeViewportRowStart = Number.parseInt(String(viewLayout.freezeViewportRowStart ?? ""), 10);
+  const freezeViewportColStart = Number.parseInt(String(viewLayout.freezeViewportColStart ?? ""), 10);
+  const hasFreezeViewportRows = Number.isFinite(freezeViewportRowStart) && freezeViewportRowStart > 0;
+  const hasFreezeViewportCols = Number.isFinite(freezeViewportColStart) && freezeViewportColStart > 0;
 
   for (const table of tablesForScope(normalized)) {
     annotateSelectionGridForTable(table);
@@ -3700,7 +3806,7 @@ function applyScopeVisibilityOverrides(scope) {
     const rows = Array.from(table.rows || []);
     for (let rowIndex = 0; rowIndex < rows.length; rowIndex += 1) {
       const row = rows[rowIndex];
-      const shouldHideRow = hiddenRows.has(rowIndex);
+      const shouldHideRow = hiddenRows.has(rowIndex) || (hasFreezeViewportRows && rowIndex < freezeViewportRowStart);
       if (shouldHideRow) {
         row.dataset.contextHiddenRow = "true";
         row.style.display = "none";
@@ -3714,7 +3820,8 @@ function applyScopeVisibilityOverrides(scope) {
       const colStart = Number.parseInt(cell.dataset.gridColStart || "", 10);
       const colEnd = Number.parseInt(cell.dataset.gridColEnd || "", 10);
       const hasColRange = Number.isFinite(colStart) && Number.isFinite(colEnd) && colStart >= 0 && colEnd >= colStart;
-      const shouldHideCol = hasColRange && isColumnRangeFullyHidden(hiddenCols, colStart, colEnd);
+      const shouldHideCol =
+        hasColRange && isColumnRangeFullyHidden(hiddenCols, colStart, colEnd, hasFreezeViewportCols ? freezeViewportColStart : null);
       if (shouldHideCol) {
         cell.dataset.contextHiddenCol = "true";
         cell.style.display = "none";
@@ -5352,6 +5459,101 @@ function sortedContextColumnIndices(scope) {
   return point ? [point.col] : [];
 }
 
+function cellIntersectsViewport(cell, viewportRect) {
+  if (!(cell instanceof HTMLElement) || !viewportRect) {
+    return false;
+  }
+  const rect = cell.getBoundingClientRect();
+  return (
+    rect.right > viewportRect.left &&
+    rect.left < viewportRect.right &&
+    rect.bottom > viewportRect.top &&
+    rect.top < viewportRect.bottom
+  );
+}
+
+function freezeViewportOriginForScope(scope, fallbackPoint = null) {
+  const normalized = normalizeViewScope(scope);
+  const wrap = tableWrapForScope(normalized);
+  if (!(wrap instanceof HTMLElement)) {
+    return {
+      row: Math.max(0, Number.parseInt(String(fallbackPoint && fallbackPoint.row), 10) || 0),
+      col: Math.max(0, Number.parseInt(String(fallbackPoint && fallbackPoint.col), 10) || 0),
+    };
+  }
+
+  const wrapRect = wrap.getBoundingClientRect();
+  const viewportRect = {
+    left: wrapRect.left + 1,
+    top: wrapRect.top + 1,
+    right: wrapRect.right - 1,
+    bottom: wrapRect.bottom - 1,
+  };
+
+  let minVisibleRow = Number.POSITIVE_INFINITY;
+  let minVisibleCol = Number.POSITIVE_INFINITY;
+  for (const table of tablesForScope(normalized)) {
+    annotateSelectionGridForTable(table);
+    for (const cell of Array.from(table.querySelectorAll("th, td"))) {
+      if (!(cell instanceof HTMLElement)) {
+        continue;
+      }
+      if (!cellIntersectsViewport(cell, viewportRect)) {
+        continue;
+      }
+      if (cell.dataset.contextHiddenRow === "true" || cell.dataset.contextHiddenCol === "true") {
+        continue;
+      }
+      const row = Number.parseInt(cell.dataset.gridRow || "", 10);
+      const col = Number.parseInt(cell.dataset.gridColStart || "", 10);
+      if (!Number.isFinite(row) || !Number.isFinite(col)) {
+        continue;
+      }
+      if (row < minVisibleRow) {
+        minVisibleRow = row;
+      }
+      if (col < minVisibleCol) {
+        minVisibleCol = col;
+      }
+      if (minVisibleRow === 0 && minVisibleCol === 0) {
+        break;
+      }
+    }
+    if (minVisibleRow === 0 && minVisibleCol === 0) {
+      break;
+    }
+  }
+
+  const fallbackRow = Math.max(0, Number.parseInt(String(fallbackPoint && fallbackPoint.row), 10) || 0);
+  const fallbackCol = Math.max(0, Number.parseInt(String(fallbackPoint && fallbackPoint.col), 10) || 0);
+  const resolvedRow = Number.isFinite(minVisibleRow) ? Math.max(0, minVisibleRow) : fallbackRow;
+  const resolvedCol = Number.isFinite(minVisibleCol) ? Math.max(0, minVisibleCol) : fallbackCol;
+  return { row: resolvedRow, col: resolvedCol };
+}
+
+function clearFreezeViewportWindowForScope(scope) {
+  const viewLayout = viewLayoutForScope(scope);
+  viewLayout.freezeViewportRowStart = null;
+  viewLayout.freezeViewportColStart = null;
+}
+
+function setFreezeViewportWindowForScope(scope, point) {
+  const normalized = normalizeViewScope(scope);
+  const viewLayout = viewLayoutForScope(normalized);
+  if (!point) {
+    clearFreezeViewportWindowForScope(normalized);
+    return { rowStart: 0, colStart: 0 };
+  }
+  const origin = freezeViewportOriginForScope(normalized, point);
+  const pointRow = Math.max(0, Number.parseInt(String(point.row || 0), 10) || 0);
+  const pointCol = Math.max(0, Number.parseInt(String(point.col || 0), 10) || 0);
+  const rowStart = Math.max(0, Math.min(origin.row, pointRow));
+  const colStart = Math.max(0, Math.min(origin.col, pointCol));
+  viewLayout.freezeViewportRowStart = rowStart > 0 ? rowStart : null;
+  viewLayout.freezeViewportColStart = colStart > 0 ? colStart : null;
+  return { rowStart, colStart };
+}
+
 function rowByGridIndex(table, gridRow) {
   if (!table || !Number.isFinite(Number(gridRow))) {
     return null;
@@ -5456,6 +5658,46 @@ function shiftIndexSetForDelete(indexSet, removedIndices) {
   for (const index of next) {
     indexSet.add(index);
   }
+}
+
+function shiftFreezeViewportStartForInsert(currentStart, insertAt, count = 1) {
+  const start = Number.parseInt(String(currentStart ?? ""), 10);
+  if (!Number.isFinite(start) || start < 1) {
+    return null;
+  }
+  const insertIndex = Number.parseInt(String(insertAt), 10);
+  const delta = Number.parseInt(String(count), 10);
+  if (!Number.isFinite(insertIndex) || !Number.isFinite(delta) || delta < 1) {
+    return start;
+  }
+  if (insertIndex <= start) {
+    return start + delta;
+  }
+  return start;
+}
+
+function shiftFreezeViewportStartForDelete(currentStart, removedIndices) {
+  const start = Number.parseInt(String(currentStart ?? ""), 10);
+  if (!Number.isFinite(start) || start < 1) {
+    return null;
+  }
+  const sortedRemoved = Array.from(new Set(Array.isArray(removedIndices) ? removedIndices : []))
+    .map((value) => Number.parseInt(String(value), 10))
+    .filter((value) => Number.isFinite(value) && value >= 0)
+    .sort((a, b) => a - b);
+  if (!sortedRemoved.length) {
+    return start;
+  }
+  let shift = 0;
+  for (const removed of sortedRemoved) {
+    if (removed < start) {
+      shift += 1;
+      continue;
+    }
+    break;
+  }
+  const nextStart = Math.max(0, start - shift);
+  return nextStart > 0 ? nextStart : null;
 }
 
 function normalizeColumnWidthPx(value) {
@@ -5820,6 +6062,11 @@ function insertRowFromContext(position) {
   const viewLayout = viewLayoutForScope(scope);
   const insertAt = position === "below" ? structure.point.row + 1 : structure.point.row;
   shiftIndexSetForInsert(viewLayout.hiddenRows, insertAt, 1);
+  viewLayout.freezeViewportRowStart = shiftFreezeViewportStartForInsert(
+    viewLayout.freezeViewportRowStart,
+    insertAt,
+    1,
+  );
   applyStructuralEditForScope(scope, `Inserted 1 row (${position}) · ${selectionScopeLabel(scope)}`);
 }
 
@@ -5845,6 +6092,10 @@ function deleteRowsFromContext() {
 
   const viewLayout = viewLayoutForScope(scope);
   shiftIndexSetForDelete(viewLayout.hiddenRows, structure.deletableRowIndices);
+  viewLayout.freezeViewportRowStart = shiftFreezeViewportStartForDelete(
+    viewLayout.freezeViewportRowStart,
+    structure.deletableRowIndices,
+  );
   applyStructuralEditForScope(scope, `Deleted ${structure.deletableRowIndices.length} row(s) · ${selectionScopeLabel(scope)}`);
 }
 
@@ -5881,6 +6132,11 @@ function insertColumnFromContext(side) {
 
   const viewLayout = viewLayoutForScope(scope);
   shiftIndexSetForInsert(viewLayout.hiddenCols, insertAt, 1);
+  viewLayout.freezeViewportColStart = shiftFreezeViewportStartForInsert(
+    viewLayout.freezeViewportColStart,
+    insertAt,
+    1,
+  );
   viewLayout.columnWidths = shiftColumnWidthMapForInsert(viewLayout.columnWidths, insertAt, 1);
   applyStructuralEditForScope(scope, `Inserted 1 column (${side}) · ${selectionScopeLabel(scope)}`);
 }
@@ -5912,20 +6168,41 @@ function deleteColumnsFromContext() {
 
   const viewLayout = viewLayoutForScope(scope);
   shiftIndexSetForDelete(viewLayout.hiddenCols, structure.selectedColumnIndices);
+  viewLayout.freezeViewportColStart = shiftFreezeViewportStartForDelete(
+    viewLayout.freezeViewportColStart,
+    structure.selectedColumnIndices,
+  );
   viewLayout.columnWidths = shiftColumnWidthMapForDelete(viewLayout.columnWidths, structure.selectedColumnIndices);
   applyStructuralEditForScope(scope, `Deleted ${structure.selectedColumnIndices.length} column(s) · ${selectionScopeLabel(scope)}`);
 }
 
-function applyFreezeOverride(scope, freezeCols, freezeRows, statusLabel) {
+function applyFreezeOverride(scope, freezeCols, freezeRows, statusLabel, options = {}) {
+  const {
+    preserveFreezeViewportWindow = false,
+    suppressStatus = false,
+  } = options || {};
   const normalized = normalizeViewScope(scope);
   const viewLayout = viewLayoutForScope(normalized);
+  if (!preserveFreezeViewportWindow) {
+    clearFreezeViewportWindowForScope(normalized);
+  }
   viewLayout.frozenRowsOverride = Math.max(0, Number.parseInt(String(freezeRows || 0), 10) || 0);
   viewLayout.frozenColsOverride = Math.max(0, Number.parseInt(String(freezeCols || 0), 10) || 0);
 
   const applied = applyScopeLayoutOverrides(normalized, viewLayout.frozenColsOverride, viewLayout.frozenRowsOverride);
   if (!applied) {
-    setText(el.statusText, "No table available to apply freeze.");
+    if (preserveFreezeViewportWindow) {
+      clearFreezeViewportWindowForScope(normalized);
+      applyScopeVisibilityOverrides(normalized);
+    }
+    if (!suppressStatus) {
+      setText(el.statusText, "No table available to apply freeze.");
+    }
     return false;
+  }
+
+  if (suppressStatus) {
+    return true;
   }
 
   if (statusLabel === "unfreeze") {
@@ -5949,7 +6226,20 @@ function freezePanesFromContext() {
 
   const freezeRows = Math.max(0, Number.parseInt(String(point.row || 0), 10) || 0);
   const freezeCols = Math.max(0, Number.parseInt(String(point.col || 0), 10) || 0);
-  applyFreezeOverride(scope, freezeCols, freezeRows, "Freeze panes applied");
+  const viewportWindow = setFreezeViewportWindowForScope(scope, point);
+  const applied = applyFreezeOverride(scope, freezeCols, freezeRows, "Freeze panes applied", {
+    preserveFreezeViewportWindow: true,
+    suppressStatus: true,
+  });
+  if (!applied) {
+    return;
+  }
+  const visibleFrozenRows = Math.max(0, freezeRows - viewportWindow.rowStart);
+  const visibleFrozenCols = Math.max(0, freezeCols - viewportWindow.colStart);
+  setText(
+    el.statusText,
+    `Freeze panes applied · ${selectionScopeLabel(scope)} · visible rows ${visibleFrozenRows}, visible columns ${visibleFrozenCols}`,
+  );
 }
 
 function freezeTopRowFromContext() {
@@ -7405,6 +7695,13 @@ function mainStyledKey(selectedMonths) {
   return `${state.viewerRole}::${state.selectedRegion}::${state.selectedMainWorkbook}::${state.selectedReferenceWorkbook}::${state.pairVersion}::${state.selectedMainSheetName}::${mode}::${nValue}::${monthValue}::${monthsPart}`;
 }
 
+function referenceStyledKey(referenceSheetName) {
+  const mode = el.refModeSelect.value;
+  const nValue = currentN(el.refNInput);
+  const monthValue = monthSelectionSignature(mode, el.refMonthSelect);
+  return `${state.viewerRole}::${state.selectedRegion}::${state.selectedMainWorkbook}::${state.selectedReferenceWorkbook}::${state.pairVersion}::${referenceSheetName || ""}::${mode}::${nValue}::${monthValue}`;
+}
+
 async function renderMainStyled(selectedMonths) {
   if (!state.selectedMainSheetName) {
     setEmptyMain("No main sheet selected.");
@@ -7519,11 +7816,85 @@ async function renderMainStyled(selectedMonths) {
   }
 }
 
-function renderReferencePanel(referenceSheet, selectedMonthsRef, referenceTab) {
+async function renderReferenceStyled(referenceTab) {
+  if (!referenceTab || !referenceTab.sheet_name) {
+    setEmptyRef("No reference sheet selected.");
+    setText(el.refMeta, "");
+    return;
+  }
+
+  const requestKey = referenceStyledKey(referenceTab.sheet_name);
+  state.referenceStyledRequestKey = requestKey;
+  const query = workbookQuery();
+  const mode = el.refModeSelect.value;
+  const nValue = currentN(el.refNInput);
+  const selectedMonthsByMode = selectedMonthsForMode(mode, el.refMonthSelect);
+  const selectedMonth = selectedMonthsByMode.length
+    ? selectedMonthsByMode[selectedMonthsByMode.length - 1]
+    : Number.NaN;
+  const selectedMonthsCsv = selectedMonthsByMode.join(",");
+  const url =
+    `/api/reference-styled-sheet?${query}` +
+    `&sheet=${encodeURIComponent(referenceTab.sheet_name)}` +
+    `&mode=${encodeURIComponent(mode)}` +
+    `&n=${encodeURIComponent(String(nValue))}` +
+    (Number.isFinite(selectedMonth) ? `&month=${encodeURIComponent(String(selectedMonth))}` : "") +
+    (selectedMonthsCsv ? `&months=${encodeURIComponent(selectedMonthsCsv)}` : "");
+
+  const payload = await fetchJson(url);
+  if (state.referenceStyledRequestKey !== requestKey) {
+    return;
+  }
+  el.refTable.innerHTML = payload.html;
+  const payloadFrozenCols = Number.parseInt(String(payload.frozen_columns ?? payload.frozen_count ?? 0), 10) || 0;
+  const payloadFrozenRows = Number.parseInt(String(payload.frozen_rows ?? 0), 10) || 0;
+  applyScopeLayoutOverrides("reference", payloadFrozenCols, payloadFrozenRows);
+
+  const hiddenRowsSkipped = Number.parseInt(String(payload.hidden_rows_skipped ?? 0), 10) || 0;
+  const hiddenColsSkipped = Number.parseInt(String(payload.hidden_columns_skipped ?? 0), 10) || 0;
+  const refLayout = viewLayoutForScope("reference");
+  const effectiveRefFreeze = {
+    rows: Math.max(0, Number.parseInt(String(refLayout.lastAppliedFrozenRows || 0), 10) || 0),
+    cols: Math.max(0, Number.parseInt(String(refLayout.lastAppliedFrozenCols || 0), 10) || 0),
+  };
+  const metaExtras = [];
+  if (effectiveRefFreeze.rows !== payloadFrozenRows || effectiveRefFreeze.cols !== payloadFrozenCols) {
+    metaExtras.push(`normalized freeze from ${payloadFrozenRows} row(s), ${payloadFrozenCols} column(s)`);
+  }
+  if (effectiveRefFreeze.rows > 0 || effectiveRefFreeze.cols > 0) {
+    metaExtras.push(`freeze ${effectiveRefFreeze.rows} row(s), ${effectiveRefFreeze.cols} column(s)`);
+  }
+  if (hiddenRowsSkipped > 0 || hiddenColsSkipped > 0) {
+    metaExtras.push(`hidden skipped ${hiddenRowsSkipped} row(s), ${hiddenColsSkipped} column(s)`);
+  }
+  if (refLayout.hiddenRows.size > 0 || refLayout.hiddenCols.size > 0) {
+    metaExtras.push(`local hidden ${refLayout.hiddenRows.size} row(s), ${refLayout.hiddenCols.size} column(s)`);
+  }
+  const extrasText = metaExtras.length ? ` · ${metaExtras.join(" · ")}` : "";
+  const monthCount = (payload.selected_month_labels || []).length;
+  if (monthCount > 0) {
+    setText(
+      el.refMeta,
+      `${payload.sheet_name} · rows ${payload.row_count} · ${payload.col_count} columns · ${monthCount} month group(s)${extrasText}`,
+    );
+  } else if (payload.filterable) {
+    setText(
+      el.refMeta,
+      `${payload.sheet_name} · rows ${payload.row_count} · ${payload.col_count} columns · fixed-layout mode${extrasText}`,
+    );
+  } else {
+    setText(
+      el.refMeta,
+      `${payload.sheet_name} · rows ${payload.row_count} · ${payload.col_count} columns · full-sheet mode${extrasText}`,
+    );
+  }
+}
+
+async function renderReferencePanel(referenceSheet, selectedMonthsRef, referenceTab) {
+  state.referenceStyledRequestKey = null;
   if (!referenceSheet) {
-    if (referenceTab && !referenceTab.filterable) {
-      setEmptyRef("Selected reference sheet is not in a compatible monthly-detail format.");
-      setText(el.refMeta, `${referenceTab.sheet_name} · non-filterable`);
+    if (referenceTab && referenceTab.sheet_name) {
+      await renderReferenceStyled(referenceTab);
       return;
     }
     setEmptyRef("No compatible monthly-detail data found for this reference sheet.");
@@ -7588,7 +7959,7 @@ async function render() {
   await renderMainStyled(selectedMonthsMain);
 
   const selectedMonthsRef = refSheetData ? pickMonths(refSheetData, "ref") : [];
-  renderReferencePanel(refSheetData, selectedMonthsRef, referenceTab);
+  await renderReferencePanel(refSheetData, selectedMonthsRef, referenceTab);
   clearGridSelectionModel();
 
   const mainSelectedMonthValues = selectedMonthsForMode(el.mainModeSelect.value, el.mainMonthSelect);
@@ -7891,9 +8262,6 @@ function bindEvents() {
     (el.accessHint && el.accessHint.closest(".panel"));
   const mainPanel = el.mainTable ? el.mainTable.closest(".panel") : null;
   const refPanel = el.refTable ? el.refTable.closest(".panel") : null;
-  const filesPanel =
-    (el.filesTableBody && el.filesTableBody.closest('[data-ribbon-panel="files"]')) ||
-    (el.filesTableBody && el.filesTableBody.closest(".panel"));
 
   if (el.ribbonGoMainBtn) {
     el.ribbonGoMainBtn.addEventListener("click", () => {
@@ -7919,9 +8287,15 @@ function bindEvents() {
     });
   }
   if (el.ribbonGoFilesBtn) {
-    el.ribbonGoFilesBtn.addEventListener("click", () => {
+    el.ribbonGoFilesBtn.addEventListener("click", (event) => {
       setRibbonTab("files");
-      scrollToNode(filesPanel);
+      setFilesManagerModalOpen(true, event.currentTarget);
+    });
+  }
+  if (el.openFilesManagerBtn) {
+    el.openFilesManagerBtn.addEventListener("click", (event) => {
+      setRibbonTab("files");
+      setFilesManagerModalOpen(true, event.currentTarget);
     });
   }
 
@@ -8655,6 +9029,48 @@ function bindEvents() {
       }
     });
   }
+  if (el.filesManagerCloseBtn) {
+    el.filesManagerCloseBtn.addEventListener("click", () => {
+      setFilesManagerModalOpen(false);
+    });
+  }
+  if (el.filesManagerDoneBtn) {
+    el.filesManagerDoneBtn.addEventListener("click", () => {
+      setFilesManagerModalOpen(false);
+    });
+  }
+  if (el.filesManagerModal) {
+    el.filesManagerModal.addEventListener("click", (event) => {
+      if (event.target === el.filesManagerModal) {
+        setFilesManagerModalOpen(false);
+      }
+    });
+    el.filesManagerModal.addEventListener("keydown", (event) => {
+      if (event.key !== "Tab" || el.filesManagerModal.hidden) {
+        return;
+      }
+      const focusables = getFilesManagerModalFocusables();
+      if (!focusables.length) {
+        return;
+      }
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement;
+
+      if (event.shiftKey) {
+        if (active === first || !focusables.includes(active)) {
+          last.focus();
+          event.preventDefault();
+        }
+        return;
+      }
+
+      if (active === last) {
+        first.focus();
+        event.preventDefault();
+      }
+    });
+  }
   document.addEventListener("keydown", (event) => {
     const shortcutKey = String(event.key || "").toLowerCase();
     const hasShortcutModifier = event.ctrlKey || event.metaKey;
@@ -8678,6 +9094,11 @@ function bindEvents() {
     if (event.ctrlKey && event.key === "F1") {
       event.preventDefault();
       setRibbonCollapsed(!state.ribbonCollapsed);
+      return;
+    }
+
+    if (event.key === "Escape" && el.filesManagerModal && !el.filesManagerModal.hidden) {
+      setFilesManagerModalOpen(false);
       return;
     }
 

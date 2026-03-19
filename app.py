@@ -794,6 +794,73 @@ def api_main_styled_sheet():
     )
 
 
+@app.route("/api/reference-styled-sheet")
+def api_reference_styled_sheet():
+    principal = principal_from_request()
+    try:
+        selection = workbook_selection_for_principal(
+            principal,
+            request.args.get("main"),
+            request.args.get("reference"),
+        )
+    except FileNotFoundError as exc:
+        return jsonify({"error": str(exc)}), 404
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 400
+
+    data = filter_data_by_allowed_townships(
+        load_viewer_data(selection["main_path"], selection["reference_path"]),
+        principal["allowed_townships"],
+    )
+    sheet_name = request.args.get("sheet")
+    if not sheet_name:
+        return jsonify({"error": "Missing required query parameter: sheet"}), 400
+
+    tab_match = next(
+        (tab for tab in data["reference_sheet_tabs"] if tab["sheet_name"] == sheet_name),
+        None,
+    )
+    if not tab_match:
+        abort(404, description=f"Unknown reference sheet: {sheet_name}")
+
+    month_keys_csv = request.args.get("month_keys", "")
+    mode = request.args.get("mode", "past_months")
+    if mode not in MONTH_FILTER_MODES:
+        mode = "past_months"
+    n_value = parse_clamped_int(request.args.get("n"), default=6, min_value=1, max_value=60)
+    month_value = parse_clamped_int(request.args.get("month"), default=0, min_value=0, max_value=12)
+    month_values_csv = normalize_month_values_csv(request.args.get("months"))
+    reference_stat = selection["reference_path"].stat()
+    html_payload = build_main_sheet_html_cached(
+        str(selection["reference_path"]),
+        reference_stat.st_mtime_ns,
+        sheet_name,
+        month_keys_csv,
+        mode,
+        n_value,
+        month_value,
+        month_values_csv,
+    )
+    return jsonify(
+        {
+            "version": data["version"],
+            "canonical": tab_match["canonical"],
+            "filterable": tab_match["filterable"],
+            "sheet_name": html_payload["sheet_name"],
+            "row_count": html_payload["row_count"],
+            "col_count": html_payload["col_count"],
+            "frozen_count": html_payload["frozen_count"],
+            "frozen_rows": html_payload.get("frozen_rows", 0),
+            "frozen_columns": html_payload.get("frozen_columns", html_payload["frozen_count"]),
+            "selected_month_labels": html_payload["selected_month_labels"],
+            "available_months": html_payload["available_months"],
+            "hidden_rows_skipped": html_payload.get("hidden_rows_skipped", 0),
+            "hidden_columns_skipped": html_payload.get("hidden_columns_skipped", 0),
+            "html": html_payload["html"],
+        }
+    )
+
+
 if __name__ == "__main__":
     host, port = resolve_runtime_host_port()
     print(f"Starting viewer at http://{host}:{port}")

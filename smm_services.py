@@ -1302,25 +1302,42 @@ def discover_workbook_entries() -> list[dict[str, Any]]:
     entries: list[dict[str, Any]] = []
     seen_names: set[str] = set()
     # Prefer data/ as the canonical workbook source, then uploads/, then legacy root files.
-    search_dirs: list[Path] = []
-    if DATA_DIR.exists():
-        search_dirs.append(DATA_DIR)
-    if UPLOAD_DIR.exists():
-        search_dirs.append(UPLOAD_DIR)
-    search_dirs.append(ROOT_DIR)
-
-    for folder in search_dirs:
-        for path in folder.iterdir():
+    def iter_excel_files(folder: Path, recursive: bool) -> list[Path]:
+        if not folder.exists():
+            return []
+        iterator = folder.rglob("*") if recursive else folder.iterdir()
+        paths: list[Path] = []
+        for path in iterator:
             if not path.is_file():
                 continue
             if path.name.startswith("~$"):
                 continue
             if path.suffix.lower() not in SUPPORTED_EXTENSIONS:
                 continue
+            paths.append(path)
+        try:
+            paths.sort(
+                key=lambda path: (
+                    len(path.relative_to(folder).parts),
+                    str(path.relative_to(folder)).lower(),
+                )
+            )
+        except ValueError:
+            paths.sort(key=lambda path: str(path).lower())
+        return paths
+
+    search_plan: list[tuple[Path, bool]] = []
+    if DATA_DIR.exists():
+        search_plan.append((DATA_DIR, True))
+    if UPLOAD_DIR.exists():
+        search_plan.append((UPLOAD_DIR, True))
+    search_plan.append((ROOT_DIR, False))
+
+    for folder, recursive in search_plan:
+        for path in iter_excel_files(folder, recursive):
             if path.name in seen_names:
                 # Keep first entry if duplicate filenames exist in different folders.
                 continue
-
             meta = registry.get(path.name)
             region_token = (
                 normalize_region_token(meta.get("region"))

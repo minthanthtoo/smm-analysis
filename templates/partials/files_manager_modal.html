@@ -1,0 +1,43 @@
+    <div id="filesManagerModal" class="modal files-manager-modal" hidden aria-hidden="true">
+      <div
+        class="modal-card files-manager-modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="filesManagerTitle"
+        aria-describedby="filesManagerDescription"
+        tabindex="-1"
+      >
+        <div class="modal-head files-manager-modal-head">
+          <div class="files-manager-head-content">
+            <h3 id="filesManagerTitle">Regional Files</h3>
+            <p id="filesManagerDescription" class="files-manager-modal-description">
+              Set each workbook role for Main view, Detail view, or both.
+            </p>
+          </div>
+          <div class="files-manager-head-actions">
+            <button id="refreshFilesBtn" type="button" class="action-btn action-btn-sm action-btn-ghost">Refresh files</button>
+            <button id="filesManagerCloseBtn" type="button" class="modal-close" aria-label="Close regional files window">
+              ✕
+            </button>
+          </div>
+        </div>
+        <div class="modal-body files-manager-modal-body">
+          <div class="table-wrap files-table-wrap files-manager-table-wrap">
+            <table id="filesTable" class="files-table">
+              <thead>
+                <tr>
+                  <th class="left files-col-file">File</th>
+                  <th class="left files-col-region">Region</th>
+                  <th class="left files-col-view">Main / Detail role</th>
+                  <th class="left files-col-actions">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="filesTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-actions files-manager-modal-actions">
+          <button id="filesManagerDoneBtn" type="button" class="action-btn action-btn-sm">Done</button>
+        </div>
+      </div>
+    </div>

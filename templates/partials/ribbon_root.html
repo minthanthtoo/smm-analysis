@@ -58,7 +58,16 @@
                 <button id="ribbonGoMainBtn" type="button" class="action-btn action-btn-sm action-btn-ghost">Go to main view</button>
                 <button id="ribbonGoRefBtn" type="button" class="action-btn action-btn-sm action-btn-ghost">Go to detail view</button>
                 <button id="ribbonGoAccessBtn" type="button" class="action-btn action-btn-sm action-btn-ghost">Go to role assignment</button>
-                <button id="ribbonGoFilesBtn" type="button" class="action-btn action-btn-sm action-btn-ghost">Go to file manager</button>
+                <button
+                  id="ribbonGoFilesBtn"
+                  type="button"
+                  class="action-btn action-btn-sm action-btn-ghost"
+                  aria-haspopup="dialog"
+                  aria-controls="filesManagerModal"
+                  aria-expanded="false"
+                >
+                  Go to file manager
+                </button>
               </div>
             </div>
             <div class="ribbon-group">
@@ -413,25 +422,22 @@
                 </div>
               </div>
             </div>
-            <div class="ribbon-group ribbon-group-fill files-list-group">
-              <div class="panel-head">
-                <h2>Regional Files</h2>
-                <button id="refreshFilesBtn" type="button" class="action-btn action-btn-ghost action-btn-sm">Refresh files</button>
+            <div class="ribbon-group ribbon-group-fill files-manager-launch-group">
+              <div class="files-manager-launch-head">
+                <h2>Regional Files Window</h2>
+                <button
+                  id="openFilesManagerBtn"
+                  type="button"
+                  class="action-btn action-btn-sm"
+                  aria-haspopup="dialog"
+                  aria-controls="filesManagerModal"
+                  aria-expanded="false"
+                >
+                  Open window
+                </button>
               </div>
-              <p class="files-role-help">Set each workbook role for Main view, Detail view, or both.</p>
-              <div class="table-wrap compact-wrap files-table-wrap">
-                <table id="filesTable" class="files-table">
-                  <thead>
-                    <tr>
-                      <th class="left files-col-file">File</th>
-                      <th class="left files-col-region">Region</th>
-                      <th class="left files-col-view">Main / Detail role</th>
-                      <th class="left files-col-actions">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody id="filesTableBody"></tbody>
-                </table>
-              </div>
+              <p class="files-role-help">Manage workbook region and Main/Detail role assignments in a popup window.</p>
+              <p id="filesManagerSummary" class="files-manager-summary">No files loaded.</p>
             </div>
           </div>
           <button
